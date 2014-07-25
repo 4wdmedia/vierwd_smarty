@@ -1,0 +1,11 @@
+{
+	"name": "vierwd/typo3-smarty",
+	"type": "typo3-cms-extension",
+	"description": "Extbase Smarty",
+	"version": "2.1.0",
+	"license": "proprietary",
+	"require": {
+		"typo3/cms-core": "*",
+		"typo3/cms-extbase": "*"
+	}
+}
