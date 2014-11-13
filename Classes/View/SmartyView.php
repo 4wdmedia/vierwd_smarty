@@ -17,6 +17,22 @@ function clean($str) {
 	}
 }
 
+function strip($template) {
+	static $replacements = [
+		'{typoscript' => '{/strip}{typoscript',
+		'{/typoscript}' => '{/typoscript}{strip}',
+		'{pre}' => '{/strip}',
+		'{/pre}' => '{strip}',
+	];
+
+	$search = array_keys($replacements);
+	$replace = array_values($replacements);
+
+	$template = str_replace($search, $replace, $template);
+	$template = '{strip}' . $template . '{/strip}';
+	return $template;
+}
+
 class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public $Smarty;
@@ -122,9 +138,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$this->Smarty = new \Smarty;
 
-		$this->Smarty->debugging = true;
-		$this->Smarty->caching = false;
-		$this->Smarty->cache_lifetime = 120;
+		$this->Smarty->setCacheLifetime(120);
 
 		// setup Template and caching dirs
 		$this->Smarty->setTemplateDir($this->getTemplateRootPath());
@@ -148,6 +162,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
 
+		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
 		// fluid
