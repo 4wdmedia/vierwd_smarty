@@ -2,7 +2,7 @@
 
 namespace Vierwd\VierwdSmarty\Controller;
 
-class ActionController extends \Tx_Extbase_MVC_Controller_ActionController {
+class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
 	 * this is needed to use the smarty view
