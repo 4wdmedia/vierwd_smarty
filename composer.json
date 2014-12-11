@@ -5,6 +5,7 @@
 	"version": "2.1.0",
 	"license": "proprietary",
 	"require": {
+		"php": ">=5.4.0",
 		"typo3/cms-core": "*",
 		"typo3/cms-extbase": "*"
 	}
