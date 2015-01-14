@@ -52,7 +52,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	protected $templateRootPath = NULL;
 
 	/**
-	 * @var tslib_cObj
+	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
 	protected $contentObject;
 
@@ -435,7 +435,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$table = isset($data['table']) ? $data['table'] : '_NO_TABLE';
 		unset($data['table']);
 
-		$cObj = GeneralUtility::makeInstance('tslib_cObj');
+		$cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 		$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
 		if ($table != '_NO_TABLE') {
 			#$data['uid'] = 0;
@@ -522,7 +522,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		) + $conf;
 
 		// Get page browser
-		$cObj = GeneralUtility::makeInstance('tslib_cObj');
+		$cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 		$cObj->start(array(), '');
 		return $cObj->cObjGetSingle('USER', $conf);
 	}
