@@ -418,6 +418,32 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$fluidView->assignMultiple($data);
 		$fluidView->setTemplateSource($content);
 
+		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		if ($configuration['view']) {
+			$layoutRootPaths = array();
+			if ($configuration['view']['layoutRootPaths']) {
+				$layoutRootPaths = $configuration['view']['layoutRootPaths'];
+			} else if ($configuration['view']['layoutRootPath']) {
+				$layoutRootPaths = array($configuration['view']['layoutRootPath']);
+			}
+			$layoutRootPaths = array_map(function($path) {
+				return GeneralUtility::getFileAbsFileName($path);
+			}, $layoutRootPaths);
+			$fluidView->setLayoutRootPaths($layoutRootPaths);
+
+			// Partials
+			$partialRootPaths = array();
+			if ($configuration['view']['partialRootPaths']) {
+				$partialRootPaths = $configuration['view']['partialRootPaths'];
+			} else if ($configuration['view']['partialRootPath']) {
+				$partialRootPaths = array($configuration['view']['partialRootPath']);
+			}
+			$partialRootPaths = array_map(function($path) {
+				return GeneralUtility::getFileAbsFileName($path);
+			}, $partialRootPaths);
+			$fluidView->setPartialRootPaths($partialRootPaths);
+		}
+
 		return $fluidView->render();
 	}
 
