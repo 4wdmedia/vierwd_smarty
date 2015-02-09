@@ -45,11 +45,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	protected $templateRootPathPattern = '@packageResourcesPath/Private/Templates';
 
 	/**
-	 * Path to the template root. If NULL, then $this->templateRootPathPattern will be used.
+	 * Path(s) to the template root. If NULL, then $this->templateRootPathPattern will be used.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $templateRootPath = NULL;
+	protected $templateRootPaths = NULL;
 
 	/**
 	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
@@ -74,22 +74,46 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 * @param string $templateRootPath Root path to the templates. If set, overrides the one determined from $this->templateRootPathPattern
 	 * @return void
 	 * @api
+	 * @see setTemplateRootPaths()
 	 */
 	public function setTemplateRootPath($templateRootPath) {
-		$this->templateRootPath = $templateRootPath;
+		$this->setTemplateRootPaths(array($templateRootPath));
+	}
+
+	/**
+	 * Set the root path(s) to the templates.
+	 * If set, overrides the one determined from $this->templateRootPathPattern
+	 *
+	 * @param array $templateRootPaths Root path(s) to the templates. If set, overrides the one determined from $this->templateRootPathPattern
+	 * @return void
+	 * @api
+	 */
+	public function setTemplateRootPaths(array $templateRootPaths) {
+		$this->templateRootPaths = $templateRootPaths;
+	}
+
+	/**
+	 * @return string Path to template root directory
+	 * @deprecated since fluid 6.2, will be removed two versions later. Use getTemplateRootPaths() instead
+	 */
+	protected function getTemplateRootPath() {
+		GeneralUtility::logDeprecatedFunction();
+		$templateRootPaths = $this->getTemplateRootPaths();
+		return array_shift($templateRootPaths);
 	}
 
 	/**
 	 * Resolves the template root to be used inside other paths.
 	 *
-	 * @return string Path to template root directory
+	 * @return array Path(s) to template root directory
 	 */
-	protected function getTemplateRootPath() {
-		if ($this->templateRootPath !== NULL) {
-			return $this->templateRootPath;
-		} else {
-			return str_replace('@packageResourcesPath', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($this->controllerContext->getRequest()->getControllerExtensionKey()) . 'Resources/', $this->templateRootPathPattern);
+	public function getTemplateRootPaths() {
+		if ($this->templateRootPaths !== NULL) {
+			return $this->templateRootPaths;
 		}
+		/** @var $actionRequest \TYPO3\CMS\Extbase\Mvc\Request */
+		$actionRequest = $this->controllerContext->getRequest();
+		return array(str_replace('@packageResourcesPath', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', $this->templateRootPathPattern));
 	}
 
 	/**
@@ -119,9 +143,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$file = $controller . '/' . ucfirst($action) . '.tpl';
 
-		$fileName = $this->getTemplateRootPath() . '/' . $file;
-		if (file_exists($fileName)) {
-			return $fileName;
+		foreach ($this->getTemplateRootPaths() as $rootPath) {
+			$fileName = str_replace('//', '/', $rootPath . '/' . $file);
+			$fileName = GeneralUtility::getFileAbsFileName($fileName);
+			if (file_exists($fileName)) {
+				return $fileName;
+			}
 		}
 
 		// no view found
@@ -133,7 +160,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		if (!class_exists('Smarty')) {
 			// use Composer's autoloader
-			require_once 'vendor/autoload.php';
+			require_once PATH_site . 'vendor/autoload.php';
 		}
 
 		$this->Smarty = new \Smarty;
@@ -141,7 +168,10 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->setCacheLifetime(120);
 
 		// setup Template and caching dirs
-		$this->Smarty->setTemplateDir($this->getTemplateRootPath());
+		$this->Smarty->setTemplateDir(array_map(function($pathName) {
+			$pathName = str_replace('//', '/', $pathName);
+			return \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($pathName);
+		}, $this->getTemplateRootPaths()));
 
 		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/vierwd_smarty/');
 		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
@@ -461,8 +491,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$table = isset($data['table']) ? $data['table'] : '_NO_TABLE';
 		unset($data['table']);
 
-		$cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 		$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
+		$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
+		$cObj->currentRecordTotal = $this->contentObject->currentRecordTotal;
+		$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
 		if ($table != '_NO_TABLE') {
 			#$data['uid'] = 0;
 			$data['_MIGRATED'] = false;
