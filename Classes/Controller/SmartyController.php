@@ -22,13 +22,19 @@ class SmartyController extends ActionController {
 
 		if (isset($this->settings['typoscript'])) {
 			foreach ($this->settings['typoscript'] as $key => $extbaseArray) {
-				// convert back to normal TypoScript array
-				$typoscriptArray = $typoScriptService->convertPlainArrayToTypoScriptArray($extbaseArray);
-
 				$contentObject = GeneralUtility::makeInstance('tslib_cObj');
 				$contentObject->start($baseContentObject->data);
 
-				$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'], $typoscriptArray);
+				if (is_array($extbaseArray)) {
+					// convert back to normal TypoScript array
+					$typoscriptArray = $typoScriptService->convertPlainArrayToTypoScriptArray($extbaseArray);
+
+					$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'], $typoscriptArray);
+				} else if (is_string($extbaseArray) && $extbaseArray[0] == '<') {
+					$content = $contentObject->cObjGetSingle($extbaseArray, array());
+				} else {
+					throw new \Exception('Unkown type for ' . $key);
+				}
 				$this->settings['typoscript'][$key] = $content;
 			}
 		}
