@@ -58,6 +58,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+	 * @inject
 	 */
 	protected $configurationManager;
 
@@ -182,6 +183,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		}
 		if (!is_dir($this->Smarty->compile_dir)) {
 			GeneralUtility::mkdir_deep($this->Smarty->compile_dir, '');
+		}
+
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] as $pluginDir) {
+				$this->Smarty->addPluginsDir($pluginDir);
+			}
 		}
 
 		$this->Smarty->registerPlugin('function', 'translate', array($this, 'smarty_translate'));
@@ -588,7 +595,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public function render($view = '') {
 		// setup TypoScript
-		$this->configurationManager = $this->variables['configurationManager'];
 		$this->contentObject = $this->configurationManager->getContentObject();
 
 		$this->Smarty->assign($this->variables);
