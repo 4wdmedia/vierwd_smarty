@@ -195,6 +195,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('function', 'uri_resource', array($this, 'smarty_uri_resource'));
 		$this->Smarty->registerPlugin('function', 'uri_action', array($this, 'smarty_uri_action'));
 		$this->Smarty->registerPlugin('function', 'typolink', array($this, 'smarty_helper_typolink'));
+		$this->Smarty->registerPlugin('modifier', 'typolink', array($this, 'smarty_helper_typolink_url'));
 		$this->Smarty->registerPlugin('function', 'flashMessages', array($this, 'smarty_flashMessages'));
 
 		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
@@ -400,6 +401,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			->build();
 
 		return $uri;
+	}
+
+	public function smarty_helper_typolink_url($parameter) {
+		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		return $cObj->getTypoLink_URL($parameter);
 	}
 
 	public function smarty_flashMessages($params, $smarty) {
