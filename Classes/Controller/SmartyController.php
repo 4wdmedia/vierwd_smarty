@@ -32,6 +32,8 @@ class SmartyController extends ActionController {
 					$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'], $typoscriptArray);
 				} else if (is_string($extbaseArray) && $extbaseArray[0] == '<') {
 					$content = $contentObject->cObjGetSingle($extbaseArray, array());
+				} else if (is_string($extbaseArray)) {
+					$content = $extbaseArray;
 				} else {
 					throw new \Exception('Unkown type for ' . $key);
 				}
