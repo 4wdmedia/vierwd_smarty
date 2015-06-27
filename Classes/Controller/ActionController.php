@@ -24,4 +24,3 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		// $view->Smarty->registerPlugin('function', 'categorylink', array($this, 'smarty_categorylink'));
 	}
 }
-?>

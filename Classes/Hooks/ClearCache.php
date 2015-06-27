@@ -29,12 +29,12 @@ class ClearCache implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInte
 				'id'    => 'realurl_cache',
 				'title' => $s_title,
 				'href' => 'ajax.php?ajaxID=tx_vierwdsmarty::clear',
-				'icon'  => '<img src="'.$s_imagePath.'ext_icon.gif" title="'.$s_title.'" alt="'.$s_title.'" />',
+				'icon'  => '<img src="' . $s_imagePath . 'ext_icon.gif" title="' . $s_title . '" alt="' . $s_title . '" />',
 			);
 			$a_optionValues[] = 'clearCacheVierwdSmarty';
 		}
 	}
-	
+
 	/**
 	 * Clears the actual Smarty Template Cache
 	 */
@@ -42,5 +42,3 @@ class ClearCache implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInte
 		$GLOBALS['typo3CacheManager']->getCache('vierwd_smarty')->flush();
 	}
 }
-
-?>

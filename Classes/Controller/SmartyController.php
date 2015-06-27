@@ -61,4 +61,3 @@ class SmartyController extends ActionController {
 		return $this->view->render('string:' . $template);
 	}
 }
-?>
