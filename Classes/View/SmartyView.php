@@ -129,6 +129,13 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		if ($controllerContext->getRequest()->getControllerObjectName() == 'Vierwd\\VierwdSmarty\\Controller\\SmartyController') {
 			return true;
 		}
+		// setting in TypoScript: plugin.tx_vierwdPLUGIN.format = tpl
+		// this will force the SmartyView for all views. Otherwise this method will check if
+		// there is a template with the same name as the action. (Which will not exist, if the action
+		// calls $view->render() with another name)
+		if ($controllerContext->getRequest()->getFormat() == 'tpl') {
+			return true;
+		}
 		try {
 			$this->getViewFileName($controllerContext);
 			return true;
