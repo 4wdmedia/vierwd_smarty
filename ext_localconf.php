@@ -18,7 +18,4 @@ if (version_compare(PHP_VERSION, '5.4.0') <= 0) {
 	)
 );
 
-if (!function_exists('utf8_deaccent')) {
-	require_once PATH_site . 'typo3conf/ext/' . $_EXTKEY . '/utf8.php';
-}
 ?>
