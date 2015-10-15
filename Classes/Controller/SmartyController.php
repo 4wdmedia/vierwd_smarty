@@ -22,7 +22,7 @@ class SmartyController extends ActionController {
 
 		if (isset($this->settings['typoscript'])) {
 			foreach ($this->settings['typoscript'] as $key => $extbaseArray) {
-				$contentObject = GeneralUtility::makeInstance('tslib_cObj');
+				$contentObject = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 				$contentObject->start($baseContentObject->data);
 
 				if (is_array($extbaseArray)) {
