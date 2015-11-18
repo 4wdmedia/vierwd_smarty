@@ -1,0 +1,25 @@
+{
+	"name": "vierwd/typo3-smarty",
+	"description": "Use Smarty in Templates instead of Fluid",
+	"type": "typo3-cms-extension",
+	"description": "Extbase Smarty",
+	"version": "2.2.0",
+	"license": "proprietary",
+	"authors": [{
+		"name": "FORWARD MEDIA",
+		"email": "kontakt@4wdmedia.de",
+		"homepage": "https://www.4wdmedia.de",
+		"role": "Developer"
+	}],
+	"require": {
+		"php": ">=5.4.0",
+		"typo3/cms-core": "*",
+		"typo3/cms-extbase": "*",
+		"smarty/smarty": "~3.1.27"
+	},
+	"autoload": {
+		"psr-4": {
+			"Vierwd\\VierwdSmarty\\": "typo3conf/ext/vierwd_smarty/Classes"
+		}
+	}
+}

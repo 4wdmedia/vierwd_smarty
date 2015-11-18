@@ -1,0 +1,9 @@
+plugin.tx_vierwdsmarty = USER
+plugin.tx_vierwdsmarty {
+	userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+	pluginName = smarty_render
+	vendorName = Vierwd
+	extensionName = VierwdSmarty
+	controller = Smarty
+	action = render
+}
