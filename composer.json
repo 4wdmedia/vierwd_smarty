@@ -1,5 +1,5 @@
 {
-	"name": "vierwd/typo3-smarty",
+	"name": "vierwd/vierwd-smarty",
 	"description": "Use Smarty in Templates instead of Fluid",
 	"type": "typo3-cms-extension",
 	"description": "Extbase Smarty",
