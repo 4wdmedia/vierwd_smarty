@@ -38,6 +38,13 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	public $Smarty;
 
 	/**
+	 * parent view (when used with AutomaticStandaloneView)
+	 *
+	 * @var \TYPO3\CMS\Fluid\View\AbstractTemplateView
+	 */
+	protected $parentView;
+
+	/**
 	 * Pattern to be resolved for "@templateRoot" in the other patterns.
 	 *
 	 * @var string
@@ -69,6 +76,24 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	protected $objectManager;
 
 	/**
+	 * set the parent view
+	 *
+	 * @param \TYPO3\CMS\Fluid\View\AbstractTemplateView $parentView
+	 */
+	public function setParentView(\TYPO3\CMS\Fluid\View\AbstractTemplateView $parentView) {
+		$this->parentView = $parentView;
+	}
+
+	/**
+	 * set the parent view
+	 *
+	 * @return \TYPO3\CMS\Fluid\View\AbstractTemplateView
+	 */
+	public function getParentView() {
+		return $this->parentView;
+	}
+
+	/**
 	 * Set the root path to the templates.
 	 * If set, overrides the one determined from $this->templateRootPathPattern
 	 *
@@ -78,6 +103,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 * @see setTemplateRootPaths()
 	 */
 	public function setTemplateRootPath($templateRootPath) {
+		GeneralUtility::logDeprecatedFunction();
 		$this->setTemplateRootPaths(array($templateRootPath));
 	}
 
@@ -163,17 +189,53 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		throw new \Exception('Template not found for '.$controller.'->'.$action);
 	}
 
-	public function initializeView() {
-		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
-
-		if (!class_exists('Smarty')) {
-			// use Composer's autoloader
-			require_once PATH_site . 'vendor/autoload.php';
+	protected function createSmarty() {
+		if ($this->Smarty) {
+			return;
 		}
 
 		$this->Smarty = new \Smarty;
 
 		$this->Smarty->setCacheLifetime(120);
+
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] as $pluginDir) {
+				$this->Smarty->addPluginsDir($pluginDir);
+			}
+		}
+
+		$this->Smarty->registerPlugin('function', 'translate', array($this, 'smarty_translate'));
+		$this->Smarty->registerPlugin('function', 'uri_resource', array($this, 'smarty_uri_resource'));
+		$this->Smarty->registerPlugin('function', 'uri_action', array($this, 'smarty_uri_action'));
+		$this->Smarty->registerPlugin('function', 'typolink', array($this, 'smarty_helper_typolink'));
+		$this->Smarty->registerPlugin('modifier', 'typolink', array($this, 'smarty_helper_typolink_url'));
+		$this->Smarty->registerPlugin('function', 'flashMessages', array($this, 'smarty_flashMessages'));
+
+		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
+
+		$this->Smarty->registerPlugin('function', 'render', array($this, 'smarty_render'));
+		$this->Smarty->registerPlugin('function', 'layout', array($this, 'smarty_layout'));
+
+		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
+		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
+
+		// fluid
+		$this->Smarty->registerPlugin('block', 'fluid', array($this, 'smarty_fluid'));
+
+		// Typoscript filters
+		$this->Smarty->registerPlugin('block', 'typoscript', array($this, 'smarty_typoscript'));
+
+		// custom functions
+		$this->Smarty->registerPlugin('function', 'email', array($this, 'smarty_email'));
+		$this->Smarty->registerPlugin('function', 'pagebrowser', array($this, 'smarty_pagebrowser'));
+
+		$this->Smarty->registerPlugin('modifier', 'nl2p', array($this, 'smarty_nl2p'));
+	}
+
+	public function initializeView() {
+		$this->createSmarty();
+
+		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 
 		// setup Template and caching dirs
 		$this->Smarty->setTemplateDir(array_map(function($pathName) {
@@ -191,36 +253,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		if (!is_dir($this->Smarty->compile_dir)) {
 			GeneralUtility::mkdir_deep($this->Smarty->compile_dir, '');
 		}
-
-		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
-			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] as $pluginDir) {
-				$this->Smarty->addPluginsDir($pluginDir);
-			}
-		}
-
-		$this->Smarty->registerPlugin('function', 'translate', array($this, 'smarty_translate'));
-		$this->Smarty->registerPlugin('function', 'uri_resource', array($this, 'smarty_uri_resource'));
-		$this->Smarty->registerPlugin('function', 'uri_action', array($this, 'smarty_uri_action'));
-		$this->Smarty->registerPlugin('function', 'typolink', array($this, 'smarty_helper_typolink'));
-		$this->Smarty->registerPlugin('modifier', 'typolink', array($this, 'smarty_helper_typolink_url'));
-		$this->Smarty->registerPlugin('function', 'flashMessages', array($this, 'smarty_flashMessages'));
-
-		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
-
-		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
-		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
-
-		// fluid
-		$this->Smarty->registerPlugin('block', 'fluid', array($this, 'smarty_fluid'));
-
-		// Typoscript filters
-		$this->Smarty->registerPlugin('block', 'typoscript', array($this, 'smarty_typoscript'));
-
-		// custom functions
-		$this->Smarty->registerPlugin('function', 'email', array($this, 'smarty_email'));
-		$this->Smarty->registerPlugin('function', 'pagebrowser', array($this, 'smarty_pagebrowser'));
-
-		$this->Smarty->registerPlugin('modifier', 'nl2p', array($this, 'smarty_nl2p'));
 	}
 
 	/**
@@ -497,6 +529,34 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		return $fluidView->render();
 	}
 
+	public function smarty_render($params, $smarty) {
+		if (!$this->parentView) {
+			return;
+		}
+
+		$section = $params['section'] ?: null;
+		$partial = $params['partial'] ?: null;
+		$arguments = isset($params['arguments']) ? $params['arguments'] : [];
+		if (isset($this->variables['settings']) && isset($this->variables['settings'])) {
+			$arguments['settings'] = $this->variables['settings'];
+		}
+
+		if ($partial !== null) {
+			return $this->parentView->renderPartial($partial, $section, $arguments);
+		} else if ($section !== null) {
+			return $this->parentView->renderSection($section, $arguments, !empty($params['optional']));
+		}
+	}
+
+	public function smarty_layout($params, $smarty) {
+		if (!$this->parentView) {
+			return;
+		}
+
+		$layout = $params['name'] ?: null;
+		return $this->parentView->renderLayout($layout);
+	}
+
 	public function smarty_typoscript($params, $content, $smarty, &$repeat) {
 		global $TSFE;
 
@@ -619,7 +679,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$formPrefix = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Service\\ExtensionService')->getPluginNamespace($extensionName, $pluginName);
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
-		$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extensionKey);
+		if ($extensionKey) {
+			$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extensionKey);
+		} else {
+			$extPath = '';
+		}
 
 		$templateVars = array(
 			'cObj' => $this->contentObject,
