@@ -1,4 +1,5 @@
 {if $gallery.rows}
+	{$rendererRegistry = call_user_func(['TYPO3\CMS\Core\Resource\Rendering\RendererRegistry', 'getInstance'])}
 	<div class="ce-gallery{if $data.imageborder} ce-border{/if}" data-ce-columns="{$gallery.count.columns}" data-ce-images="{$gallery.count.files}">
 		{if $gallery.position.horizontal == 'center'}
 			<div class="ce-outer">
@@ -15,17 +16,17 @@
 								<div class="ce-media">
 							{/if}
 
-							{capture assign=media}
-								{fluid}{literal}
-									<f:media
-										file="{column.media}"
-										width="{column.dimensions.width}"
-										height="{column.dimensions.height}"
-										alt="{column.media.alternative}"
-										title="{column.media.title}"
-									/>
-								{/literal}{/fluid}
-							{/capture}
+							{$renderer = $rendererRegistry->getRenderer($column.media)}
+							{if $renderer}
+								{$media = $renderer->render($column.media, $column.dimensions.width, $column.dimensions.height)}
+							{else}
+								{typoscript assign=media}
+									10 < lib.responsiveImage
+									10.file = {$column.media->getForLocalProcessing(false)}
+									10.altText = {$column.media->getAlternative()}
+									10.titleText = {$column.media->getTitle()}
+								{/typoscript}
+							{/if}
 
 							{if $column.media->getType() == 2}
 								{if $column.media->getLink()}

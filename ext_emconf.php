@@ -27,16 +27,15 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
-	'version' => '2.2.1',
+	'version' => '2.3.0',
 	'constraints' => array(
 		'depends' => array(
-			'cms' => '',
-			'extbase' => '',
 			'php' => '5.4',
 		),
 		'conflicts' => array(
 		),
 		'suggests' => array(
+			'fluid_styled_content' => '*',
 		),
 	),
 	'_md5_values_when_last_written' => '',
