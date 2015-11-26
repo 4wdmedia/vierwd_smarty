@@ -12,7 +12,11 @@
 			{if $gallery.position.noWrap}
 				{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
 			{/if}
-			{$data.bodytext nofilter}
+			{typoscript bodytext=$data.bodytext}
+			10 = TEXT
+			10.field = bodytext
+			10.parseFunc < lib.parseFunc_RTE
+			{/typoscript}
 		</div>
 
 		{if $gallery.position.vertical == 'below'}
