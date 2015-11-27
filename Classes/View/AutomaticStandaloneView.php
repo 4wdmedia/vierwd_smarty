@@ -39,7 +39,7 @@ class AutomaticStandaloneView extends \TYPO3\CMS\Fluid\View\StandaloneView {
 		}
 
 		if (substr($layoutPathAndFilename, -4) === '.tpl') {
-			return 'smarty:' . $layoutSource;
+			return 'smarty:' . $layoutPathAndFilename;
 		}
 		return $layoutSource;
 	}
@@ -56,7 +56,7 @@ class AutomaticStandaloneView extends \TYPO3\CMS\Fluid\View\StandaloneView {
 		}
 
 		if (substr($this->templatePathAndFilename, -4) === '.tpl') {
-			return 'smarty:' . $this->templateSource;
+			return 'smarty:' . $this->templatePathAndFilename;
 		}
 		return $this->templateSource;
 	}
@@ -69,7 +69,7 @@ class AutomaticStandaloneView extends \TYPO3\CMS\Fluid\View\StandaloneView {
 		}
 
 		if (substr($partialPathAndFilename, -4) === '.tpl') {
-			return 'smarty:' . $partialSource;
+			return 'smarty:' . $partialPathAndFilename;
 		}
 		return $partialSource;
 	}

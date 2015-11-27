@@ -28,6 +28,6 @@ class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		$view->initializeView();
 		$view->assignMultiple($this->renderingContext->getTemplateVariableContainer()->getAll());
 
-		return $view->render('string:' . $template);
+		return $view->render($template);
 	}
 }
