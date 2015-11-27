@@ -10,5 +10,20 @@ plugin.tx_vierwdsmarty {
 
 tt_content.stdWrap.orderedStdWrap.100 {
 	postUserFunc = Vierwd\VierwdSmarty\Service\WrapOldElements->wrap
-	postUserFunc.doNotWrap = bullets,div,header,html,list,menu,shortcut,table,textmedia,uploads,default
+	postUserFunc.doNotWrap = text,image,bullets,div,header,html,list,menu,shortcut,table,textmedia,uploads,default
 }
+
+tt_content.text = < lib.fluidContent
+tt_content.text {
+	templateName = Textmedia
+
+	stdWrap {
+		# Setup the edit icon for content element "textmedia"
+		editIcons = tt_content: header [header_layout], bodytext
+		editIcons {
+			iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.textmedia
+		}
+	}
+}
+
+tt_content.image = < tt_content.textmedia
