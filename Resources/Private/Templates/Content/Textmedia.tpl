@@ -1,4 +1,5 @@
-<div id="c{$data.uid}">
+{$captureName = uniqid('content')}
+{capture name=$captureName}
 	{if $gallery.position.noWrap != 1}
 		{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
 	{/if}
@@ -25,4 +26,6 @@
 	</div>
 
 	{render partial="Footer" arguments=$smarty.template_object->getTemplateVars()}
-</div>
+{/capture}
+
+{layout name="ContentWrap"}
