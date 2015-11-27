@@ -94,20 +94,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	/**
-	 * Set the root path to the templates.
-	 * If set, overrides the one determined from $this->templateRootPathPattern
-	 *
-	 * @param string $templateRootPath Root path to the templates. If set, overrides the one determined from $this->templateRootPathPattern
-	 * @return void
-	 * @api
-	 * @see setTemplateRootPaths()
-	 */
-	public function setTemplateRootPath($templateRootPath) {
-		GeneralUtility::logDeprecatedFunction();
-		$this->setTemplateRootPaths(array($templateRootPath));
-	}
-
-	/**
 	 * Set the root path(s) to the templates.
 	 * If set, overrides the one determined from $this->templateRootPathPattern
 	 *
@@ -117,16 +103,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 */
 	public function setTemplateRootPaths(array $templateRootPaths) {
 		$this->templateRootPaths = $templateRootPaths;
-	}
-
-	/**
-	 * @return string Path to template root directory
-	 * @deprecated since fluid 6.2, will be removed two versions later. Use getTemplateRootPaths() instead
-	 */
-	protected function getTemplateRootPath() {
-		GeneralUtility::logDeprecatedFunction();
-		$templateRootPaths = $this->getTemplateRootPaths();
-		return array_shift($templateRootPaths);
 	}
 
 	/**
