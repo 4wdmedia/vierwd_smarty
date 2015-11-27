@@ -1,4 +1,3 @@
 <div id="c{$data.uid}">
-	{$smarty.capture[$captureName] nofilter}
-	{capture name=$captureName}{/capture}
+	{render section="content"}
 </div>

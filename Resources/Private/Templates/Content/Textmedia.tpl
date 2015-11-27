@@ -1,5 +1,4 @@
-{$captureName = uniqid('content')}
-{capture name=$captureName}
+{capture name=content}
 	{if $gallery.position.noWrap != 1}
 		{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
 	{/if}
