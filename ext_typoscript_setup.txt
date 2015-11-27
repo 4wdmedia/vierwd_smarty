@@ -7,3 +7,8 @@ plugin.tx_vierwdsmarty {
 	controller = Smarty
 	action = render
 }
+
+tt_content.stdWrap.orderedStdWrap.100 {
+	postUserFunc = Vierwd\VierwdSmarty\Service\WrapOldElements->wrap
+	postUserFunc.doNotWrap = bullets,div,header,html,list,menu,shortcut,table,textmedia,uploads,default
+}
