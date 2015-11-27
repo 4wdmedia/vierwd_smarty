@@ -153,7 +153,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$file = $controller . '/' . ucfirst($action) . '.tpl';
 
-		foreach ($this->getTemplateRootPaths() as $rootPath) {
+		$paths = $this->getTemplateRootPaths();
+        $paths = \TYPO3\CMS\Extbase\Utility\ArrayUtility::sortArrayWithIntegerKeys($paths);
+        $paths = array_reverse($paths, true);
+
+		foreach ($paths as $rootPath) {
 			$fileName = str_replace('//', '/', $rootPath . '/' . $file);
 			$fileName = GeneralUtility::getFileAbsFileName($fileName);
 			if (file_exists($fileName)) {
