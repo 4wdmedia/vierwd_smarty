@@ -27,3 +27,4 @@ tt_content.text {
 }
 
 tt_content.image = < tt_content.textmedia
+tt_content.image.dataProcessing.10.references.fieldName = image

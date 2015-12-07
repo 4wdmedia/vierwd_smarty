@@ -190,6 +190,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('function', 'typolink', array($this, 'smarty_helper_typolink'));
 		$this->Smarty->registerPlugin('modifier', 'typolink', array($this, 'smarty_helper_typolink_url'));
 		$this->Smarty->registerPlugin('function', 'flashMessages', array($this, 'smarty_flashMessages'));
+		$this->Smarty->registerPlugin('function', 'svg', array($this, 'smarty_svg'));
 
 		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
 
@@ -462,6 +463,13 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		return $content;
 	}
 
+	public function smarty_svg($params, $smarty) {
+		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		$svgObject = GeneralUtility::makeInstance(\Vierwd\VierwdBase\Frontend\ContentObject\ScalableVectorGraphicsContentObject::class, $cObj);
+		return $svgObject->render($params);
+	}
+
+
 	protected function getParam($params, $key, $default = false) {
 		return !empty($params[$key]) ? $params[$key] : $default;
 	}
@@ -678,6 +686,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			//'settings' => $typoScript['settings'],
 			'frameworkSettings' => $typoScript,
 			'TSFE' => $GLOBALS['TSFE'],
+			'typolinkService' => GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Service\TypoLinkCodecService::class),
 		);
 		$this->Smarty->assign($templateVars);
 		$settings = $this->Smarty->getTemplateVars('settings');
