@@ -4,11 +4,12 @@
 
 ## Getting Started
 
-This extension requires TYPO3 ≥6.0.
+This extension requires TYPO3 ≥7.6.
 
-The Smarty class needs to be autoloadable. An easy way is to use [Composer](https://getcomposer.org/).
-
-Copy the code into `typo3conf/ext` and install the extension in TYPO3 using the extension manager.
+The Smarty class needs to be autoloadable. An easy way is to use [Composer](https://getcomposer.org/):
+```
+composer require 'vierwd/vierwd-smarty'
+```
 
 ### Usage in controllers
 
