@@ -20,4 +20,9 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Fluid\\View\\Standalo
 	'className' => 'Vierwd\\VierwdSmarty\\View\\AutomaticStandaloneView',
 );
 
+// SMARTY Menu Object
+$menuContentObjectFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\Menu\MenuContentObjectFactory::class);
+$menuContentObjectFactory->registerMenuType('SMARTY', \Vierwd\VierwdSmarty\Frontend\ContentObject\Menu\SmartyMenuContentObject::class);
+unset($menuContentObjectFactory);
+
 ?>
