@@ -3,7 +3,7 @@
 	"description": "Use Smarty in Templates instead of Fluid",
 	"type": "typo3-cms-extension",
 	"description": "Extbase Smarty",
-	"version": "2.3.3",
+	"version": "2.4.0",
 	"license": "proprietary",
 	"authors": [{
 		"name": "FORWARD MEDIA",
