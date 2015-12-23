@@ -1,5 +1,5 @@
-{capture name=content}
+{fsection name=content}
 <hr>
-{/capture}
+{/fsection}
 
 {layout name="ContentFooter"}

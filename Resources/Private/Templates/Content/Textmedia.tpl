@@ -1,4 +1,4 @@
-{capture name=content}
+{fsection name=content}
 	{if $gallery.position.noWrap != 1}
 		{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
 	{/if}
@@ -25,6 +25,6 @@
 	</div>
 
 	{render partial="Footer" arguments=$smarty.template_object->getTemplateVars()}
-{/capture}
+{/fsection}
 
 {layout name="ContentWrap"}

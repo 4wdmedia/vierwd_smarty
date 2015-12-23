@@ -4,6 +4,8 @@ namespace Vierwd\VierwdSmarty\Service;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use Vierwd\VierwdSmarty\View\SmartyView;
+
 class WrapOldElements {
 	/**
 	 * @var TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
@@ -27,7 +29,7 @@ class WrapOldElements {
 			'templateName' => 'WrapOld',
 		];
 
-		\Smarty::$_smarty_vars['capture']['content'] = $content;
+		SmartyView::$sections['content'] = $content;
 		return $this->cObj->cObjGetSingle('< lib.fluidContent', $renderConfig);
 	}
 }

@@ -38,6 +38,13 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	public $Smarty;
 
 	/**
+	 * captured sections
+	 *
+	 * @var array
+	 */
+	static public $sections = [];
+
+	/**
 	 * parent view (when used with AutomaticStandaloneView)
 	 *
 	 * @var \TYPO3\CMS\Fluid\View\AbstractTemplateView
@@ -193,6 +200,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('function', 'svg', array($this, 'smarty_svg'));
 
 		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
+		$this->Smarty->registerPlugin('block', 'fsection', array($this, 'smarty_fsection'));
 
 		$this->Smarty->registerPlugin('function', 'render', array($this, 'smarty_render'));
 		$this->Smarty->registerPlugin('function', 'layout', array($this, 'smarty_layout'));
@@ -224,7 +232,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			return \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($pathName);
 		}, $this->getTemplateRootPaths()));
 
-		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/vierwd_smarty/');
+		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/Cache/vierwd_smarty/');
 		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
 		$this->Smarty->cache_dir   = $extCacheDir . '/smarty/' . $extensionKey . '/';
 
@@ -515,6 +523,22 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		}
 
 		return $fluidView->render();
+	}
+
+	public function smarty_fsection($params, $content, $smarty, &$repeat) {
+		if (!isset($params['name'])) {
+			trigger_error('missing name for fsection');
+			return '';
+		}
+
+		if (!isset($content)) {
+			return '';
+		}
+
+		$name = $params['name'];
+		self::$sections[$name] = $content;
+
+		return '';
 	}
 
 	public function smarty_render($params, $smarty) {

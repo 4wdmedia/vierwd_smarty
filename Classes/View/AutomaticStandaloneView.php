@@ -75,9 +75,9 @@ class AutomaticStandaloneView extends \TYPO3\CMS\Fluid\View\StandaloneView {
 	}
 
 	public function renderSection($sectionName, array $variables, $ignoreUnknown = false) {
-		if (isset(\Smarty::$_smarty_vars, \Smarty::$_smarty_vars['capture'], \Smarty::$_smarty_vars['capture'][$sectionName])) {
-			$section = \Smarty::$_smarty_vars['capture'][$sectionName];
-			unset(\Smarty::$_smarty_vars['capture'][$sectionName]);
+		if (isset(SmartyView::$sections, SmartyView::$sections[$sectionName])) {
+			$section = SmartyView::$sections[$sectionName];
+			unset(SmartyView::$sections[$sectionName]);
 			return $section;
 		}
 
