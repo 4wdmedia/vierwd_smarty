@@ -170,3 +170,47 @@ All entries in settings.typoscript will be parsed and will be available as varia
 ```
 
 Note the nofilter argument for Smarty. By default all variables will be escaped to prevent some XSS attacks.
+
+## Using Smarty for Menus
+
+```typoscript
+lib.navigation = HMENU
+lib.navigation {
+	entryLevel = 0
+
+	1 = SMARTY
+	1 {
+		expAll = 1
+		extensionName = vierwd_example
+		template = Navigation/Main.tpl
+
+		NO = 1
+		ACT = 1
+		IFSUB = 1
+		ACTIFSUB = 1
+	}
+
+	2 < .1
+	2.template = Navigation/Submenu.tpl
+	3 < .2
+}
+```
+
+This code block will load the templates at `typo3conf/ext/vierwd_example/Resources/Private/Templates/Navigation/` to render the navigation. Within the template you can iterate over your menu items and output the menu:
+
+```smarty
+<nav class="main-navigation">
+	<ul>
+	{foreach $menu as $item}
+		{$hasSubmenu = $menuObject->isSubMenu($item.uid)}
+		{$isActive = $menuObject->isActive($item.uid)}
+		<li class="{if $isActive}active{/if}">
+			<a href="{$item.uid|typolink}">
+				{$item.nav_title|default:$item.title}
+			</a>
+			{$menuObject->submenu($item.uid) nofilter}
+		</li>
+	{/foreach}
+	</ul>
+</nav>
+```
