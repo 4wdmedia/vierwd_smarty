@@ -33,5 +33,10 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 
 		return $view->render($template);
 	}
-}
 
+	public function subMenu($uid, $objSuffix = '') {
+		$tsfe = $this->getTypoScriptFrontendController();
+		$tsfe->register['parentMenu'] = $this;
+		return parent::subMenu($uid, $objSuffix);
+	}
+}
