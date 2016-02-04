@@ -23,6 +23,10 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 		$request->setControllerExtensionName($this->mconf['extensionName'] ? $this->mconf['extensionName'] : 'vierwd_smarty');
 		$controllerContext->setRequest($request);
 
+		$uriBuilder = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder::class);
+		$uriBuilder->setRequest($request);
+		$controllerContext->setUriBuilder($uriBuilder);
+
 		$view = $objectManager->get(\Vierwd\VierwdSmarty\View\SmartyView::class);
 		$view->setControllerContext($controllerContext);
 		$view->initializeView();
@@ -34,9 +38,23 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 		return $view->render($template);
 	}
 
-	public function subMenu($uid, $objSuffix = '') {
+	public function subMenu($uid, $objSuffix = '', $key = false) {
 		$tsfe = $this->getTypoScriptFrontendController();
 		$tsfe->register['parentMenu'] = $this;
+
+		$this->I = [];
+		if ($key !== false) {
+			$this->I['key'] = $key;
+		} else {
+			// subMenu expects a valid I[key] to work on _SUB_MENU
+			foreach ($this->menuArr as $key => $value) {
+				if ($value['uid'] == $uid) {
+					$this->I['key'] = $key;
+				}
+			}
+		}
+
 		return parent::subMenu($uid, $objSuffix);
 	}
 }
+
