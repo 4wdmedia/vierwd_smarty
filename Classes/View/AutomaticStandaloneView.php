@@ -95,4 +95,13 @@ class AutomaticStandaloneView extends \TYPO3\CMS\Fluid\View\StandaloneView {
 		$this->stopRendering();
 		return $output;
 	}
+
+	protected function getCurrentRenderingContext() {
+		$context = parent::getCurrentRenderingContext();
+		if (!$context) {
+			return $this->baseRenderingContext;
+		}
+
+		return $context;
+	}
 }

@@ -27,9 +27,9 @@ class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		$view->setParentView($parentView);
 		$view->initializeView();
 
-		if (!$view->isTopLevel) {
+		if (!$view->hasTopLevelViewHelper) {
 			$isTopLevel = true;
-			$view->isTopLevel = true;
+			$view->hasTopLevelViewHelper = true;
 			$smartyVariables = [];
 		} else {
 			$isTopLevel = false;
@@ -39,7 +39,7 @@ class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		$templateVariableContainer = $this->renderingContext->getTemplateVariableContainer();
 		$variables = $templateVariableContainer->getAll();
 		foreach ($variables as $key => &$value) {
-			if (!$view->isTopLevel || !isset($smartyVariables[$key])) {
+			if (!$view->hasTopLevelViewHelper || !isset($smartyVariables[$key])) {
 				$view->Smarty->assignByRef($key, $value);
 			}
 			unset($value);
@@ -58,7 +58,7 @@ class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		}
 
 		if ($isTopLevel) {
-			$view->isTopLevel = false;
+			$view->hasTopLevelViewHelper = false;
 		}
 
 		return $result;

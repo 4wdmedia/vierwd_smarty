@@ -37,6 +37,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public $Smarty;
 
+	public $hasTopLevelViewHelper = false;
+
 	/**
 	 * captured sections
 	 *
@@ -223,6 +225,9 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public function initializeView() {
 		$this->createSmarty();
+		if (!$this->hasTopLevelViewHelper) {
+			$this->Smarty->clearAllAssign();
+		}
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 
@@ -604,7 +609,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		if (is_array($TSFE->tmpl->setup)) {
 			foreach ($TSFE->tmpl->setup as $tsObjectKey => $tsObjectValue) {
 				// do not copy int-keys
-				if ($tsObjectKey !== intval($tsObjectKey)) {
+				if ($tsObjectKey !== intval($tsObjectKey) && $tsObjectKey !== intval($tsObjectKey) . '.') {
 					$tsparserObj->setup[$tsObjectKey] = $tsObjectValue;
 				}
 			}
@@ -616,7 +621,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$oldSetup = $TSFE->tmpl->setup;
 		$TSFE->tmpl->setup = $tsparserObj->setup;
 
+		$oldTplVars = $this->Smarty->tpl_vars;
+		$this->Smarty->tpl_vars = [];
+
 		$content = $cObj->cObjGet($tsparserObj->setup, 'COA');
+
+		$this->Smarty->tpl_vars = $oldTplVars;
 
 		// reset typoscript
 		$TSFE->tmpl->setup = $oldSetup;
@@ -681,6 +691,10 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	public function render($view = '') {
 		// setup TypoScript
 		$this->contentObject = $this->configurationManager->getContentObject();
+
+		if (!$this->contentObject->data && $this->variables['data']) {
+			$this->contentObject->data = $this->variables['data'];
+		}
 
 		$this->Smarty->assign($this->variables);
 		$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
