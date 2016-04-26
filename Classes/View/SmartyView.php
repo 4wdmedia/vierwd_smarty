@@ -2,7 +2,8 @@
 
 namespace Vierwd\VierwdSmarty\View;
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 function clean($str) {
 	if(is_scalar($str)) {
@@ -137,7 +138,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public function canRender(\TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext $controllerContext) {
 		$this->setControllerContext($controllerContext);
-		if ($controllerContext->getRequest()->getControllerObjectName() == 'Vierwd\\VierwdSmarty\\Controller\\SmartyController') {
+		if ($controllerContext->getRequest()->getControllerObjectName() == \Vierwd\VierwdSmarty\Controller\SmartyController::class) {
 			return true;
 		}
 		// setting in TypoScript: plugin.tx_vierwdPLUGIN.format = tpl
@@ -231,12 +232,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 
-		// setup Template and caching dirs
-		$this->Smarty->setTemplateDir(array_map(function($pathName) {
-			$pathName = str_replace('//', '/', $pathName);
-			return \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($pathName);
-		}, $this->getTemplateRootPaths()));
-
+		// setup compile and caching dirs
 		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/Cache/vierwd_smarty/');
 		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
 		$this->Smarty->cache_dir   = $extCacheDir . '/smarty/' . $extensionKey . '/';
@@ -437,7 +433,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_helper_typolink_url($parameter) {
-		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		return $cObj->getTypoLink_URL($parameter);
 	}
 
@@ -477,7 +473,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_svg($params, $smarty) {
-		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		$svgObject = GeneralUtility::makeInstance(\Vierwd\VierwdBase\Frontend\ContentObject\ScalableVectorGraphicsContentObject::class, $cObj);
 		return $svgObject->render($params);
 	}
@@ -588,23 +584,19 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$table = isset($data['table']) ? $data['table'] : '_NO_TABLE';
 		unset($data['table']);
 
-		$cObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
 		$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
 		$cObj->currentRecordTotal = $this->contentObject->currentRecordTotal;
 		$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
 		if ($table != '_NO_TABLE') {
-			#$data['uid'] = 0;
 			$data['_MIGRATED'] = false;
 		}
 		$cObj->start($data, $table);
-		if ($table != '_NO_TABLE') {
-			$cObj->data['uid'] = 0;
-		}
 
 		// $cObj->setCurrentVal($dataValues[$key][$valueKey]);
 
-		$tsparserObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
+		$tsparserObj = GeneralUtility::makeInstance(\TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser::class);
 
 		if (is_array($TSFE->tmpl->setup)) {
 			foreach ($TSFE->tmpl->setup as $tsObjectKey => $tsObjectValue) {
@@ -683,12 +675,14 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		) + $conf;
 
 		// Get page browser
-		$cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		$cObj->start(array(), '');
 		return $cObj->cObjGetSingle('USER', $conf);
 	}
 
 	public function render($view = '') {
+		$this->Smarty->setTemplateDir($this->getTemplateRootPaths());
+
 		// setup TypoScript
 		$this->contentObject = $this->configurationManager->getContentObject();
 
@@ -713,6 +707,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$templateVars = array(
 			'cObj' => $this->contentObject,
+			'data' => $this->contentObject->data,
 			'extensionPath' => $extPath,
 			'extensionName' => $extensionName,
 			'pluginName' => $pluginName,
@@ -740,7 +735,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		if ($extensionName == 'VierwdSmarty' && file_exists($view)) {
 			// make sure the directory of the file is in the template dirs
 			$fileDir = realpath(dirname($view));
-			$dirs = (array)$this->Smarty->template_dir;
+			$dirs = (array)$this->Smarty->getTemplateDir();
 			$found = false;
 			foreach ($dirs as $dir) {
 				if (realpath($dir) == $fileDir) {
@@ -759,24 +754,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		}
 
 
-		// test for correct case-sensitivity
-		if (isset($_SERVER['4WD_CONFIG']) && substr($view, 0, 7) != 'string:') {
-			if (!file_exists($view)) {
-				// try to get the file
-				$dirs = (array)$this->Smarty->template_dir;
-				foreach ($dirs as $dir) {
-					if (file_exists($dir . $view)) {
-						$view = $dir . $view;
-					}
-				}
-			}
-
-			if (!glob($view.'*')) {
-				$controller = $this->controllerContext->getRequest()->getControllerName();
-				$action     = $this->controllerContext->getRequest()->getControllerActionName();
-
-				throw new \Exception('Template not found for '.$controller.'->'.$action."\nMaybe incorrect case of filename?");
-			}
+		if (!$this->Smarty->templateExists($view)) {
+			return $this->Smarty->fetch('string:' . $view);
 		}
 
 		return $this->Smarty->fetch($view);

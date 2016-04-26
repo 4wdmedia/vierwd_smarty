@@ -14,6 +14,7 @@ class SmartyController extends ActionController {
 		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
 
 		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+
 		if (!empty($configuration['dataProcessing'])) {
 			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
 				// reference to existing value
@@ -34,6 +35,17 @@ class SmartyController extends ActionController {
 			$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
 
 			$this->view->assignMultiple($variables);
+		}
+
+		if (isset($this->settings['templateRootPaths'])) {
+			$templateRootPaths = $this->settings['templateRootPaths'];
+			krsort($templateRootPaths);
+			$templateRootPaths = array_map(function($rootPath) {
+				$rootPath = str_replace('//', '/', $rootPath);
+				return GeneralUtility::getFileAbsFileName($rootPath);
+			}, $templateRootPaths);
+			$templateRootPaths = array_values(array_filter($templateRootPaths));
+			$this->view->setTemplateRootPaths($templateRootPaths);
 		}
 
 		// first check, if the template was given using the settings
@@ -83,7 +95,7 @@ class SmartyController extends ActionController {
 			return $this->view->render($file);
 		}
 
-		// try to render the string directly
-		return $this->view->render('string:' . $template);
+		// try to render the template. maybe it is relative
+		return $this->view->render($template);
 	}
 }

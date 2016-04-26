@@ -8,14 +8,9 @@ plugin.tx_vierwdsmarty {
 	action = render
 }
 
-tt_content.stdWrap.orderedStdWrap.100 {
-	postUserFunc = Vierwd\VierwdSmarty\Service\WrapOldElements->wrap
-	postUserFunc.doNotWrap = text,image,bullets,div,header,html,list,menu,shortcut,table,textmedia,uploads,default
-}
-
-tt_content.text = < lib.fluidContent
+tt_content.text = < plugin.tx_vierwdsmarty
 tt_content.text {
-	templateName = Textmedia
+	template = Content/Textmedia.tpl
 
 	stdWrap {
 		# Setup the edit icon for content element "textmedia"
