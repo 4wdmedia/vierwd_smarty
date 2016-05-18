@@ -6,20 +6,8 @@ plugin.tx_vierwdsmarty {
 	extensionName = VierwdSmarty
 	controller = Smarty
 	action = render
-}
 
-tt_content.text = < plugin.tx_vierwdsmarty
-tt_content.text {
-	template = Content/Textmedia.tpl
-
-	stdWrap {
-		# Setup the edit icon for content element "textmedia"
-		editIcons = tt_content: header [header_layout], bodytext
-		editIcons {
-			iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.textmedia
-		}
+	settings.templateRootPaths {
+		1 = EXT:vierwd_smarty/Resources/Private/Templates/
 	}
 }
-
-tt_content.image = < tt_content.textmedia
-tt_content.image.dataProcessing.10.references.fieldName = image

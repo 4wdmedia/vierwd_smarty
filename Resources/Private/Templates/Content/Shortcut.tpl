@@ -1,4 +1,4 @@
 {extends file='Layouts/ContentWrap.tpl'}
 {block name=content}
-	<hr>
+	{$shortcuts nofilter}
 {/block}

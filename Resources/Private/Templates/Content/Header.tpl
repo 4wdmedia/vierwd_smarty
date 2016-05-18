@@ -1,4 +1,4 @@
 {extends file='Layouts/ContentWrap.tpl'}
 {block name=content}
-	<hr>
+	{include 'Partials/Header.tpl'}
 {/block}

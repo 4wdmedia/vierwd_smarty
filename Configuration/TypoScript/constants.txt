@@ -1,0 +1,4 @@
+styles.content {
+	# cat=content/cShortcut/t0; type=string; label=List of accepted tables
+	shortcut.tables = tt_content
+}

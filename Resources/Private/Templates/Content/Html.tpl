@@ -1,4 +1,4 @@
 {extends file='Layouts/ContentWrap.tpl'}
 {block name=content}
-	<hr>
+	{$data.bodytext nofilter}
 {/block}

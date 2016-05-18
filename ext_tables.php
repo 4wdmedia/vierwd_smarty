@@ -9,5 +9,4 @@ if (!defined('TYPO3_MODE')) {
 	'Smarty Rendering'
 );
 
-
-?>
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Smarty Content Elements');

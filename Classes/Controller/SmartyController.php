@@ -37,6 +37,11 @@ class SmartyController extends ActionController {
 			$this->view->assignMultiple($variables);
 		}
 
+		if (!empty($configuration['variables'])) {
+			$variables = $this->getContentObjectVariables($configuration);
+			$this->view->assignMultiple($variables);
+		}
+
 		if (isset($this->settings['templateRootPaths'])) {
 			$templateRootPaths = $this->settings['templateRootPaths'];
 			krsort($templateRootPaths);
@@ -97,5 +102,36 @@ class SmartyController extends ActionController {
 
 		// try to render the template. maybe it is relative
 		return $this->view->render($template);
+	}
+
+	/**
+	 * Compile rendered content objects in variables array ready to assign to the view
+	 *
+	 * @param array $conf Configuration array
+	 * @return array the variables to be assigned
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getContentObjectVariables(array $conf) {
+		$contentObject = $this->configurationManager->getContentObject();
+		$variables = array();
+		$reservedVariables = array('data', 'current');
+		// Accumulate the variables to be process and loop them through cObjGetSingle
+		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+		$variablesToProcess = $typoScriptService->convertPlainArrayToTypoScriptArray($conf['variables']);
+		foreach ($variablesToProcess as $variableName => $cObjType) {
+			if (is_array($cObjType)) {
+				continue;
+			}
+			if (!in_array($variableName, $reservedVariables)) {
+				$variables[$variableName] = $contentObject->cObjGetSingle($cObjType, $variablesToProcess[$variableName . '.']);
+			} else {
+				throw new \InvalidArgumentException(
+					'Cannot use reserved name "' . $variableName . '" as variable name in Smarty ContentObject.',
+					1463556016
+				);
+			}
+		}
+
+		return $variables;
 	}
 }

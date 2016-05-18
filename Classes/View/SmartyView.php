@@ -48,13 +48,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	static public $sections = [];
 
 	/**
-	 * parent view (when used with AutomaticStandaloneView)
-	 *
-	 * @var \TYPO3\CMS\Fluid\View\AbstractTemplateView
-	 */
-	protected $parentView;
-
-	/**
 	 * Pattern to be resolved for "@templateRoot" in the other patterns.
 	 *
 	 * @var string
@@ -84,24 +77,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 * @inject
 	 */
 	protected $objectManager;
-
-	/**
-	 * set the parent view
-	 *
-	 * @param \TYPO3\CMS\Fluid\View\AbstractTemplateView $parentView
-	 */
-	public function setParentView(\TYPO3\CMS\Fluid\View\AbstractTemplateView $parentView) {
-		$this->parentView = $parentView;
-	}
-
-	/**
-	 * set the parent view
-	 *
-	 * @return \TYPO3\CMS\Fluid\View\AbstractTemplateView
-	 */
-	public function getParentView() {
-		return $this->parentView;
-	}
 
 	/**
 	 * Set the root path(s) to the templates.
@@ -205,9 +180,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
 		$this->Smarty->registerPlugin('block', 'fsection', array($this, 'smarty_fsection'));
 
-		$this->Smarty->registerPlugin('function', 'render', array($this, 'smarty_render'));
-		$this->Smarty->registerPlugin('function', 'layout', array($this, 'smarty_layout'));
-
 		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
@@ -270,6 +242,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public function smarty_uri_resource($params, $smarty) {
 		$params = $params + array(
+			'path' => NULL,
 			'extensionName' => NULL,
 			'absolute' => FALSE,
 		);
@@ -280,9 +253,9 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		}
 		$uri = 'EXT:' . GeneralUtility::camelCaseToLowerCaseUnderscored($extensionName) . '/Resources/Public/' . $path;
 		$uri = GeneralUtility::getFileAbsFileName($uri);
-		$uri = substr($uri, strlen(PATH_site));
+		$uri = \TYPO3\CMS\Core\Utility\PathUtility::stripPathSitePrefix($uri);
 
-		if (TYPO3_MODE === 'BE' && $absolute === FALSE) {
+		if (TYPO3_MODE === 'BE' && $absolute === false && $uri !== false) {
 			$uri = '../' . $uri;
 		}
 
@@ -540,34 +513,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		self::$sections[$name] = $content;
 
 		return '';
-	}
-
-	public function smarty_render($params, $smarty) {
-		if (!$this->parentView) {
-			return;
-		}
-
-		$section = $params['section'] ?: null;
-		$partial = $params['partial'] ?: null;
-		$arguments = isset($params['arguments']) ? $params['arguments'] : [];
-		if (isset($this->variables['settings']) && isset($this->variables['settings'])) {
-			$arguments['settings'] = $this->variables['settings'];
-		}
-
-		if ($partial !== null) {
-			return $this->parentView->renderPartial($partial, $section, $arguments);
-		} else if ($section !== null) {
-			return $this->parentView->renderSection($section, $arguments, !empty($params['optional']));
-		}
-	}
-
-	public function smarty_layout($params, $smarty) {
-		if (!$this->parentView) {
-			return;
-		}
-
-		$layout = $params['name'] ?: null;
-		return $this->parentView->renderLayout($layout);
 	}
 
 	public function smarty_typoscript($params, $content, $smarty, &$repeat) {

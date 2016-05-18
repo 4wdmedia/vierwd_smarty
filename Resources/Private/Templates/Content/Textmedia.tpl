@@ -1,30 +1,30 @@
-{fsection name=content}
-	{if $gallery.position.noWrap != 1}
-		{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
-	{/if}
+{extends file='Layouts/ContentWrap.tpl'}
+{block name=content}
+	{typoscript bodytext=$data.bodytext assign=bodytext}
+	10 = TEXT
+	10.field = bodytext
+	10.parseFunc < lib.parseFunc_RTE
+	{/typoscript}
 
-	<div class="ce-textpic ce-{$gallery.position.horizontal} ce-{$gallery.position.vertical}{if $gallery.position.noWrap} ce-nowrap{/if}">
-		{if $gallery.position.vertical != 'below'}
-			{render partial="MediaGallery" arguments=$smarty.template_object->getTemplateVars()}
-		{/if}
+	{if $data.CType == text || !count($files)}
+		{* only render the text *}
+		<div class="textmedia__text">
+			{include 'Partials/Header.tpl'}
 
-		<div class="ce-bodytext">
-			{if $gallery.position.noWrap}
-				{render partial="Header" arguments=$smarty.template_object->getTemplateVars()}
-			{/if}
-			{typoscript bodytext=$data.bodytext}
-			10 = TEXT
-			10.field = bodytext
-			10.parseFunc < lib.parseFunc_RTE
-			{/typoscript}
+			{$bodytext nofilter}
 		</div>
+	{else}
+		{include 'Partials/Header.tpl'}
 
-		{if $gallery.position.vertical == 'below'}
-			{render partial="MediaGallery" arguments=$smarty.template_object->getTemplateVars()}
-		{/if}
-	</div>
-
-	{render partial="Footer" arguments=$smarty.template_object->getTemplateVars()}
-{/fsection}
-
-{layout name="ContentWrap"}
+		<div class="row">
+			<div class="col col-xs-12 col-md-6">
+				{include 'Partials/Image.tpl'}
+			</div>
+			<div class="col col-xs-12 col-lg-6">
+				<div class="textmedia__text">
+					{$bodytext nofilter}
+				</div>
+			</div>
+		</div>
+	{/if}
+{/block}
