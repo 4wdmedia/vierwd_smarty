@@ -105,6 +105,13 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	/**
+	 * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject
+	 */
+	public function setContentObject(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject) {
+		$this->contentObject = $contentObject;
+	}
+
+	/**
 	 * @var \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext
 	 */
 	public function getControllerContext() {
@@ -591,14 +598,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$parameter = $this->getParam($params, 'parameter', $address . ' - mail');
 		$ATagParams = $this->getParam($params, 'ATagParams');
 
-		$contentObject = $this->configurationManager->getContentObject();
-
 		$conf = array(
 			'parameter' => $parameter,
 			'ATagParams' => $ATagParams,
 		);
 
-		return $contentObject->typoLink($label, $conf);
+		return $this->contentObject->typoLink($label, $conf);
 	}
 
 	public function smarty_pagebrowser($params, $smarty) {
@@ -627,9 +632,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public function render($view = '') {
 		$this->Smarty->setTemplateDir($this->getTemplateRootPaths());
-
-		// setup TypoScript
-		$this->contentObject = $this->configurationManager->getContentObject();
 
 		if (!$this->contentObject->data && $this->variables['data']) {
 			$this->contentObject->data = $this->variables['data'];

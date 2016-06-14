@@ -24,6 +24,8 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	protected function initializeView(\TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view) {
 		parent::initializeView($view);
 
+		$view->setContentObject($this->configurationManager->getContentObject());
+
 		// $view->Smarty->registerPlugin('function', 'categorylink', array($this, 'smarty_categorylink'));
 	}
 
