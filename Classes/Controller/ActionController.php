@@ -24,7 +24,21 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	protected function initializeView(\TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view) {
 		parent::initializeView($view);
 
-		$view->setContentObject($this->configurationManager->getContentObject());
+		if ($view instanceof \Vierwd\VierwdSmarty\View\SmartyView) {
+			$view->setContentObject($this->configurationManager->getContentObject());
+		}
+
+		// set template root paths, if available
+		if (isset($this->settings['templateRootPaths'])) {
+			$templateRootPaths = $this->settings['templateRootPaths'];
+			krsort($templateRootPaths);
+			$templateRootPaths = array_map(function($rootPath) {
+				$rootPath = str_replace('//', '/', $rootPath);
+				return GeneralUtility::getFileAbsFileName($rootPath);
+			}, $templateRootPaths);
+			$templateRootPaths = array_values(array_filter($templateRootPaths));
+			$this->view->setTemplateRootPaths($templateRootPaths);
+		}
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', array($this, 'smarty_categorylink'));
 	}

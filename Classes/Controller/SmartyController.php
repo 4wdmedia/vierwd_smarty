@@ -42,17 +42,6 @@ class SmartyController extends ActionController {
 			$this->view->assignMultiple($variables);
 		}
 
-		if (isset($this->settings['templateRootPaths'])) {
-			$templateRootPaths = $this->settings['templateRootPaths'];
-			krsort($templateRootPaths);
-			$templateRootPaths = array_map(function($rootPath) {
-				$rootPath = str_replace('//', '/', $rootPath);
-				return GeneralUtility::getFileAbsFileName($rootPath);
-			}, $templateRootPaths);
-			$templateRootPaths = array_values(array_filter($templateRootPaths));
-			$this->view->setTemplateRootPaths($templateRootPaths);
-		}
-
 		// first check, if the template was given using the settings
 		// 10 < plugin.tx_vierwdsmarty
 		// 10.settings.template = fileadmin/templates/fce.tpl
