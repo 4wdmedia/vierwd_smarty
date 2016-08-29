@@ -2,6 +2,8 @@
 
 namespace Vierwd\VierwdSmarty\Controller;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
