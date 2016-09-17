@@ -31,5 +31,5 @@
 	"replace": {
         "vierwd_smarty": "self.version",
         "vierwd/vierwd_smarty": "self.version"
-    },
+    }
 }
