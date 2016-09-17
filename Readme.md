@@ -8,7 +8,7 @@ This extension requires TYPO3 ≥7.6.
 
 The Smarty class needs to be autoloadable. An easy way is to use [Composer](https://getcomposer.org/):
 ```
-composer require 'vierwd/vierwd-smarty'
+composer require 'vierwd/typo3-smarty'
 ```
 
 ### Usage in controllers
