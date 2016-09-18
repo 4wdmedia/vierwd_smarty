@@ -4,6 +4,7 @@ namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 
@@ -72,7 +73,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$this->assertTrue($templateView->canRender($mockControllerContext));
@@ -81,7 +82,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$this->assertTrue($templateView->canRender($mockControllerContext));
@@ -95,7 +96,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$templateView->initializeView();
@@ -118,7 +119,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$templateView->initializeView();
@@ -134,7 +135,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$templateView->initializeView();
@@ -150,7 +151,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
 		$templateView->setTemplateRootPaths([
-			'EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates',
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
 		$mockContentObject = $this->getAccessibleMock(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class, null, [], '', false);
