@@ -141,4 +141,22 @@ class SmartyViewTest extends UnitTestCase {
 
 		$this->assertEquals('LineBreaks and trailing spacesmultiple breaks', $templateView->render('Whitespace.tpl'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function testEmailLink() {
+		$mockControllerContext = $this->setupMockControllerContext('MyPackage', null, 'Controller', 'action', 'tpl');
+		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
+		$templateView->setControllerContext($mockControllerContext);
+		$templateView->setTemplateRootPaths([
+			dirname(__DIR__) . '/Fixtures/Templates',
+		]);
+
+		$mockContentObject = $this->getAccessibleMock(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class, null, [], '', false);
+		$templateView->setContentObject($mockContentObject);
+
+		$templateView->initializeView();
+		$this->assertEquals('<a href="mailto:example@example.com" class="mail">example@example.com</a>', $templateView->render('string:{email address="example@example.com"}'));
+	}
 }
