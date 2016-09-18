@@ -152,7 +152,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		foreach ($paths as $rootPath) {
 			$fileName = str_replace('//', '/', $rootPath . '/' . $file);
-			$fileName = GeneralUtility::getFileAbsFileName($fileName, false);
+			$fileName = GeneralUtility::getFileAbsFileName($fileName);
 			if (file_exists($fileName)) {
 				return $fileName;
 			}
