@@ -4,6 +4,7 @@ namespace Vierwd\VierwdSmarty\View;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use Vierwd\VierwdSmarty\Resource\ExtResource;
 
 function clean($str) {
 	if(is_scalar($str)) {
@@ -201,6 +202,9 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('function', 'pagebrowser', array($this, 'smarty_pagebrowser'));
 
 		$this->Smarty->registerPlugin('modifier', 'nl2p', array($this, 'smarty_nl2p'));
+
+		// Resource type
+		$this->Smarty->registerResource('EXT', new ExtResource);
 	}
 
 	public function initializeView() {
@@ -700,9 +704,28 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			$view = $this->getViewFileName($this->controllerContext);
 		}
 
-
 		if (!$this->Smarty->templateExists($view)) {
 			return $this->Smarty->fetch('string:' . $view);
+		}
+
+		// test for correct case-sensitivity
+		if (isset($_SERVER['4WD_CONFIG']) && substr($view, 0, 7) != 'string:') {
+			if (!file_exists($view)) {
+				// try to get the file
+				$dirs = (array)$this->Smarty->getTemplateDir();
+				foreach ($dirs as $dir) {
+					if (file_exists($dir . $view)) {
+						$view = $dir . $view;
+					}
+				}
+			}
+
+			if (!glob($view.'*')) {
+				$controller = $this->controllerContext->getRequest()->getControllerName();
+				$action     = $this->controllerContext->getRequest()->getControllerActionName();
+
+				throw new \Exception('Template not found for '.$controller.'->'.$action."\nMaybe incorrect case of filename?");
+			}
 		}
 
 		return $this->Smarty->fetch($view);
