@@ -1,4 +1,4 @@
-# TYPO3 Smarty Extension
+# TYPO3 Smarty Extension [![Build Status](https://travis-ci.org/4wdmedia/vierwd_smarty.svg?branch=master)](https://travis-ci.org/4wdmedia/vierwd_smarty)
 
 > Use [Smarty](http://www.smarty.net/) in your templates and extbase extensions.
 
