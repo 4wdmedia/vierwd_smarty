@@ -32,14 +32,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		// set template root paths, if available
 		if (isset($this->settings['templateRootPaths'])) {
-			$templateRootPaths = $this->settings['templateRootPaths'];
-			krsort($templateRootPaths);
-			$templateRootPaths = array_map(function($rootPath) {
-				$rootPath = str_replace('//', '/', $rootPath);
-				return GeneralUtility::getFileAbsFileName($rootPath);
-			}, $templateRootPaths);
-			$templateRootPaths = array_values(array_filter($templateRootPaths));
-			$this->view->setTemplateRootPaths($templateRootPaths);
+			$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
 		}
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', array($this, 'smarty_categorylink'));

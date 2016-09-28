@@ -107,6 +107,21 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	/**
+	 * get template root paths and resolve all relative paths and paths containing EXT:
+	 *
+	 * @return array
+	 */
+	public function resolveTemplateRootPaths() {
+		$templateRootPaths = $this->getTemplateRootPaths();
+		$templateRootPaths = \TYPO3\CMS\Extbase\Utility\ArrayUtility::sortArrayWithIntegerKeys($templateRootPaths);
+		$templateRootPaths = array_reverse($templateRootPaths, true);
+		$templateRootPaths = array_map(function($path) {
+			return GeneralUtility::getFileAbsFileName(GeneralUtility::fixWindowsFilePath($path));
+		}, $templateRootPaths);
+		return array_filter($templateRootPaths);
+	}
+
+	/**
 	 * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject
 	 */
 	public function setContentObject(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject) {
@@ -152,7 +167,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
         $paths = array_reverse($paths, true);
 
 		foreach ($paths as $rootPath) {
-			$fileName = str_replace('//', '/', $rootPath . '/' . $file);
+			$fileName = GeneralUtility::fixWindowsFilePath($rootPath . '/' . $file);
 			$fileName = GeneralUtility::getFileAbsFileName($fileName);
 			if (file_exists($fileName)) {
 				return $fileName;
@@ -636,7 +651,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function render($view = '') {
-		$this->Smarty->setTemplateDir($this->getTemplateRootPaths());
+		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
 
 		if (!$this->contentObject->data && $this->variables['data']) {
 			$this->contentObject->data = $this->variables['data'];
