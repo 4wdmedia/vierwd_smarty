@@ -7,8 +7,9 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 
 function clean($str) {
-	if(is_scalar($str)) {
+	if (is_scalar($str)) {
 		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', $str);
+		// replace html-characters
 		$str = str_replace(array('<', '>', '"'), array('&lt;', '&gt;', '&quot;'), $str);
 
 		return $str;
@@ -102,7 +103,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		}
 		/** @var $actionRequest \TYPO3\CMS\Extbase\Mvc\Request */
 		$actionRequest = $this->controllerContext->getRequest();
-		return array(str_replace('@packageResourcesPath', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', $this->templateRootPathPattern));
+		return array(str_replace(['@packageResourcesPath', '//'], [\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', '/'], $this->templateRootPathPattern));
 	}
 
 	/**
@@ -645,9 +646,15 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
 		$pluginName = $this->controllerContext->getRequest()->getPluginName();
 
-		$typoScript = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		if ($this->configurationManager) {
+			$typoScript = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+			$this->Smarty->assign('frameworkSettings', $typoScript);
+		}
 
-		$formPrefix = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Service\\ExtensionService')->getPluginNamespace($extensionName, $pluginName);
+		if ($this->objectManager) {
+			$formPrefix = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Service\\ExtensionService')->getPluginNamespace($extensionName, $pluginName);
+			$this->Smarty->assign('formPrefix', $formPrefix);
+		}
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 		if ($extensionKey) {
@@ -666,9 +673,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			'actionName' => $this->controllerContext->getRequest()->getControllerActionName(),
 			'context' => $this->controllerContext,
 			'request' => $this->controllerContext->getRequest(),
-			'formPrefix' => $formPrefix,
 			//'settings' => $typoScript['settings'],
-			'frameworkSettings' => $typoScript,
 			'TSFE' => $GLOBALS['TSFE'],
 			'typolinkService' => GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Service\TypoLinkCodecService::class),
 		);
