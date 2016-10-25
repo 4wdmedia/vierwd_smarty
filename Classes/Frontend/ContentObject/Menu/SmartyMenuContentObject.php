@@ -56,5 +56,14 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 
 		return parent::subMenu($uid, $objSuffix);
 	}
+
+	/**
+	 * This method is missing in TYPO3 6.2
+	 *
+	 * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+	 */
+	protected function getTypoScriptFrontendController() {
+		return $GLOBALS['TSFE'];
+	}
 }
 
