@@ -690,8 +690,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			'request' => $this->controllerContext->getRequest(),
 			//'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],
-			'typolinkService' => GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Service\TypoLinkCodecService::class),
 		);
+		if (class_exists('TYPO3\\CMS\\Frontend\\Service\\TypoLinkCodecService')) {
+			// TYPO3 >= 7
+			$templateVars['typolinkService'] = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Service\\TypoLinkCodecService');
+		}
 		$this->Smarty->assign($templateVars);
 		$settings = $this->Smarty->getTemplateVars('settings');
 		$userVars = $settings['typoscript'];
