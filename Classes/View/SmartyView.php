@@ -444,7 +444,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		);
 		extract($params);
 
-		$flashMessages = $this->controllerContext->getFlashMessageContainer()->getAllMessagesAndFlush();
+		if (method_exists($this->controllerContext, 'getFlashMessageQueue')) {
+			$flashMessages = $this->controllerContext->getFlashMessageQueue()->getAllMessagesAndFlush();
+		} else {
+			$flashMessages = $this->controllerContext->getFlashMessageContainer()->getAllMessagesAndFlush();
+		}
+
 		if ($flashMessages === NULL || count($flashMessages) === 0) {
 			return '';
 		}
