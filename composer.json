@@ -62,7 +62,7 @@
 			"cp -r .Build/vendor/smarty/smarty .Build/ter-release/Resources/Private/Smarty",
 			".Build/bin/php-cs-fixer fix .Build/ter-release/ --fixers=class_keyword_remove || true",
 			"sed -i \"\" -e \"s/'php' => '5.5'/'php' => '5.4'/g\" .Build/ter-release/ext_emconf.php",
-			"sed -i \"\" -e \"s/'version' => '[0-9]+\\.[0-9]+\\.[0-9]+'/'version' => '`git describe --abbrev=0 --tags`'/g\" .Build/ter-release/ext_emconf.php",
+			"sed -i \"\" -E \"s/'version' => '[0-9]+\\.[0-9]+\\.[0-9]+'/'version' => '`git describe --abbrev=0 --tags`'/g\" .Build/ter-release/ext_emconf.php",
 			"cd .Build/ter-release/ && zip -r ../../vierwd_smarty_`git describe --abbrev=0 --tags`.zip . && cd -"
 		]
 	},
