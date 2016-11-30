@@ -51,6 +51,15 @@
 		"post-autoload-dump": [
 			"mkdir -p .Build/Web/typo3conf/ext/",
 			"[ -L .Build/Web/typo3conf/ext/vierwd_smarty ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/vierwd_smarty"
+		],
+		"ter-release": [
+			"rm -rf .Build/ter-release",
+			"mkdir .Build/ter-release",
+			"git archive -o .Build/ter-release/release.zip HEAD",
+			"unzip .Build/ter-release/release.zip -d .Build/ter-release/",
+			"rm .Build/ter-release/release.zip .Build/ter-release/composer.json",
+			"cp -r .Build/vendor/smarty/smarty .Build/ter-release/Resources/Private/Smarty",
+			"cd .Build/ter-release/ && zip -r ../../vierwd_smarty_`git describe --abbrev=0 --tags`.zip . && cd -"
 		]
 	},
 	"extra": {

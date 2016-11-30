@@ -183,6 +183,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			return;
 		}
 
+		if (!class_exists('Smarty', true) && file_exists($smartyClassFile = GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Resources/Private/Smarty/libs/Smarty.class.php'))) {
+			// Smarty was not autoloadable, might occur when installed via TER
+			require_once $smartyClassFile;
+		}
+
 		$this->Smarty = new \Smarty;
 
 		$this->Smarty->setCacheLifetime(120);
