@@ -113,7 +113,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 */
 	public function resolveTemplateRootPaths() {
 		$templateRootPaths = $this->getTemplateRootPaths();
-		$templateRootPaths = \TYPO3\CMS\Extbase\Utility\ArrayUtility::sortArrayWithIntegerKeys($templateRootPaths);
+		ksort($templateRootPaths);
 		$templateRootPaths = array_reverse($templateRootPaths, true);
 		$templateRootPaths = array_map(function($path) {
 			return GeneralUtility::getFileAbsFileName(GeneralUtility::fixWindowsFilePath($path));
@@ -163,8 +163,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$file = $controller . '/' . ucfirst($action) . '.tpl';
 
 		$paths = $this->getTemplateRootPaths();
-        $paths = \TYPO3\CMS\Extbase\Utility\ArrayUtility::sortArrayWithIntegerKeys($paths);
-        $paths = array_reverse($paths, true);
+		ksort($paths);
+		$paths = array_reverse($paths, true);
 
 		foreach ($paths as $rootPath) {
 			$fileName = GeneralUtility::fixWindowsFilePath($rootPath . '/' . $file);
