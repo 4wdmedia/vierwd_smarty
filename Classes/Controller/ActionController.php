@@ -35,7 +35,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
 		}
 
-		// $view->Smarty->registerPlugin('function', 'categorylink', array($this, 'smarty_categorylink'));
+		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
 	}
 
 	/**

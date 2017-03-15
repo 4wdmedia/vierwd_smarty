@@ -16,8 +16,8 @@ class SmartyViewTest extends UnitTestCase {
 	 * Like get Accessible Mock, but with correct signature (no type-hint for $methods)
 	 */
 	protected function getOwnAccessibleMock(
-		$originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '',
-		$callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE
+		$originalClassName, $methods = [], array $arguments = [], $mockClassName = '',
+		$callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true
 	) {
 		if ($originalClassName === '') {
 			throw new \InvalidArgumentException('$originalClassName must not be empty.', 1334701880);

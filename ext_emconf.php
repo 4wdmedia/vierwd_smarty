@@ -2,15 +2,9 @@
 
 /***************************************************************
  * Extension Manager/Repository config file for ext "vierwd_smarty".
- *
- * Auto generated 06-03-2013 10:40
- *
- * Manual updates:
- * Only the data in the array - everything else is removed by next
- * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
 	'title' => 'Extbase Smarty',
 	'description' => 'Enables the Smarty template engine for extbase views. Smarty is easier to use than fluid.',
 	'category' => 'misc',
@@ -28,18 +22,15 @@ $EM_CONF[$_EXTKEY] = array(
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
 	'version' => '2.6.3',
-	'constraints' => array(
-		'depends' => array(
+	'constraints' => [
+		'depends' => [
 			'php' => '5.5',
 			'typo3' => '6.2.0-8.9.99',
-		),
-		'conflicts' => array(
-		),
-		'suggests' => array(
+		],
+		'conflicts' => [
+		],
+		'suggests' => [
 			'fluid_styled_content' => '*',
-		),
-	),
-	'_md5_values_when_last_written' => '',
-);
-
-?>
+		],
+	],
+];

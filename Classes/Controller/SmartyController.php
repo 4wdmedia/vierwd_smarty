@@ -63,7 +63,7 @@ class SmartyController extends ActionController {
 
 					$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'], $typoscriptArray);
 				} else if (is_string($extbaseArray) && $extbaseArray[0] == '<') {
-					$content = $contentObject->cObjGetSingle($extbaseArray, array());
+					$content = $contentObject->cObjGetSingle($extbaseArray, []);
 				} else if (is_string($extbaseArray)) {
 					$content = $extbaseArray;
 				} else {
@@ -102,8 +102,8 @@ class SmartyController extends ActionController {
 	 */
 	protected function getContentObjectVariables(array $conf) {
 		$contentObject = $this->configurationManager->getContentObject();
-		$variables = array();
-		$reservedVariables = array('data', 'current');
+		$variables = [];
+		$reservedVariables = ['data', 'current'];
 		// Accumulate the variables to be process and loop them through cObjGetSingle
 		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
 		$variablesToProcess = $typoScriptService->convertPlainArrayToTypoScriptArray($conf['variables']);

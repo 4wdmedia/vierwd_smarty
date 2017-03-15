@@ -10,7 +10,7 @@ function clean($str) {
 	if (is_scalar($str)) {
 		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', $str);
 		// replace html-characters
-		$str = str_replace(array('<', '>', '"'), array('&lt;', '&gt;', '&quot;'), $str);
+		$str = str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $str);
 
 		return $str;
 	} elseif($str === null) {
@@ -61,7 +61,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 *
 	 * @var array
 	 */
-	protected $templateRootPaths = NULL;
+	protected $templateRootPaths = null;
 
 	/**
 	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
@@ -98,12 +98,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 * @return array Path(s) to template root directory
 	 */
 	public function getTemplateRootPaths() {
-		if ($this->templateRootPaths !== NULL) {
+		if ($this->templateRootPaths !== null) {
 			return $this->templateRootPaths;
 		}
 		/** @var $actionRequest \TYPO3\CMS\Extbase\Mvc\Request */
 		$actionRequest = $this->controllerContext->getRequest();
-		return array(str_replace(['@packageResourcesPath', '//'], [\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', '/'], $this->templateRootPathPattern));
+		return [str_replace(['@packageResourcesPath', '//'], [\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', '/'], $this->templateRootPathPattern)];
 	}
 
 	/**
@@ -198,31 +198,31 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			}
 		}
 
-		$this->Smarty->registerPlugin('function', 'translate', array($this, 'smarty_translate'));
-		$this->Smarty->registerPlugin('function', 'uri_resource', array($this, 'smarty_uri_resource'));
-		$this->Smarty->registerPlugin('function', 'uri_action', array($this, 'smarty_uri_action'));
-		$this->Smarty->registerPlugin('function', 'typolink', array($this, 'smarty_helper_typolink'));
-		$this->Smarty->registerPlugin('modifier', 'typolink', array($this, 'smarty_helper_typolink_url'));
-		$this->Smarty->registerPlugin('function', 'flashMessages', array($this, 'smarty_flashMessages'));
-		$this->Smarty->registerPlugin('function', 'svg', array($this, 'smarty_svg'));
+		$this->Smarty->registerPlugin('function', 'translate',     [$this, 'smarty_translate']);
+		$this->Smarty->registerPlugin('function', 'uri_resource',  [$this, 'smarty_uri_resource']);
+		$this->Smarty->registerPlugin('function', 'uri_action',    [$this, 'smarty_uri_action']);
+		$this->Smarty->registerPlugin('function', 'typolink',      [$this, 'smarty_helper_typolink']);
+		$this->Smarty->registerPlugin('modifier', 'typolink',      [$this, 'smarty_helper_typolink_url']);
+		$this->Smarty->registerPlugin('function', 'flashMessages', [$this, 'smarty_flashMessages']);
+		$this->Smarty->registerPlugin('function', 'svg',           [$this, 'smarty_svg']);
 
-		$this->Smarty->registerPlugin('block', 'link_action', array($this, 'smarty_link_action'));
-		$this->Smarty->registerPlugin('block', 'fsection', array($this, 'smarty_fsection'));
+		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
+		$this->Smarty->registerPlugin('block', 'fsection',    [$this, 'smarty_fsection']);
 
 		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
 		// fluid
-		$this->Smarty->registerPlugin('block', 'fluid', array($this, 'smarty_fluid'));
+		$this->Smarty->registerPlugin('block', 'fluid', [$this, 'smarty_fluid']);
 
 		// Typoscript filters
-		$this->Smarty->registerPlugin('block', 'typoscript', array($this, 'smarty_typoscript'));
+		$this->Smarty->registerPlugin('block', 'typoscript', [$this, 'smarty_typoscript']);
 
 		// custom functions
-		$this->Smarty->registerPlugin('function', 'email', array($this, 'smarty_email'));
-		$this->Smarty->registerPlugin('function', 'pagebrowser', array($this, 'smarty_pagebrowser'));
+		$this->Smarty->registerPlugin('function', 'email',       [$this, 'smarty_email']);
+		$this->Smarty->registerPlugin('function', 'pagebrowser', [$this, 'smarty_pagebrowser']);
 
-		$this->Smarty->registerPlugin('modifier', 'nl2p', array($this, 'smarty_nl2p'));
+		$this->Smarty->registerPlugin('modifier', 'nl2p', [$this, 'smarty_nl2p']);
 
 		// Resource type
 		$this->Smarty->registerResource('EXT', new ExtResource);
@@ -255,16 +255,16 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 */
 	public function smarty_translate($params, $smarty) {
 		$request = $this->controllerContext->getRequest();
-		$params = $params + array(
+		$params = $params + [
 			'default' => null,
 			'htmlEscape' => true,
 			'arguments' => null,
 			'extensionName' => $request->getControllerExtensionName(),
-		);
+		];
 		extract($params);
 
 		$value = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, $extensionName, $arguments);
-		if ($value === NULL) {
+		if ($value === null) {
 			$value = $default;
 		} elseif ($htmlEscape) {
 			$value = htmlspecialchars($value);
@@ -273,14 +273,14 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_uri_resource($params, $smarty) {
-		$params = $params + array(
-			'path' => NULL,
-			'extensionName' => NULL,
-			'absolute' => FALSE,
-		);
+		$params = $params + [
+			'path' => null,
+			'extensionName' => null,
+			'absolute' => false,
+		];
 		extract($params);
 
-		if ($extensionName === NULL) {
+		if ($extensionName === null) {
 			$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
 		}
 		$uri = 'EXT:' . GeneralUtility::camelCaseToLowerCaseUnderscored($extensionName) . '/Resources/Public/' . $path;
@@ -291,7 +291,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			$uri = '../' . $uri;
 		}
 
-		if ($absolute === TRUE) {
+		if ($absolute === true) {
 			$uri = $this->controllerContext->getRequest()->getBaseURI() . $uri;
 		}
 
@@ -299,24 +299,24 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_uri_action($params, $smarty) {
-		$params = $params + array(
-			'action' => NULL,
-			'arguments' => array(),
-			'controller' => NULL,
-			'extensionName' => NULL,
-			'pluginName' => NULL,
-			'pageUid' => NULL,
+		$params = $params + [
+			'action' => null,
+			'arguments' => [],
+			'controller' => null,
+			'extensionName' => null,
+			'pluginName' => null,
+			'pageUid' => null,
 			'pageType' => 0,
-			'noCache' => FALSE,
-			'noCacheHash' => FALSE,
+			'noCache' => false,
+			'noCacheHash' => false,
 			'section' => '',
 			'format' => '',
-			'linkAccessRestrictedPages' => FALSE,
-			'additionalParams' => array(),
-			'absolute' => FALSE,
-			'addQueryString' => FALSE,
-			'argumentsToBeExcludedFromQueryString' => array(),
-		);
+			'linkAccessRestrictedPages' => false,
+			'additionalParams' => [],
+			'absolute' => false,
+			'addQueryString' => false,
+			'argumentsToBeExcludedFromQueryString' => [],
+		];
 		extract($params);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder();
@@ -346,24 +346,24 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			return;
 		}
 
-		$defaultUrlParams = array(
-			'action' => NULL,
-			'arguments' => array(),
-			'controller' => NULL,
-			'extensionName' => NULL,
-			'pluginName' => NULL,
-			'pageUid' => NULL,
+		$defaultUrlParams = [
+			'action' => null,
+			'arguments' => [],
+			'controller' => null,
+			'extensionName' => null,
+			'pluginName' => null,
+			'pageUid' => null,
 			'pageType' => 0,
-			'noCache' => FALSE,
-			'noCacheHash' => FALSE,
+			'noCache' => false,
+			'noCacheHash' => false,
 			'section' => '',
 			'format' => '',
-			'linkAccessRestrictedPages' => FALSE,
-			'additionalParams' => array(),
-			'absolute' => FALSE,
-			'addQueryString' => FALSE,
-			'argumentsToBeExcludedFromQueryString' => array(),
-		);
+			'linkAccessRestrictedPages' => false,
+			'additionalParams' => [],
+			'absolute' => false,
+			'addQueryString' => false,
+			'argumentsToBeExcludedFromQueryString' => [],
+		];
 
 		$attributes = array_diff_key($params, $defaultUrlParams);
 
@@ -405,12 +405,12 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	 * @param boolean $linkAccessRestrictedPages If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed.
 	 * @param boolean $absolute If set, the URI of the rendered link is absolute
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
 	 * @return string Rendered page URI
 	 */
 	public function smarty_helper_typolink($params, $smarty) {
 		$pageUid = $this->getParam($params, 'pageUid', null);
-		$additionalParams = $this->getParam($params, 'additionalParams', array());
+		$additionalParams = $this->getParam($params, 'additionalParams', []);
 		$pageType = $this->getParam($params, 'pageType', 0);
 		$noCache = $this->getParam($params, 'noCache');
 		$noCacheHash = $this->getParam($params, 'noCacheHash');
@@ -418,7 +418,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$absolute = $this->getParam($params, 'absolute');
 		$section = $this->getParam($params, 'section');
 		$addQueryString = $this->getParam($params, 'addQueryString');
-		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', array());
+		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$uri = $uriBuilder
@@ -443,10 +443,10 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_flashMessages($params, $smarty) {
-		$params = $params + array(
+		$params = $params + [
 			'renderMode' => 'ul',
 			'class' => 'typo3-messages',
-		);
+		];
 		extract($params);
 
 		if (method_exists($this->controllerContext, 'getFlashMessageQueue')) {
@@ -455,7 +455,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			$flashMessages = $this->controllerContext->getFlashMessageContainer()->getAllMessagesAndFlush();
 		}
 
-		if ($flashMessages === NULL || count($flashMessages) === 0) {
+		if ($flashMessages === null || count($flashMessages) === 0) {
 			return '';
 		}
 
@@ -498,7 +498,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			return;
 		}
 
-		$data = isset($params['data']) ? $params['data'] : array();
+		$data = isset($params['data']) ? $params['data'] : [];
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
@@ -509,11 +509,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		if ($configuration['view']) {
-			$layoutRootPaths = array();
+			$layoutRootPaths = [];
 			if ($configuration['view']['layoutRootPaths']) {
 				$layoutRootPaths = $configuration['view']['layoutRootPaths'];
 			} else if ($configuration['view']['layoutRootPath']) {
-				$layoutRootPaths = array($configuration['view']['layoutRootPath']);
+				$layoutRootPaths = [$configuration['view']['layoutRootPath']];
 			}
 			$layoutRootPaths = array_map(function($path) {
 				return GeneralUtility::getFileAbsFileName($path);
@@ -521,11 +521,11 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			$fluidView->setLayoutRootPaths($layoutRootPaths);
 
 			// Partials
-			$partialRootPaths = array();
+			$partialRootPaths = [];
 			if ($configuration['view']['partialRootPaths']) {
 				$partialRootPaths = $configuration['view']['partialRootPaths'];
 			} else if ($configuration['view']['partialRootPath']) {
-				$partialRootPaths = array($configuration['view']['partialRootPath']);
+				$partialRootPaths = [$configuration['view']['partialRootPath']];
 			}
 			$partialRootPaths = array_map(function($path) {
 				return GeneralUtility::getFileAbsFileName($path);
@@ -559,7 +559,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			return;
 		}
 
-		$data = isset($params['data']) ? $params['data'] : array();
+		$data = isset($params['data']) ? $params['data'] : [];
 		unset($params['data']);
 		$data = $params + $data;
 
@@ -628,10 +628,10 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$parameter = $this->getParam($params, 'parameter', $address . ' - mail');
 		$ATagParams = $this->getParam($params, 'ATagParams');
 
-		$conf = array(
+		$conf = [
 			'parameter' => $parameter,
 			'ATagParams' => $ATagParams,
-		);
+		];
 
 		return $this->contentObject->typoLink($label, $conf);
 	}
@@ -648,15 +648,15 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		// for search
 		unset($params['search']['pointer']);
 		unset($params['page']);
-		$conf = array(
+		$conf = [
 			'pageParameterName' => $prefix . '|page',
 			'numberOfPages' => $numberOfPages,
-			'extraQueryString' => '&' . http_build_query(array($prefix => $params)),
-		) + $conf;
+			'extraQueryString' => '&' . http_build_query([$prefix => $params]),
+		] + $conf;
 
 		// Get page browser
 		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		$cObj->start(array(), '');
+		$cObj->start([], '');
 		return $cObj->cObjGetSingle('USER', $conf);
 	}
 
@@ -688,7 +688,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			$extPath = '';
 		}
 
-		$templateVars = array(
+		$templateVars = [
 			'cObj' => $this->contentObject,
 			'data' => $this->contentObject->data,
 			'extensionPath' => $extPath,
@@ -700,7 +700,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			'request' => $this->controllerContext->getRequest(),
 			//'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],
-		);
+		];
 		if (class_exists('TYPO3\\CMS\\Frontend\\Service\\TypoLinkCodecService')) {
 			// TYPO3 >= 7
 			$templateVars['typolinkService'] = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Service\\TypoLinkCodecService');
