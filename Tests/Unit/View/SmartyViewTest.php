@@ -35,30 +35,30 @@ class SmartyViewTest extends UnitTestCase {
 	}
 
 	/**
-     * Helper to build mock controller context needed to test expandGenericPathPattern.
-     *
-     * @param string $packageKey
-     * @param string $subPackageKey
-     * @param string $controllerName
-     * @param string $format
-     * @return ControllerContext
-     */
-    protected function setupMockControllerContext($packageKey, $subPackageKey, $controllerName, $action, $format) {
-        $controllerObjectName = "TYPO3\\$packageKey\\" . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
-        $mockRequest = $this->getMock(WebRequest::class);
-        $mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
-        $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
-        $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
-        $mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
-        $mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($action));
-        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
-        $mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
+	 * Helper to build mock controller context needed to test expandGenericPathPattern.
+	 *
+	 * @param string $packageKey
+	 * @param string $subPackageKey
+	 * @param string $controllerName
+	 * @param string $format
+	 * @return ControllerContext
+	 */
+	protected function setupMockControllerContext($packageKey, $subPackageKey, $controllerName, $action, $format) {
+		$controllerObjectName = "TYPO3\\$packageKey\\" . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+		$mockRequest = $this->getMock(WebRequest::class);
+		$mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
+		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
+		$mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
+		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
+		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($action));
+		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
+		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
 
-        $mockControllerContext = $this->getMock(ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+		$mockControllerContext = $this->getMock(ControllerContext::class, ['getRequest'], [], '', false);
+		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-        return $mockControllerContext;
-    }
+		return $mockControllerContext;
+	}
 
 	/**
 	 * @test
