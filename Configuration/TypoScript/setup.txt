@@ -7,7 +7,10 @@ styles.content.get {
 	select.where = colPos=0
 }
 
-# Change all content to Smarty
+lib.stdheader =< plugin.tx_vierwdsmarty
+lib.stdheader.settings.template = Partials/Header.tpl
+
+tt_content >
 tt_content = CASE
 tt_content {
 	key {
@@ -24,206 +27,119 @@ tt_content {
 			edit.displayRecord = 1
 		}
 	}
+}
+
+# Use Configuration of fluid_styled_content
+
+# Typical content elements
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Bullets.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Div.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Header.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Html.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Image.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/List.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Shortcut.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Table.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Text.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textmedia.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textpic.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Uploads.txt">
+
+# Menu content elements
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuAbstract.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedContent.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSubpages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSection.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSectionPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRecentlyUpdated.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRelatedPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemap.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemapPages.txt">
+
+# Override and use Smarty to render those elements
+tt_content {
 	bullets =< plugin.tx_vierwdsmarty
-	bullets {
-		settings.template = Content/Bullets.tpl
-		dataProcessing {
-			10 = TYPO3\CMS\Frontend\DataProcessing\SplitProcessor
-			10 {
-				if {
-					value = 2
-					isLessThan.field = bullets_type
-				}
-				fieldName = bodytext
-				removeEmptyEntries = 1
-				as = bullets
-			}
-			20 = TYPO3\CMS\Frontend\DataProcessing\CommaSeparatedValueProcessor
-			20 {
-				fieldName = bodytext
-				if {
-					value = 2
-					equals.field = bullets_type
-				}
-				fieldDelimiter = |
-				as = bullets
-			}
-		}
-		stdWrap {
-			# Setup the edit icon for content element "bullets"
-			editIcons = tt_content: header [header_layout], bodytext [bullets_type]
-			editIcons {
-				beforeLastTag = 1
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.bullets
-			}
-		}
-	}
+	bullets.settings.template = Content/Bullets.tpl
+
 	div =< plugin.tx_vierwdsmarty
-	div {
-		settings.template = Content/Div.tpl
-	}
+	div.settings.template = Content/Div.tpl
+
 	header =< plugin.tx_vierwdsmarty
-	header {
-		settings.template = Content/Header.tpl
-		stdWrap {
-			# Setup the edit icon for content element "header"
-			editIcons = tt_content: header [header_layout|header_link], subheader, date
-			editIcons {
-				beforeLastTag = 1
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.header
-			}
-		}
-	}
+	header.settings.template = Content/Header.tpl
+
 	html =< plugin.tx_vierwdsmarty
-	html {
-		settings.template = Content/Html.tpl
-		stdWrap {
-			# Setup the edit icon for content element "html"
-			editIcons = tt_content: bodytext
-			editIcons {
-				beforeLastTag = 1
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.html
-			}
-		}
-	}
+	html.settings.template = Content/Html.tpl
+
 	list =< plugin.tx_vierwdsmarty
-	list {
-		settings.template = Content/Plugin.tpl
-		stdWrap {
-			# Setup the edit icon for content element "list"
-			editIcons = tt_content: header [header_layout], list_type, layout, select_key, pages [recursive]
-			editIcons {
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.list
-			}
-		}
-	}
-	menu =< plugin.tx_vierwdsmarty
-	menu {
-		settings.template = Content/Menu.tpl
-		dataProcessing {
-			10 = TYPO3\CMS\Frontend\DataProcessing\SplitProcessor
-			10 {
-				if.isTrue.field = pages
-				fieldName = pages
-				delimiter = ,
-				removeEmptyEntries = 1
-				filterIntegers = 1
-				filterUnique = 1
-				as = pageUids
-			}
-			20 < .10
-			20 {
-				if.isTrue.field = selected_categories
-				fieldName = selected_categories
-				as = categoryUids
-			}
-		}
-		stdWrap {
-			# Setup the edit icon for content element "menu"
-			editIcons = tt_content: header [header_layout], menu_type, pages
-			editIcons {
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.menu
-			}
-		}
-	}
+	list.settings.template = Content/Plugin.tpl
+
 	shortcut =< plugin.tx_vierwdsmarty
-	shortcut {
-		settings.template = Content/Shortcut.tpl
+	shortcut.settings.template = Content/Shortcut.tpl
 
-		# Keep this, since the "conf" option can be used
-		variables.shortcuts = RECORDS
-		variables.shortcuts {
-			source.field = records
-			tables = {$styles.content.shortcut.tables}
-		}
-
-		stdWrap {
-			# Setup the edit icon for content element "shortcut"
-			editIcons = tt_content: header [header_layout], records
-			editIcons {
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.shortcut
-			}
-		}
-	}
 	table =< plugin.tx_vierwdsmarty
-	table {
-		settings.template = Content/Table.tpl
-		dataProcessing {
-			10 = TYPO3\CMS\Frontend\DataProcessing\CommaSeparatedValueProcessor
-			10 {
-				fieldName = bodytext
-				fieldDelimiter.char.cObject = TEXT
-				fieldDelimiter.char.cObject {
-					field = table_delimiter
-				}
-				fieldEnclosure.char.cObject = TEXT
-				fieldEnclosure.char.cObject {
-					field = table_enclosure
-				}
-				maximumColumns.field = cols
-				as = table
-			}
-		}
-		stdWrap {
-			# Setup the edit icon for content element "table"
-			editIcons = tt_content: header [header_layout], bodytext, [table_caption|cols|table_header_position|table_tfoot]
-			editIcons {
-				beforeLastTag = 1
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.table
-			}
-		}
-	}
+	table.settings.template = Content/Table.tpl
+
 	textmedia =< plugin.tx_vierwdsmarty
-	textmedia {
-		settings.template = Content/Textmedia.tpl
-		dataProcessing {
-			10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
-			10 {
-				references.fieldName = assets
-			}
-			20 = TYPO3\CMS\Frontend\DataProcessing\GalleryProcessor
-			20 {
-				maxGalleryWidth = {$styles.content.textmedia.maxW}
-				maxGalleryWidthInText = {$styles.content.textmedia.maxWInText}
-				columnSpacing = {$styles.content.textmedia.columnSpacing}
-				borderWidth = {$styles.content.textmedia.borderWidth}
-				borderPadding = {$styles.content.textmedia.borderPadding}
-			}
-		}
-		stdWrap {
-			# Setup the edit icon for content element "textmedia"
-			editIcons = tt_content: header [header_layout], bodytext, assets [imageorient|imagewidth|imageheight], [imagecols|imageborder], image_zoom
-			editIcons {
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.textmedia
-			}
-		}
-	}
+	textmedia.settings.template = Content/Textmedia.tpl
 	image < .textmedia
+	text < .textmedia
 
 	uploads =< plugin.tx_vierwdsmarty
-	uploads {
-		settings.template = Content/Uploads.tpl
-		dataProcessing {
-			10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
-			10 {
-				references.fieldName = media
-				collections.field = file_collections
-				sorting.field = filelink_sorting
-			}
-		}
-		stdWrap {
-			# Setup the edit icon for content element "uploads"
-			editIcons = tt_content: header [header_layout], media, file_collections, filelink_sorting, [filelink_size|uploads_description|uploads_type]
-			editIcons {
-				iconTitle.data = LLL:EXT:fluid_styled_content/Resources/Private/Language/FrontendEditing.xlf:editIcon.uploads
-			}
-		}
-	}
+	uploads.settings.template = Content/Uploads.tpl
 
 	# The "default" content element, which will be called when no rendering definition can be found
 	default =< plugin.tx_vierwdsmarty
 	default.settings.template = Content/Default.tpl
-}
 
-lib.stdheader =< plugin.tx_vierwdsmarty
-lib.stdheader.settings.template = Partials/Header.tpl
+
+	menu_abstract =< plugin.tx_vierwdsmarty
+	menu_abstract.settings.template = Content/Menu/Abstract.tpl
+
+	menu_categorized_content =< plugin.tx_vierwdsmarty
+	menu_categorized_content.settings.template = Content/Menu/CategorizedContent.tpl
+
+	menu_categorized_pages =< plugin.tx_vierwdsmarty
+	menu_categorized_pages.settings.template = Content/Menu/CategorizedPages.tpl
+
+	menu_pages =< plugin.tx_vierwdsmarty
+	menu_pages.settings.template = Content/Menu/Pages.tpl
+
+	menu_subpages =< plugin.tx_vierwdsmarty
+	menu_subpages.settings.template = Content/Menu/Subpages.tpl
+
+	menu_section =< plugin.tx_vierwdsmarty
+	menu_section.settings.template = Content/Menu/Section.tpl
+
+	menu_section_pages =< plugin.tx_vierwdsmarty
+	menu_section_pages.settings.template = Content/Menu/SectionPages.tpl
+
+	menu_recently_updated =< plugin.tx_vierwdsmarty
+	menu_recently_updated.settings.template = Content/Menu/RecentlyUpdated.tpl
+
+	menu_related_pages =< plugin.tx_vierwdsmarty
+	menu_related_pages.settings.template = Content/Menu/RelatedPages.tpl
+
+	menu_sitemap =< plugin.tx_vierwdsmarty
+	menu_sitemap.settings.template = Content/Menu/Sitemap.tpl
+
+	menu_sitemap_pages =< plugin.tx_vierwdsmarty
+	menu_sitemap_pages.settings.template = Content/Menu/SitemapPages.tpl
+
+	menu = CASE
+	menu {
+		key.field = menu_type
+
+		categorized_pages =< tt_content.menu_categorized_pages
+		categorized_content =< tt_content.menu_categorized_content
+		5 =< tt_content.menu_recently_updated
+		6 =< tt_content.menu_related_pages
+		2 =< tt_content.menu_sitemap
+		8 =< tt_content.menu_sitemap_pages
+		4 =< tt_content.menu_abstract
+		3 =< tt_content.menu_section
+		7 =< tt_content.menu_section_pages
+		default =< tt_content.menu_pages
+	}
+}

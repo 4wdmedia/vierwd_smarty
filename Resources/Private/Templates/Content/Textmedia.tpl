@@ -1,10 +1,6 @@
 {extends file='Layouts/ContentWrap.tpl'}
 {block name=content}
-	{typoscript bodytext=$data.bodytext assign=bodytext}
-	10 = TEXT
-	10.field = bodytext
-	10.parseFunc < lib.parseFunc_RTE
-	{/typoscript}
+	{$bodytext = $cObj->parseFunc($data.bodytext, [], '< lib.parseFunc_RTE')}
 
 	{if $data.CType == text || !count($files)}
 		{* only render the text *}
