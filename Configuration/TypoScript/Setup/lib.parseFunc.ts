@@ -19,9 +19,20 @@ lib.parseFunc {
 			typolink {
 				parameter.data = parameters : allParams
 				extTarget = {$styles.content.links.extTarget}
-				target = {$styles.content.links.target}
 			}
 			parseFunc.constants = 1
+		}
+		a = TEXT
+		a {
+			current = 1
+			typolink {
+				parameter.data = parameters:href
+				title.data = parameters:title
+				aTagParams.data = parameters:allParams
+				target.data = parameters:target
+				extTarget = {$styles.content.links.extTarget}
+				extTarget.override.data = parameters:target
+			}
 		}
 	}
 	allowTags = {$styles.content.allowTags}
@@ -42,7 +53,7 @@ lib.parseFunc {
 lib.parseFunc_RTE < lib.parseFunc
 lib.parseFunc_RTE {
 	# Processing <table> and <blockquote> blocks separately
-	externalBlocks = article, aside, blockquote, div, dd, dl, footer, header, nav, ol, section, table, ul
+	externalBlocks = article, aside, blockquote, div, dd, dl, footer, header, nav, ol, section, table, ul, pre
 	externalBlocks {
 		# The blockquote content is passed into parseFunc again...
 		blockquote {
@@ -55,17 +66,14 @@ lib.parseFunc_RTE {
 				}
 			}
 		}
-
 		ol {
 			stripNL = 1
 			stdWrap.parseFunc = < lib.parseFunc
 		}
-
 		ul {
 			stripNL = 1
 			stdWrap.parseFunc = < lib.parseFunc
 		}
-
 		table {
 			stripNL = 1
 			stdWrap {
@@ -89,12 +97,10 @@ lib.parseFunc_RTE {
 				addChr10BetweenParagraphs = 1
 			}
 		}
-
 		div {
 			stripNL = 1
 			callRecursive = 1
 		}
-
 		article < .div
 		aside < .div
 		footer < .div
