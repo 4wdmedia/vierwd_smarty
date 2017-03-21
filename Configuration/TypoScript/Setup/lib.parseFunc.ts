@@ -28,7 +28,13 @@ lib.parseFunc {
 			typolink {
 				parameter.data = parameters:href
 				title.data = parameters:title
-				aTagParams.data = parameters:allParams
+				# ATagParams.data = parameters:allParams
+				# Currently ATagParams is broken
+				# https://forge.typo3.org/issues/80373
+				ATagParams.data = parameters:class
+				ATagParams.wrap = class="|"
+				ATagParams.required = 1
+
 				target.data = parameters:target
 				extTarget = {$styles.content.links.extTarget}
 				extTarget.override.data = parameters:target
