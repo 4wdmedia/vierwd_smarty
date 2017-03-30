@@ -1,0 +1,145 @@
+<INCLUDE_TYPOSCRIPT: source="FILE:./Setup/lib.parseFunc.ts">
+
+styles.content.get = CONTENT
+styles.content.get {
+	table = tt_content
+	select.orderBy = sorting
+	select.where = colPos=0
+}
+
+lib.stdheader =< plugin.tx_vierwdsmarty
+lib.stdheader.settings.template = Partials/Header.tpl
+
+tt_content >
+tt_content = CASE
+tt_content {
+	key {
+		field = CType
+	}
+	stdWrap {
+		# Setup the edit panel for all content elements
+		editPanel = 1
+		editPanel {
+			allow = move, new, edit, hide, delete
+			label = %s
+			onlyCurrentPid = 1
+			previewBorder = 1
+			edit.displayRecord = 1
+		}
+	}
+}
+
+# Use Configuration of fluid_styled_content
+
+# Typical content elements
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Bullets.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Div.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Header.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Html.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Image.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/List.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Shortcut.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Table.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Text.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textmedia.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textpic.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Uploads.txt">
+
+# Menu content elements
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuAbstract.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedContent.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSubpages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSection.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSectionPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRecentlyUpdated.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRelatedPages.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemap.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemapPages.txt">
+
+# Override and use Smarty to render those elements
+tt_content {
+	bullets =< plugin.tx_vierwdsmarty
+	bullets.settings.template = Content/Bullets.tpl
+
+	div =< plugin.tx_vierwdsmarty
+	div.settings.template = Content/Div.tpl
+
+	header =< plugin.tx_vierwdsmarty
+	header.settings.template = Content/Header.tpl
+
+	html =< plugin.tx_vierwdsmarty
+	html.settings.template = Content/Html.tpl
+
+	list =< plugin.tx_vierwdsmarty
+	list.settings.template = Content/Plugin.tpl
+
+	shortcut =< plugin.tx_vierwdsmarty
+	shortcut.settings.template = Content/Shortcut.tpl
+
+	table =< plugin.tx_vierwdsmarty
+	table.settings.template = Content/Table.tpl
+
+	textmedia =< plugin.tx_vierwdsmarty
+	textmedia.settings.template = Content/Textmedia.tpl
+	image < .textmedia
+	text < .textmedia
+
+	uploads =< plugin.tx_vierwdsmarty
+	uploads.settings.template = Content/Uploads.tpl
+
+	# The "default" content element, which will be called when no rendering definition can be found
+	default =< plugin.tx_vierwdsmarty
+	default.settings.template = Content/Default.tpl
+
+
+	menu_abstract =< plugin.tx_vierwdsmarty
+	menu_abstract.settings.template = Content/Menu/Abstract.tpl
+
+	menu_categorized_content =< plugin.tx_vierwdsmarty
+	menu_categorized_content.settings.template = Content/Menu/CategorizedContent.tpl
+
+	menu_categorized_pages =< plugin.tx_vierwdsmarty
+	menu_categorized_pages.settings.template = Content/Menu/CategorizedPages.tpl
+
+	menu_pages =< plugin.tx_vierwdsmarty
+	menu_pages.settings.template = Content/Menu/Pages.tpl
+
+	menu_subpages =< plugin.tx_vierwdsmarty
+	menu_subpages.settings.template = Content/Menu/Subpages.tpl
+
+	menu_section =< plugin.tx_vierwdsmarty
+	menu_section.settings.template = Content/Menu/Section.tpl
+
+	menu_section_pages =< plugin.tx_vierwdsmarty
+	menu_section_pages.settings.template = Content/Menu/SectionPages.tpl
+
+	menu_recently_updated =< plugin.tx_vierwdsmarty
+	menu_recently_updated.settings.template = Content/Menu/RecentlyUpdated.tpl
+
+	menu_related_pages =< plugin.tx_vierwdsmarty
+	menu_related_pages.settings.template = Content/Menu/RelatedPages.tpl
+
+	menu_sitemap =< plugin.tx_vierwdsmarty
+	menu_sitemap.settings.template = Content/Menu/Sitemap.tpl
+
+	menu_sitemap_pages =< plugin.tx_vierwdsmarty
+	menu_sitemap_pages.settings.template = Content/Menu/SitemapPages.tpl
+
+	menu = CASE
+	menu {
+		key.field = menu_type
+
+		categorized_pages =< tt_content.menu_categorized_pages
+		categorized_content =< tt_content.menu_categorized_content
+		5 =< tt_content.menu_recently_updated
+		6 =< tt_content.menu_related_pages
+		2 =< tt_content.menu_sitemap
+		8 =< tt_content.menu_sitemap_pages
+		4 =< tt_content.menu_abstract
+		3 =< tt_content.menu_section
+		7 =< tt_content.menu_section_pages
+		default =< tt_content.menu_pages
+	}
+}
