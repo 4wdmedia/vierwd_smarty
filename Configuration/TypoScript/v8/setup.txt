@@ -1,4 +1,4 @@
-<INCLUDE_TYPOSCRIPT: source="FILE:./Setup/lib.parseFunc.ts">
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/Setup/lib.parseFunc.ts">
 
 styles.content.get = CONTENT
 styles.content.get {
