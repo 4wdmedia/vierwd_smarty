@@ -68,3 +68,7 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; .Build/bin/phpunit --colors  -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}'
+
+notifications:
+  slack:
+    secure: aeWPdcYqtSnFjGHhYdxZ1bzwIYRAKV5wUuRVom4qJrMBBH4XB1b48lPXuE4EGYxTkMRJFgz9h8g4PSlJeLSdsHyN3ZdOEXS9/WZNF3jkhL9n6vdalbwYPXGVxxtz0h5Dx/nCTaHik8zbyyEzR1veOWfnRtsRCiG/zcOImRKI3fay6G+Tzuo9gD1kEz3ufeSFVoOgWbMZv51LCcGG32xLyUnf2azKdfoCCpEh2IDIhpTAf73mZcafd6CUuNqOzJCNRitP7PXafYSa3YTs21bBX1bU4SjZhxmPmpFp45BGXR05tKw6KSval1BirGPr5M2kJzPtb9iXBUH2s+M03IEoo56eP9zLfqqwv0sJe6qcsAqmNcipM6/dMtkTEzAPXKMY4XPSVCHfd6W+isqT9cSqnz8Aj2EMkIoLA+Gg7Ar50oYQuk6caayYsC9pXm9K6BrIlJd9AMuFyQ74ExVOtZ2hSivsGM4lr+3T2G5WDb0buagTV91NOsw1uV+0Qrpe5f+xM5IcI5q/uNN+hI1rLfn3680JJ1au/jBBMOL3j4qhu6a77NZvPfdGmO+Ia92plqWslK0otWQr6Nfe2llWRQ89tRAydcJ9pnVLbFf0ct3XF6mFrJ2PzRH6fRfKMKu99zuL1G/8TGAGe63NYb8LF2kJiKme2nFjoDUQ7kSUY+ol678=
