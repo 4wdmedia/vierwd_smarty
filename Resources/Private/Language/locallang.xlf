@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-03-28T13:17:12Z" product-name="vierwd_schubra">
+		<header/>
+		<body>
+			<trans-unit id="flushTemplateCache">
+				<source>Clear Smarty Template Cache</source>
+			</trans-unit>
+			<trans-unit id="flushTemplateCache.description">
+				<source>Clear all generated and cached templates</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

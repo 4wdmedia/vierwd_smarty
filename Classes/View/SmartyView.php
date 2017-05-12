@@ -190,7 +190,10 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$this->Smarty = new \Smarty;
 
-		$this->Smarty->setCacheLifetime(120);
+		if (!$GLOBALS['BE_USER']) {
+			$this->Smarty->setCacheLifetime(120);
+			$this->Smarty->setCompileCheck(false);
+		}
 
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] as $pluginDir) {
@@ -239,7 +242,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		// setup compile and caching dirs
 		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/Cache/vierwd_smarty/');
 		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
-		$this->Smarty->cache_dir   = $extCacheDir . '/smarty/' . $extensionKey . '/';
+		$this->Smarty->cache_dir   = $extCacheDir . '/cache/' . $extensionKey . '/';
 
 		if (!is_dir($this->Smarty->cache_dir)) {
 			GeneralUtility::mkdir_deep($this->Smarty->cache_dir, '');
