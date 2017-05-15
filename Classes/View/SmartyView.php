@@ -190,7 +190,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$this->Smarty = new \Smarty;
 
-		if (!$GLOBALS['BE_USER']) {
+		if ($GLOBALS['TSFE'] && !$GLOBALS['TSFE']->headerNoCache()) {
 			$this->Smarty->setCacheLifetime(120);
 			$this->Smarty->setCompileCheck(false);
 		}
