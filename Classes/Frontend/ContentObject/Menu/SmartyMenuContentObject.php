@@ -2,6 +2,11 @@
 
 namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+
 class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject {
 
 	public function writeMenu() {
@@ -15,9 +20,9 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 			return '';
 		}
 
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-		$controllerContext = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext::class);
+		$controllerContext = $objectManager->get(ControllerContext::class);
 
 		$request = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Request::class);
 		$request->setControllerExtensionName($this->mconf['extensionName'] ? $this->mconf['extensionName'] : 'vierwd_smarty');
@@ -27,8 +32,15 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 		$uriBuilder->setRequest($request);
 		$controllerContext->setUriBuilder($uriBuilder);
 
+		$configuration = $objectManager->get(ConfigurationManagerInterface::class);
+		$settings = $configuration->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $request->getControllerExtensionName());
+
 		$view = $objectManager->get(\Vierwd\VierwdSmarty\View\SmartyView::class);
 		$view->setControllerContext($controllerContext);
+		// set template root paths, if available
+		if (isset($settings['templateRootPaths'])) {
+			$view->setTemplateRootPaths($settings['templateRootPaths']);
+		}
 		$view->initializeView();
 
 		$view->assign('level', $this->menuNumber);
