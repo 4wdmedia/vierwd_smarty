@@ -23,16 +23,24 @@ class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHook
 	 */
 	public function manipulateCacheActions(&$cacheActions, &$optionValues) {
 		if ($GLOBALS['BE_USER']->isAdmin()) {
-			// $title = $GLOBALS['LANG']->sL('LLL:EXT:realurl_clearcache/locallang.xml:rm.clearCacheMenu_realUrlClearCache', true);
-			$title = 'Smarty Cache leeren';
-			$imagePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('vierwd_smarty');
-			$cacheActions[] = array(
-				'id' => 'vierwd_smarty',
-				'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xml:flushTemplateCache',
-				'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xml:flushTemplateCache.description',
-				'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
-				'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
-			);
+			if (TYPO3_version < '8.0.0') {
+				$iconFactory = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
+				$cacheActions[] = array(
+					'id' => 'vierwd_smarty',
+					'title' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache', true),
+					'description' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description', true),
+					'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
+					'icon' => $iconFactory->getIcon('actions-system-cache-clear-impact-medium', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render(),
+				);
+			} else {
+				$cacheActions[] = array(
+					'id' => 'vierwd_smarty',
+					'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
+					'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description',
+					'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
+					'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
+				);
+			}
 			$optionValues[] = 'vierwd_smarty';
 		}
 	}
