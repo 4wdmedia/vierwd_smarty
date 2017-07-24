@@ -24,13 +24,19 @@ class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHook
 	public function manipulateCacheActions(&$cacheActions, &$optionValues) {
 		if ($GLOBALS['BE_USER']->isAdmin()) {
 			if (TYPO3_version < '8.0.0') {
-				$iconFactory = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
+				if (TYPO3_version < '7.4.0') {
+					$icon = \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-system-cache-clear-impact-high');
+				} else {
+					$iconFactory = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
+					$icon = $iconFactory->getIcon('actions-system-cache-clear-impact-medium', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
+				}
+
 				$cacheActions[] = array(
 					'id' => 'vierwd_smarty',
 					'title' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache', true),
 					'description' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description', true),
 					'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
-					'icon' => $iconFactory->getIcon('actions-system-cache-clear-impact-medium', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render(),
+					'icon' => $icon,
 				);
 			} else {
 				$cacheActions[] = array(
