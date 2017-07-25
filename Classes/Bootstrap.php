@@ -13,7 +13,7 @@ class Bootstrap {
 	public $cObj;
 
 	public function run($content, $configuration) {
-		if ($this->cObj->data['pi_flexform'] && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
+		if (is_string($this->cObj->data['pi_flexform']) && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
 			// remove switchable controller actions
 			$this->cObj->data['pi_flexform'] = preg_replace('/<field index="switchableControllerActions">(.*?)<\\/field>/s', '', $this->cObj->data['pi_flexform']);
 		}
