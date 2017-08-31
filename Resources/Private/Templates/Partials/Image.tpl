@@ -28,8 +28,14 @@
 			<source srcset="{$imageSM->getPublicUrl()}" media="(min-width: 592px)">
 			<source srcset="{$imageXS->getPublicUrl()}">
 			<!--[if IE 9]></video><![endif]-->
-			<img src="{$imageMD->getPublicUrl()}">
+			<img src="{$imageMD->getPublicUrl()}" alt="{$image->getAlternative()}"{if $image->getTitle()} title="{$image->getTitle()}"{/if}>
 		</picture>
+
+		{if $image->getDescription()}
+			<figcaption class="textmedia__caption">
+				{$image->getDescription()}
+			</figcaption>
+		{/if}
 
 		{if $link}
 			</a>
