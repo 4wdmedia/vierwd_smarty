@@ -34,7 +34,7 @@ $smartyCaching = [
 		'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
 		'backend' => \Vierwd\VierwdSmarty\Cache\CacheBackend::class,
 		'options' => ['cacheType' => 'templates_c'],
-		'groups' => ['all', 'vierwd_smarty'],
+		'groups' => ['all', 'pages', 'vierwd_smarty'],
 	],
 ];
 $cacheManager->setCacheConfigurations($smartyCaching);
