@@ -1,6 +1,6 @@
 {extends file='Layouts/ContentWrap.tpl'}
 {block name=content}
-	{$bodytext = $cObj->parseFunc($data.bodytext, [], '< lib.parseFunc_RTE')}
+	{include 'Partials/Bodytext.tpl' bodytext=$data.bodytext assign=bodytext}
 
 	{if $data.CType == text || !count($files)}
 		{* only render the text *}
