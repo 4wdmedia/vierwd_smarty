@@ -13,7 +13,7 @@ function clean($str) {
 		$str = str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $str);
 
 		return $str;
-	} elseif($str === null) {
+	} else if ($str === null) {
 		return '';
 	} else {
 		throw new \Exception('$str needs to be scalar value');
@@ -36,6 +36,9 @@ function strip($template) {
 	return $template;
 }
 
+/**
+ * phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+ */
 class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 	public $Smarty;
@@ -201,6 +204,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			}
 		}
 
+		// phpcs:disable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
 		$this->Smarty->registerPlugin('function', 'translate',     [$this, 'smarty_translate']);
 		$this->Smarty->registerPlugin('function', 'uri_resource',  [$this, 'smarty_uri_resource']);
 		$this->Smarty->registerPlugin('function', 'uri_action',    [$this, 'smarty_uri_action']);
@@ -226,6 +230,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('function', 'pagebrowser', [$this, 'smarty_pagebrowser']);
 
 		$this->Smarty->registerPlugin('modifier', 'nl2p', [$this, 'smarty_nl2p']);
+		// phpcs:enable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
 
 		// Resource type
 		$this->Smarty->registerResource('EXT', new ExtResource);
@@ -556,8 +561,6 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 	}
 
 	public function smarty_typoscript($params, $content, $smarty, &$repeat) {
-		global $TSFE;
-
 		if (!isset($content)) {
 			return;
 		}
@@ -583,8 +586,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 
 		$tsparserObj = GeneralUtility::makeInstance(\TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser::class);
 
-		if (is_array($TSFE->tmpl->setup)) {
-			foreach ($TSFE->tmpl->setup as $tsObjectKey => $tsObjectValue) {
+		if (is_array($GLOBALS['TSFE']->tmpl->setup)) {
+			foreach ($GLOBALS['TSFE']->tmpl->setup as $tsObjectKey => $tsObjectValue) {
 				// do not copy int-keys
 				if ($tsObjectKey !== intval($tsObjectKey) && $tsObjectKey !== intval($tsObjectKey) . '.') {
 					$tsparserObj->setup[$tsObjectKey] = $tsObjectValue;
@@ -595,8 +598,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$tsparserObj->parse($content);
 
 		// save current typoscript setup and change to modified setup
-		$oldSetup = $TSFE->tmpl->setup;
-		$TSFE->tmpl->setup = $tsparserObj->setup;
+		$oldSetup = $GLOBALS['TSFE']->tmpl->setup;
+		$GLOBALS['TSFE']->tmpl->setup = $tsparserObj->setup;
 
 		$oldTplVars = $this->Smarty->tpl_vars;
 		$this->Smarty->tpl_vars = [];
@@ -606,7 +609,7 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->tpl_vars = $oldTplVars;
 
 		// reset typoscript
-		$TSFE->tmpl->setup = $oldSetup;
+		$GLOBALS['TSFE']->tmpl->setup = $oldSetup;
 
 		if ($params['assign']) {
 			$smarty->assign($params['assign'], $content);

@@ -42,7 +42,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface $request
 	 * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
 	 * @return void
-	 * @throws \Exception
+	 * @throws PropertyException if property mapping failed
 	 * @override \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 	 * @see http://nerdcenter.de/extbase-fehlerbehandlung/
 	 */
