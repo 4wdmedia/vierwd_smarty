@@ -773,6 +773,33 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 			}
 		}
 
+		// check if the view was modified AFTER the extension was installed
+		if (isset($_SERVER['4WD_CONFIG']) && strpos($view, 'vierwd_smarty/Resources/Private/Templates') !== false) {
+			$viewModifiedTime = filemtime($view);
+			$emConf = GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/ext_emconf.php');
+			$extensionInstallTime = filemtime($emConf);
+			if ($viewModifiedTime > $extensionInstallTime + 3600) {
+				$viewFileName = str_replace(PATH_site, '', $view);
+				while (ob_get_level() > 0) {
+					ob_end_clean();
+				}
+
+				if (!headers_sent()) {
+					header('Content-Type: text/html; charset=utf-8');
+					header('Content-Encoding: identity');
+					header_remove('Content-Length');
+				}
+
+				echo '<h1>Invalid Smarty Template change detected</h1>';
+				echo '<p>A view within the Smarty template directory was changed instead of creating an override template within the website extension.<br>';
+				echo 'View: <b>' . htmlspecialchars($viewFileName) . '</b><br>You cannot commit this file.</p>';
+				echo '<p>To fix this error create a template within the website extension.</p>';
+				echo '<p>To ignore this message, update the filemtime of the ext_emconf of the Smarty extension:</p>';
+				echo '<pre>touch ' . htmlspecialchars($view) . '</pre>';
+				exit;
+			}
+		}
+
 		return $this->Smarty->fetch($view);
 	}
 }
