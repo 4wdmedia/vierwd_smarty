@@ -13,10 +13,10 @@
 		{include 'Partials/Header.tpl'}
 
 		<div class="row">
-			<div class="col col-xs-12 col-md-6">
+			<div class="col col-12 col-xs-12 col-md-6">
 				{include 'Partials/Image.tpl'}
 			</div>
-			<div class="col col-xs-12 col-lg-6">
+			<div class="col col-12 col-xs-12 col-lg-6">
 				<div class="textmedia__text">
 					{$bodytext nofilter}
 				</div>
