@@ -4,3 +4,7 @@ Line
 
 
  multiple breaks
+
+
+	{* comment *}
+	Whitespace after comment
