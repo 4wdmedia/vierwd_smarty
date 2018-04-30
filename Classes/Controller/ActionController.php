@@ -3,6 +3,9 @@
 namespace Vierwd\VierwdSmarty\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+use TYPO3\CMS\Extbase\Service\TypoScriptService;
 
 class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
@@ -36,6 +39,34 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		}
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
+
+		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		if (!empty($configuration['dataProcessing'])) {
+			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
+				// reference to existing value
+				$key = trim(substr($configuration['dataProcessing'], 1));
+				$cF = GeneralUtility::makeInstance(TypoScriptParser::class);
+				list($name, $dataProcessing) = $cF->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
+			} else {
+				$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+				$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
+			}
+
+			$dataProcessing = ['dataProcessing.' => $dataProcessing];
+
+			$contentDataProcessor = GeneralUtility::makeInstance(ContentDataProcessor::class);
+
+			$variables = [];
+			$baseContentObject = $this->configurationManager->getContentObject();
+			$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
+
+			$this->view->assignMultiple($variables);
+		}
+
+		if (!empty($configuration['variables'])) {
+			$variables = $this->getContentObjectVariables($configuration);
+			$this->view->assignMultiple($variables);
+		}
 	}
 
 	/**
@@ -57,5 +88,36 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			}
 			throw $exception;
 		}
+	}
+
+	/**
+	 * Compile rendered content objects in variables array ready to assign to the view
+	 *
+	 * @param array $conf Configuration array
+	 * @return array the variables to be assigned
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getContentObjectVariables(array $conf) {
+		$contentObject = $this->configurationManager->getContentObject();
+		$variables = [];
+		$reservedVariables = ['data', 'current'];
+		// Accumulate the variables to be process and loop them through cObjGetSingle
+		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+		$variablesToProcess = $typoScriptService->convertPlainArrayToTypoScriptArray($conf['variables']);
+		foreach ($variablesToProcess as $variableName => $cObjType) {
+			if (is_array($cObjType)) {
+				continue;
+			}
+			if (!in_array($variableName, $reservedVariables)) {
+				$variables[$variableName] = $contentObject->cObjGetSingle($cObjType, $variablesToProcess[$variableName . '.']);
+			} else {
+				throw new \InvalidArgumentException(
+					'Cannot use reserved name "' . $variableName . '" as variable name in Smarty ContentObject.',
+					1463556016
+				);
+			}
+		}
+
+		return $variables;
 	}
 }
