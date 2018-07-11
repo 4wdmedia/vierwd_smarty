@@ -10,7 +10,6 @@ namespace Vierwd\VierwdSmarty\Cache;
 *
 ***************************************************************/
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface {
@@ -23,30 +22,17 @@ class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHook
 	 */
 	public function manipulateCacheActions(&$cacheActions, &$optionValues) {
 		if ($GLOBALS['BE_USER']->isAdmin()) {
-			if (TYPO3_version < '8.0.0') {
-				if (TYPO3_version < '7.4.0') {
-					$icon = \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-system-cache-clear-impact-high');
-				} else {
-					$iconFactory = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
-					$icon = $iconFactory->getIcon('actions-system-cache-clear-impact-medium', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
-				}
+			$uriBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
+			$link = $uriBuilder->buildUriFromRoute('tce_db', ['cacheCmd' => 'vierwd_smarty']);
 
-				$cacheActions[] = array(
-					'id' => 'vierwd_smarty',
-					'title' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache', true),
-					'description' => $GLOBALS['LANG']->sL('LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description', true),
-					'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
-					'icon' => $icon,
-				);
-			} else {
-				$cacheActions[] = array(
-					'id' => 'vierwd_smarty',
-					'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
-					'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description',
-					'href' => BackendUtility::getModuleUrl('tce_db', ['cacheCmd' => 'vierwd_smarty']),
-					'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
-				);
-			}
+			$cacheActions[] = [
+				'id' => 'vierwd_smarty',
+				'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
+				'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description',
+				'href' => $link,
+				'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
+			];
+
 			$optionValues[] = 'vierwd_smarty';
 		}
 	}
