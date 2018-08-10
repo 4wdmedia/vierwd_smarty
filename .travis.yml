@@ -10,6 +10,9 @@ matrix:
   exclude:
     # - php: 7.2
     #   env: TYPO3_VERSION="^7.6.0"
+  include:
+    - php: 7.2
+      env: SNIFF=1
 sudo: false
 
 addons:
@@ -26,12 +29,9 @@ before_install:
   - composer self-update
   - composer --version
 
-before_script:
-  - composer require "typo3/minimal"="$TYPO3_VERSION"
-  # Restore composer.json
-  - git checkout composer.json
-  - export TYPO3_PATH_WEB=$PWD/.Build/Web
-  - composer info | grep smarty/smarty
+install:
+  - if [[ "$TYPO3_VERSION" ]]; then composer require "typo3/minimal" "$TYPO3_VERSION"; git checkout .; export TYPO3_PATH_WEB=$PWD/.Build/Web; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
 
 script:
   - >
@@ -51,6 +51,8 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; .Build/bin/phpunit --colors  -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}'
+
+  - if [[ "$SNIFF" == "1" ]]; then .Build/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=.Build/vendor/vierwd/coding-standard/ForwardMedia Classes/; fi
 
 notifications:
   slack:
