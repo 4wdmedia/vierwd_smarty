@@ -5,11 +5,12 @@ namespace Vierwd\VierwdSmarty\Cache;
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2017 Robert Vock <robert.vock@4wdmedia.de>
+*  (c) 2018 Robert Vock <robert.vock@4wdmedia.de>
 *  All rights reserved
 *
 ***************************************************************/
 
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface {
@@ -22,17 +23,15 @@ class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHook
 	 */
 	public function manipulateCacheActions(&$cacheActions, &$optionValues) {
 		if ($GLOBALS['BE_USER']->isAdmin()) {
-			$uriBuilder = GeneralUtility::makeInstance(\TYPO3\CMS\Backend\Routing\UriBuilder::class);
-			$link = $uriBuilder->buildUriFromRoute('tce_db', ['cacheCmd' => 'vierwd_smarty']);
-
+			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+			$uri = $uriBuilder->buildUriFromRoute('tce_db', ['cacheCmd' => 'vierwd_smarty']);
 			$cacheActions[] = [
 				'id' => 'vierwd_smarty',
 				'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
 				'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description',
-				'href' => $link,
+				'href' => $uri,
 				'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
 			];
-
 			$optionValues[] = 'vierwd_smarty';
 		}
 	}
