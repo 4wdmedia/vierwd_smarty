@@ -30,7 +30,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		parent::initializeView($view);
 
 		if ($view instanceof \Vierwd\VierwdSmarty\View\SmartyView) {
-			$view->setContentObject($this->configurationManager->getContentObject());
+			$view->setContentObject($this->configurationManager->getContentObjectRenderer());
 		}
 
 		// set template root paths, if available
@@ -57,7 +57,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$contentDataProcessor = GeneralUtility::makeInstance(ContentDataProcessor::class);
 
 			$variables = [];
-			$baseContentObject = $this->configurationManager->getContentObject();
+			$baseContentObject = $this->configurationManager->getContentObjectRenderer();
 			$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
 
 			$this->view->assignMultiple($variables);
@@ -98,7 +98,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getContentObjectVariables(array $conf) {
-		$contentObject = $this->configurationManager->getContentObject();
+		$contentObject = $this->configurationManager->getContentObjectRenderer();
 		$variables = [];
 		$reservedVariables = ['data', 'current'];
 		// Accumulate the variables to be process and loop them through cObjGetSingle

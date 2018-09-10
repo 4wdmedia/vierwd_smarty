@@ -36,7 +36,7 @@ class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 			$smartyVariables = $view->Smarty->getTemplateVars();
 		}
 
-		$templateVariableContainer = $this->renderingContext->getTemplateVariableContainer();
+		$templateVariableContainer = $this->renderingContext->getVariableProvider();
 		$variables = $templateVariableContainer->getAll();
 		foreach ($variables as $key => &$value) {
 			if (!$view->hasTopLevelViewHelper || !isset($smartyVariables[$key])) {

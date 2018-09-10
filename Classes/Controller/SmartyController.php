@@ -10,7 +10,7 @@ use TYPO3\CMS\Extbase\Service\TypoScriptService;
 class SmartyController extends ActionController {
 
 	public function renderAction() {
-		$baseContentObject = $this->configurationManager->getContentObject();
+		$baseContentObject = $this->configurationManager->getContentObjectRenderer();
 
 		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
