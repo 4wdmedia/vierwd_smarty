@@ -137,7 +137,7 @@ class SmartyViewTest extends UnitTestCase {
 
 		$templateView->initializeView();
 
-		$this->assertEquals('LineBreaks and trailing spacesmultiple breaksWhitespace after comment', $templateView->render('Whitespace.tpl'));
+		$this->assertEquals('LineBreaks and trailing spacesmultiple breaksWhitespace after commentWhitespace after multiline comment', $templateView->render('Whitespace.tpl'));
 	}
 
 	/**
