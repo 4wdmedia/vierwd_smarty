@@ -2,17 +2,19 @@
 
 namespace Vierwd\VierwdSmarty\Controller;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Service\TypoScriptService;
+use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class SmartyController extends ActionController {
 
 	public function renderAction() {
 		$baseContentObject = $this->configurationManager->getContentObject();
 
-		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
 		if (is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
 			// Gridelements changed pi_flexform to array. Extbase only uses the xml-structure to fill the settings array.
@@ -33,7 +35,7 @@ class SmartyController extends ActionController {
 
 		if (isset($this->settings['typoscript'])) {
 			foreach ($this->settings['typoscript'] as $key => $extbaseArray) {
-				$contentObject = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+				$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 				$contentObject->start($baseContentObject->data);
 
 				if (is_array($extbaseArray)) {

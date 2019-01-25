@@ -2,12 +2,21 @@
 
 namespace Vierwd\VierwdSmarty\Controller;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
-use TYPO3\CMS\Extbase\Service\TypoScriptService;
+use InvalidArgumentException;
 
-class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
+use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\Service\TypoScriptService;
+use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+
+use Vierwd\VierwdSmarty\View\SmartyView;
+
+class ActionController extends ExtbaseActionController {
 
 	/**
 	 * @var string
@@ -26,10 +35,10 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
-	protected function initializeView(\TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view) {
+	protected function initializeView(ViewInterface $view) {
 		parent::initializeView($view);
 
-		if ($view instanceof \Vierwd\VierwdSmarty\View\SmartyView) {
+		if ($view instanceof SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
 		}
 
@@ -40,7 +49,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
 
-		$configuration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		if (!empty($configuration['dataProcessing'])) {
 			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
 				// reference to existing value
@@ -77,7 +86,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * @override \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 	 * @see http://nerdcenter.de/extbase-fehlerbehandlung/
 	 */
-	public function processRequest(\TYPO3\CMS\Extbase\Mvc\RequestInterface $request, \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response) {
+	public function processRequest(RequestInterface $request, ResponseInterface $response) {
 		try {
 			parent::processRequest($request, $response);
 		} catch(PropertyException $exception) {
@@ -95,7 +104,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 *
 	 * @param array $conf Configuration array
 	 * @return array the variables to be assigned
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	protected function getContentObjectVariables(array $conf) {
 		$contentObject = $this->configurationManager->getContentObject();
@@ -111,7 +120,7 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			if (!in_array($variableName, $reservedVariables)) {
 				$variables[$variableName] = $contentObject->cObjGetSingle($cObjType, $variablesToProcess[$variableName . '.']);
 			} else {
-				throw new \InvalidArgumentException(
+				throw new InvalidArgumentException(
 					'Cannot use reserved name "' . $variableName . '" as variable name in Smarty ContentObject.',
 					1463556016
 				);

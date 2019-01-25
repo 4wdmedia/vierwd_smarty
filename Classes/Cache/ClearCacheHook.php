@@ -11,9 +11,11 @@ namespace Vierwd\VierwdSmarty\Cache;
 ***************************************************************/
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface {
+class ClearCacheHook implements ClearCacheActionsHookInterface {
 
 	/**
 	 * Adds the option to clear the Smarty Template cache in the backend clear cache menu.
@@ -38,7 +40,7 @@ class ClearCacheHook implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHook
 
 	public function clear(array $params) {
 		if ($params['cacheCmd'] === 'vierwd_smarty') {
-			$cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
+			$cacheManager = GeneralUtility::makeInstance(CacheManager::class);
 			$cacheManager->flushCachesInGroup('vierwd_smarty');
 		}
 	}

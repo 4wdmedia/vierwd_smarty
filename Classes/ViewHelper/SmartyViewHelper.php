@@ -2,9 +2,11 @@
 
 namespace Vierwd\VierwdSmarty\ViewHelper;
 
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+
 use Vierwd\VierwdSmarty\View\SmartyView;
 
-class SmartyViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class SmartyViewHelper extends AbstractViewHelper {
 	/**
 	 * @var Vierwd\VierwdSmarty\View\SmartyView
 	 */

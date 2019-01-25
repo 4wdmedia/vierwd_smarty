@@ -2,9 +2,10 @@
 
 namespace Vierwd\VierwdSmarty\Cache;
 
+use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class CacheBackend extends \TYPO3\CMS\Core\Cache\Backend\NullBackend {
+class CacheBackend extends NullBackend {
 
 	/**
 	 * @var string

@@ -6,8 +6,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
 
-class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject {
+use Vierwd\VierwdSmarty\View\SmartyView;
+
+class SmartyMenuContentObject extends TextMenuContentObject {
 
 	public function writeMenu() {
 		if (empty($this->menuArr)) {
@@ -35,7 +38,7 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 		$configuration = $objectManager->get(ConfigurationManagerInterface::class);
 		$settings = $configuration->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $request->getControllerExtensionName());
 
-		$view = $objectManager->get(\Vierwd\VierwdSmarty\View\SmartyView::class);
+		$view = $objectManager->get(SmartyView::class);
 		$view->setControllerContext($controllerContext);
 		// set template root paths, if available
 		if (isset($settings['templateRootPaths'])) {
@@ -68,14 +71,4 @@ class SmartyMenuContentObject extends \TYPO3\CMS\Frontend\ContentObject\Menu\Tex
 
 		return parent::subMenu($uid, $objSuffix);
 	}
-
-	/**
-	 * This method is missing in TYPO3 6.2
-	 *
-	 * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
-	 */
-	protected function getTypoScriptFrontendController() {
-		return $GLOBALS['TSFE'];
-	}
 }
-
