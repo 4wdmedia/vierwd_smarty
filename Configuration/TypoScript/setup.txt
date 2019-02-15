@@ -1,5 +1,7 @@
 <INCLUDE_TYPOSCRIPT: source="FILE:./v8/setup.txt">
 
+[compatVersion = 8.7.0]
+[else]
 # Override and use Smarty to render those elements
 tt_content {
 	menu_abstract >
@@ -45,3 +47,4 @@ tt_content {
 		}
 	}
 }
+[global]
