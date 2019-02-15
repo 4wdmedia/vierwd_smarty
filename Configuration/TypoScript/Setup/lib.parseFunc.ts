@@ -28,11 +28,7 @@ lib.parseFunc {
 			typolink {
 				parameter.data = parameters:href
 				title.data = parameters:title
-				# ATagParams.data = parameters:allParams
-				# Currently ATagParams is broken
-				# https://forge.typo3.org/issues/80373
-				ATagParams.data = parameters:class
-				ATagParams.wrap = class="|"
+				ATagParams.data = parameters:allParams
 				ATagParams.required = 1
 
 				target.data = parameters:target
