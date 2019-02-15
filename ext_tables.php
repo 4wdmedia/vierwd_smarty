@@ -7,10 +7,4 @@ defined('TYPO3_MODE') || die('Access denied.');
 	'Smarty Rendering'
 );
 
-if (TYPO3_version < '8.0.0') {
-	// old TypoScript-Setup
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Smarty Content Elements');
-} else {
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/v8', 'Smarty Content Elements');
-}
-
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Smarty Content Elements');

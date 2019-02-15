@@ -44,3 +44,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clea
 
 // Setup Plugins directoy
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'][] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY, 'Resources/Private/Smarty');
+
+// Update location of TypoScript Template
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][\Vierwd\VierwdSmarty\Install\Updates\MigrateFscStaticTemplateUpdate::class] = \Vierwd\VierwdSmarty\Install\Updates\MigrateFscStaticTemplateUpdate::class;
