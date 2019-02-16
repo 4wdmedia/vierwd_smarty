@@ -68,13 +68,6 @@ class SmartyView extends AbstractView {
 	public $hasTopLevelViewHelper = false;
 
 	/**
-	 * captured sections
-	 *
-	 * @var array
-	 */
-	static public $sections = [];
-
-	/**
 	 * Pattern to be resolved for "@templateRoot" in the other patterns.
 	 *
 	 * @var string
@@ -236,7 +229,6 @@ class SmartyView extends AbstractView {
 		$this->Smarty->registerPlugin('function', 'svg',           [$this, 'smarty_svg']);
 
 		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
-		$this->Smarty->registerPlugin('block', 'fsection',    [$this, 'smarty_fsection']);
 
 		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
@@ -564,22 +556,6 @@ class SmartyView extends AbstractView {
 		}
 
 		return $fluidView->render();
-	}
-
-	public function smarty_fsection($params, $content, $smarty, &$repeat) {
-		if (!isset($params['name'])) {
-			trigger_error('missing name for fsection');
-			return '';
-		}
-
-		if (!isset($content)) {
-			return '';
-		}
-
-		$name = $params['name'];
-		self::$sections[$name] = $content;
-
-		return '';
 	}
 
 	public function smarty_typoscript($params, $content, $smarty, &$repeat) {
