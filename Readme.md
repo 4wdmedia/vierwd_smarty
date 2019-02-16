@@ -2,11 +2,9 @@
 
 > Use [Smarty](http://www.smarty.net/) in your templates and extbase extensions.
 
-## Getting Started
+## Installation
 
-This extension requires TYPO3 ≥7.6.
-
-The Smarty class needs to be autoloadable. An easy way is to use [Composer](https://getcomposer.org/):
+Install using [composer](https://getcomposer.org/):
 ```
 composer require 'vierwd/typo3-smarty'
 ```
@@ -23,18 +21,11 @@ namespace Example\ExampleBlog\Controller;
 
 class BlogController extends \Vierwd\VierwdSmarty\Controller\ActionController {
 	/**
-	 * postRepository
-	 *
 	 * @var \Example\ExampleBlog\Domain\Repository\PostRepository
-	 * @inject
+	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
 	protected $postRepository;
 
-	/**
-	 * action list
-	 *
-	 * @return void
-	 */
 	public function listAction() {
 		$posts = $this->postRepository->findAll();
 		$this->view->assign('posts', $posts);
@@ -49,7 +40,7 @@ class BlogController extends \Vierwd\VierwdSmarty\Controller\ActionController {
 	<div class="post">
 		<h1>{$post->getTitle()}</h1>
 
-		{$post->getContent()|nl2p}
+		{$post->getContent()|escape|nl2p nofilter}
 	</div>
 {/foreach}
 ```
@@ -71,6 +62,7 @@ request | The current request (instance of `TYPO3\CMS\Extbase\MvcRequest`)
 formPrefix | Prefix form fields need as name to automatically map form fields to arguments
 settings | Flexform settings for the plugin
 frameworkSettings | TypoScript settings for `plugin.tx_exampleblog`
+typolinkService | An instance of `TYPO3\CMS\Frontend\Service\TypoLinkCodecService`
 TSFE | `$TSFE` (instance of `TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController`)
 
 ### Pre-defined smarty functions, blocks and modifiers
@@ -82,12 +74,14 @@ TSFE | `$TSFE` (instance of `TYPO3\CMS\Frontend\Controller\TypoScriptFrontendCon
 - flashMessages
 - nl2p
 - email
+- typolink
 - typoscript
 - fluid
+- svg
 
 ### Power-Blocks: typoscript and fluid
 
-What's realy good about this extension is, that you can still use typoscript and fluid within your Smarty templates. That way you can make sure, that an element gets exactly the same HTML output as a normal content element like Text-with-images. If you write a form, it's also good to fallback to Fluid for some ViewHelpers.
+What's realy good about this extension is, that you can still use typoscript and fluid within your Smarty templates. That way you can ensure, that an element gets exactly the same HTML output as a normal content element like Text-with-images. If you write a form, it's also good to fallback to Fluid for some ViewHelpers.
 
 #### Typoscript
 ```smarty
