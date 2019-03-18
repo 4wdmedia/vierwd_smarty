@@ -6,6 +6,7 @@ use Exception;
 use Throwable;
 use Smarty;
 
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -256,7 +257,7 @@ class SmartyView extends AbstractView {
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 
 		// setup compile and caching dirs
-		$extCacheDir = GeneralUtility::getFileAbsFileName('typo3temp/Cache/vierwd_smarty/');
+		$extCacheDir = Environment::getVarPath() . '/cache/vierwd_smarty';
 		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
 		$this->Smarty->cache_dir   = $extCacheDir . '/cache/' . $extensionKey . '/';
 
