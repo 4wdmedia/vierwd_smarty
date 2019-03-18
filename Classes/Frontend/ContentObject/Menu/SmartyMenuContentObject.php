@@ -55,6 +55,36 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		return $view->render($template);
 	}
 
+	/**
+	 * check the state of a menu-item.
+	 * This method is used as a wrapper around isItemState which does not use the $key for menuArr, but the $item itself.
+	 * It's also public because it's used within the templates and the item-state methods are protected since TYPO3 v9.
+	 *
+	 * @param string $kind ACT, IFSUB, CUR etc
+	 */
+	public function checkItemState(string $kind, array $item): bool {
+		if ($item['ITEM_STATE'] ?? false) {
+			if ((string)$item['ITEM_STATE'] === (string)$kind) {
+				return true;
+			}
+		}
+
+		foreach ($this->menuArr as $key => $menuItem) {
+			if ($menuItem === $item) {
+				return $this->isItemState($kind, $key);
+			}
+		}
+
+		// item not found. return first item matching the uid
+		foreach ($this->menuArr as $key => $menuItem) {
+			if ($menuItem['uid'] === $item['uid']) {
+				return $this->isItemState($kind, $key);
+			}
+		}
+
+		return false;
+	}
+
 	public function subMenu($uid, $objSuffix = '', $key = false) {
 		$tsfe = $this->getTypoScriptFrontendController();
 		$tsfe->register['parentMenu'] = $this;
