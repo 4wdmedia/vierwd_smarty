@@ -15,6 +15,7 @@ use TYPO3\CMS\Extbase\Mvc\View\AbstractView;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatcher;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
@@ -582,7 +583,8 @@ class SmartyView extends AbstractView {
 
 		// $cObj->setCurrentVal($dataValues[$key][$valueKey]);
 
-		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class);
+		$conditionMatcher = GeneralUtility::makeInstance(ConditionMatcher::class);
+		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class, $conditionMatcher);
 
 		if (is_array($GLOBALS['TSFE']->tmpl->setup)) {
 			foreach ($GLOBALS['TSFE']->tmpl->setup as $tsObjectKey => $tsObjectValue) {
