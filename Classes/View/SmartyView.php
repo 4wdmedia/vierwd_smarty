@@ -6,6 +6,7 @@ use Exception;
 use Throwable;
 use Smarty;
 
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -691,6 +692,9 @@ class SmartyView extends AbstractView {
 			$extPath = '';
 		}
 
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+		$siteLanguage = $request ? $request->getAttribute('language') : null;
+
 		$templateVars = [
 			'cObj' => $this->contentObject,
 			'data' => $this->contentObject->data,
@@ -699,8 +703,11 @@ class SmartyView extends AbstractView {
 			'pluginName' => $pluginName,
 			'controllerName' => $this->controllerContext->getRequest()->getControllerName(),
 			'actionName' => $this->controllerContext->getRequest()->getControllerActionName(),
-			'context' => $this->controllerContext,
+			'controllerContext' => $this->controllerContext,
 			'request' => $this->controllerContext->getRequest(),
+			'context' => GeneralUtility::makeInstance(Context::class),
+			'siteLanguage' => $siteLanguage,
+			'typo3Request' => $request,
 			'typolinkService' => GeneralUtility::makeInstance(TypoLinkCodecService::class),
 			//'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],

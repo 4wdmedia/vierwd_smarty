@@ -6,7 +6,7 @@
 {$bodytext = $cObj->parseFunc($bodytext, [], '< lib.parseFunc_RTE')}
 
 {$readMore = 'Read more'}
-{if $TSFE->lang == 'de'}
+{if $siteLanguage && $siteLanguage->getTwoLetterIsoCode()}
 	{$readMore = 'Weiterlesen'}
 {/if}
 {$replacement = "<div class=\"textmedia__more textmedia__more--hidden\">$3</div><p class=\"textmedia__more-link\"><a class=\"button\" href=\"#\">{$readMore}</a></p>"}
