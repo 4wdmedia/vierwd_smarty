@@ -5,6 +5,8 @@ namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
 
@@ -27,11 +29,11 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 
 		$controllerContext = $objectManager->get(ControllerContext::class);
 
-		$request = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Request::class);
-		$request->setControllerExtensionName($this->mconf['extensionName'] ? $this->mconf['extensionName'] : 'vierwd_smarty');
+		$request = $objectManager->get(Request::class);
+		$request->setControllerExtensionName($this->mconf['extensionName'] ?: 'vierwd_smarty');
 		$controllerContext->setRequest($request);
 
-		$uriBuilder = $objectManager->get(\TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder::class);
+		$uriBuilder = $objectManager->get(UriBuilder::class);
 		$uriBuilder->setRequest($request);
 		$controllerContext->setUriBuilder($uriBuilder);
 

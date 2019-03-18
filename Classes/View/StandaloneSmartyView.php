@@ -8,15 +8,12 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class StandaloneSmartyView extends SmartyView {
 
 	/**
 	 * @param ContentObjectRenderer $contentObject The current cObject. If NULL a new instance will be created
-	 * @throws \InvalidArgumentException
-	 * @throws \UnexpectedValueException
 	 */
 	public function __construct(ContentObjectRenderer $contentObject = null) {
 		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);

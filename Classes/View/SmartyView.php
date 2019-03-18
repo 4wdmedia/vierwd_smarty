@@ -3,6 +3,7 @@
 namespace Vierwd\VierwdSmarty\View;
 
 use Exception;
+use Throwable;
 use Smarty;
 
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
@@ -120,7 +121,7 @@ class SmartyView extends AbstractView {
 		if ($this->templateRootPaths !== null) {
 			return $this->templateRootPaths;
 		}
-		/** @var $actionRequest \TYPO3\CMS\Extbase\Mvc\Request */
+		/** @var \TYPO3\CMS\Extbase\Mvc\Request $actionRequest */
 		$actionRequest = $this->controllerContext->getRequest();
 		return [str_replace(['@packageResourcesPath', '//'], [ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', '/'], $this->templateRootPathPattern)];
 	}
@@ -169,7 +170,7 @@ class SmartyView extends AbstractView {
 		try {
 			$this->getViewFileName($controllerContext);
 			return true;
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 	}
@@ -202,12 +203,7 @@ class SmartyView extends AbstractView {
 			return;
 		}
 
-		if (!class_exists('Smarty', true) && file_exists($smartyClassFile = GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Resources/Private/Smarty/libs/Smarty.class.php'))) {
-			// Smarty was not autoloadable, might occur when installed via TER
-			require_once $smartyClassFile;
-		}
-
-		$this->Smarty = new Smarty;
+		$this->Smarty = new Smarty();
 
 		if ($GLOBALS['TSFE'] && !$GLOBALS['TSFE']->headerNoCache()) {
 			$this->Smarty->setCacheLifetime(120);
@@ -248,7 +244,7 @@ class SmartyView extends AbstractView {
 		// phpcs:enable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
 
 		// Resource type
-		$this->Smarty->registerResource('EXT', new ExtResource);
+		$this->Smarty->registerResource('EXT', new ExtResource());
 	}
 
 	public function initializeView() {
@@ -419,15 +415,15 @@ class SmartyView extends AbstractView {
 	}
 
 	/**
-	 * @param integer $page target PID
+	 * @param int $page target PID
 	 * @param array $additionalParams query parameters to be attached to the resulting URI
-	 * @param integer $pageType type of the target page. See typolink.parameter
-	 * @param boolean $noCache set this to disable caching for the target page. You should not need this.
-	 * @param boolean $noCacheHash set this to supress the cHash query parameter created by TypoLink. You should not need this.
+	 * @param int $pageType type of the target page. See typolink.parameter
+	 * @param bool $noCache set this to disable caching for the target page. You should not need this.
+	 * @param bool $noCacheHash set this to supress the cHash query parameter created by TypoLink. You should not need this.
 	 * @param string $section the anchor to be added to the URI
-	 * @param boolean $linkAccessRestrictedPages If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed.
-	 * @param boolean $absolute If set, the URI of the rendered link is absolute
-	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+	 * @param bool $linkAccessRestrictedPages If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed.
+	 * @param bool $absolute If set, the URI of the rendered link is absolute
+	 * @param bool $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
 	 * @return string Rendered page URI
 	 */

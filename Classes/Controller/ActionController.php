@@ -55,7 +55,7 @@ class ActionController extends ExtbaseActionController {
 				// reference to existing value
 				$key = trim(substr($configuration['dataProcessing'], 1));
 				$cF = GeneralUtility::makeInstance(TypoScriptParser::class);
-				list($name, $dataProcessing) = $cF->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
+				[, $dataProcessing] = $cF->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
 			} else {
 				$typoScriptService = $this->objectManager->get(TypoScriptService::class);
 				$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
@@ -82,7 +82,6 @@ class ActionController extends ExtbaseActionController {
 	 * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface $request
 	 * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
 	 * @return void
-	 * @throws PropertyException if property mapping failed
 	 * @override \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 	 * @see http://nerdcenter.de/extbase-fehlerbehandlung/
 	 */
@@ -104,7 +103,6 @@ class ActionController extends ExtbaseActionController {
 	 *
 	 * @param array $conf Configuration array
 	 * @return array the variables to be assigned
-	 * @throws InvalidArgumentException
 	 */
 	protected function getContentObjectVariables(array $conf) {
 		$contentObject = $this->configurationManager->getContentObject();
