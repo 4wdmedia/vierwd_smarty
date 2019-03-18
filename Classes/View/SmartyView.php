@@ -583,8 +583,7 @@ class SmartyView extends AbstractView {
 
 		// $cObj->setCurrentVal($dataValues[$key][$valueKey]);
 
-		$conditionMatcher = GeneralUtility::makeInstance(ConditionMatcher::class);
-		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class, $conditionMatcher);
+		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class);
 
 		if (is_array($GLOBALS['TSFE']->tmpl->setup)) {
 			foreach ($GLOBALS['TSFE']->tmpl->setup as $tsObjectKey => $tsObjectValue) {
@@ -595,7 +594,8 @@ class SmartyView extends AbstractView {
 			}
 		}
 
-		$tsparserObj->parse($content);
+		$conditionMatcher = GeneralUtility::makeInstance(ConditionMatcher::class);
+		$tsparserObj->parse($content, $conditionMatcher);
 
 		// save current typoscript setup and change to modified setup
 		$oldSetup = $GLOBALS['TSFE']->tmpl->setup;
