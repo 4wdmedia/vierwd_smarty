@@ -23,7 +23,7 @@ class MigrateFscStaticTemplateUpdate extends AbstractUpdate {
 	 * @return bool Whether an update is needed (TRUE) or not (FALSE)
 	 */
 	public function checkForUpdate(&$description) {
-		if ($this->isWizardDone()) {
+		if ($this->isWizardDone() || !class_exists(ConnectionPool::class)) {
 			return false;
 		}
 
