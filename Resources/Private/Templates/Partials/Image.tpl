@@ -26,12 +26,10 @@
 			{$imageMD = $image->getOriginalFile()->process($taskType, ['crop' => $crop, 'maxWidth' => 992])}
 			{$imageSM = $image->getOriginalFile()->process($taskType, ['crop' => $crop, 'maxWidth' => 768])}
 			{$imageXS = $image->getOriginalFile()->process($taskType, ['crop' => $crop, 'maxWidth' => 400])}
-			<!--[if IE 9]><video style="display: none;"><![endif]-->
-			<source srcset="{$imageLG->getPublicUrl()}" media="(min-width: 1200px)">
-			<source srcset="{$imageMD->getPublicUrl()}" media="(min-width: 992px)">
-			<source srcset="{$imageSM->getPublicUrl()}" media="(min-width: 592px)">
-			<source srcset="{$imageXS->getPublicUrl()}">
-			<!--[if IE 9]></video><![endif]-->
+			<source srcset="{$imageLG->getPublicUrl()} {$imageLG->getProperty('width')}w" media="(min-width: 1200px)">
+			<source srcset="{$imageMD->getPublicUrl()} {$imageMD->getProperty('width')}w" media="(min-width: 992px)">
+			<source srcset="{$imageSM->getPublicUrl()} {$imageSM->getProperty('width')}w" media="(min-width: 592px)">
+			<source srcset="{$imageXS->getPublicUrl()} {$imageXS->getProperty('width')}w">
 			<img src="{$imageMD->getPublicUrl()}" class="textmedia__image" alt="{$image->getAlternative()}"{if $image->getTitle()} title="{$image->getTitle()}"{/if}>
 		</picture>
 
