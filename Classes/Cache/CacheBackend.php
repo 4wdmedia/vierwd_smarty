@@ -3,6 +3,7 @@
 namespace Vierwd\VierwdSmarty\Cache;
 
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CacheBackend extends NullBackend {
@@ -18,7 +19,7 @@ class CacheBackend extends NullBackend {
 
 	public function flush() {
 		// just remove all files
-		$directory = PATH_site . 'typo3temp/Cache/vierwd_smarty/' . $this->cacheType . '/';
+		$directory = Environment::getVarPath() . '/cache/vierwd_smarty/' . $this->cacheType . '/';
 		GeneralUtility::flushDirectory($directory, true);
 	}
 }
