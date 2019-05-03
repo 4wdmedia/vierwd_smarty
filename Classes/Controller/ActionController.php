@@ -40,11 +40,11 @@ class ActionController extends ExtbaseActionController {
 
 		if ($view instanceof SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
-		}
 
-		// set template root paths, if available
-		if (isset($this->settings['templateRootPaths'])) {
-			$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			// set template root paths, if available
+			if (isset($this->settings['templateRootPaths'])) {
+				$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			}
 		}
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
