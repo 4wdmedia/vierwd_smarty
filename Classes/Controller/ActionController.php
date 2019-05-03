@@ -31,11 +31,11 @@ class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		if ($view instanceof \Vierwd\VierwdSmarty\View\SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
-		}
 
-		// set template root paths, if available
-		if (isset($this->settings['templateRootPaths'])) {
-			$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			// set template root paths, if available
+			if (isset($this->settings['templateRootPaths'])) {
+				$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			}
 		}
 
 		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
