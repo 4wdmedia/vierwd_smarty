@@ -41,7 +41,6 @@
 		}
 	},
 	"replace": {
-		"vierwd_smarty": "self.version",
 		"vierwd/vierwd_smarty": "self.version"
 	},
 	"config": {
@@ -72,6 +71,7 @@
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
+			"extension-key": "vierwd_smarty",
 			"web-dir": ".Build/Web"
 		}
 	}
