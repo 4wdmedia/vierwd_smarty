@@ -20,28 +20,6 @@ function clean($str) {
 	}
 }
 
-function strip($template) {
-	static $replacements = [
-		'{typoscript' => '{/strip}{typoscript',
-		'{/typoscript}' => '{/typoscript}{strip}',
-		'{pre}' => '{/strip}',
-		'{/pre}' => '{strip}',
-	];
-
-	// Smarty v3.1.32 changed handling of strip and comments.
-	// Whitespace after comments is not stripped.
-	// @see https://github.com/smarty-php/smarty/issues/436
-	// We do not want this behaviour. That's why we strip all comments
-	$template = preg_replace('-\{\*.*?\*\}-s', '', $template);
-
-	$search = array_keys($replacements);
-	$replace = array_values($replacements);
-
-	$template = str_replace($search, $replace, $template);
-	$template = '{strip}' . $template . '{/strip}';
-	return $template;
-}
-
 /**
  * phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
  */
@@ -222,7 +200,8 @@ class SmartyView extends \TYPO3\CMS\Extbase\Mvc\View\AbstractView {
 		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
 		$this->Smarty->registerPlugin('block', 'fsection',    [$this, 'smarty_fsection']);
 
-		$this->Smarty->registerFilter('pre', 'Vierwd\\VierwdSmarty\\View\\strip');
+		$templateProcessor = new TemplatePreprocessor();
+		$this->Smarty->registerFilter('pre', $templateProcessor);
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
 		// fluid
