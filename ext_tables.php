@@ -2,9 +2,9 @@
 defined('TYPO3_MODE') || die('Access denied.');
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-	$_EXTKEY,
+	'vierwd_smarty',
 	'smarty_render',
 	'Smarty Rendering'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Smarty Content Elements');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('vierwd_smarty', 'Configuration/TypoScript', 'Smarty Content Elements');
