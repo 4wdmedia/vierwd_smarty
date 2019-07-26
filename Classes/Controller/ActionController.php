@@ -5,13 +5,13 @@ namespace Vierwd\VierwdSmarty\Controller;
 use InvalidArgumentException;
 
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
-use TYPO3\CMS\Extbase\Service\TypoScriptService;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -26,7 +26,7 @@ class ActionController extends ExtbaseActionController {
 	/**
 	 * this is needed to use the smarty view
 	 */
-	protected $namespacesViewObjectNamePattern = 'Vierwd\\VierwdSmarty\\View\\SmartyView';
+	protected $defaultViewObjectName = 'Vierwd\\VierwdSmarty\\View\\SmartyView';
 
 	/**
 	 * initialize the view.

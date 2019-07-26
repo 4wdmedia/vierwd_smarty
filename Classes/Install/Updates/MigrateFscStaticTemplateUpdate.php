@@ -4,17 +4,44 @@ namespace Vierwd\VierwdSmarty\Install\Updates;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Install\Updates\AbstractUpdate;
+use TYPO3\CMS\Install\Service\UpgradeWizardsService;
+use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
+use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;
 
 /**
  * Migrate "vierwd_smarty" static template location. "Old" location was "Configuration/TypoScript/v8". New location is default "Configuration/TypoScript"
  */
-class MigrateFscStaticTemplateUpdate extends AbstractUpdate {
+class MigrateFscStaticTemplateUpdate implements UpgradeWizardInterface {
 
-	/**
-	 * @var string
-	 */
-	protected $title = 'Migrate "vierwd_smarty" static template location';
+	public function getIdentifier(): string {
+		return self::class;
+	}
+
+	public function getTitle(): string {
+		return 'Migrate "vierwd_smarty" static template location';
+	}
+
+	public function getDescription(): string {
+		return 'Migrate "vierwd_smarty" static template location. "Old" location was "Configuration/TypoScript/v8". New location is default "Configuration/TypoScript"';
+	}
+
+	public function executeUpdate(): bool {
+		$queries = [];
+		$message = '';
+		$this->performUpdate($queries, $message);
+	}
+
+	public function updateNecessary(): bool {
+		$description = '';
+		return $this->checkForUpdate($description);
+	}
+
+	public function getPrerequisites(): array {
+		return [
+			DatabaseUpdatedPrerequisite::class,
+		];
+	}
+
 
 	/**
 	 * Checks if an update is needed
@@ -23,7 +50,8 @@ class MigrateFscStaticTemplateUpdate extends AbstractUpdate {
 	 * @return bool Whether an update is needed (TRUE) or not (FALSE)
 	 */
 	public function checkForUpdate(&$description) {
-		if ($this->isWizardDone()) {
+		$isDone = (new UpgradeWizardsService())->isWizardDone($this->getIdentifier());
+		if ($isDone) {
 			return false;
 		}
 
@@ -104,7 +132,7 @@ class MigrateFscStaticTemplateUpdate extends AbstractUpdate {
 			$databaseQueries[] = $queryBuilder->getSQL();
 			$queryBuilder->execute();
 		}
-		$this->markWizardAsDone();
+		(new UpgradeWizardsService())->markWizardAsDone($this->getIdentifier());
 		return true;
 	}
 }

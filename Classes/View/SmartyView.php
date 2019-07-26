@@ -754,7 +754,7 @@ class SmartyView extends AbstractView {
 			$emConf = GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/ext_emconf.php');
 			$extensionInstallTime = filemtime($emConf);
 			if ($viewModifiedTime > $extensionInstallTime + 3600) {
-				$viewFileName = str_replace(PATH_site, '', $view);
+				$viewFileName = str_replace(Environment::getProjectPath(), '', $view);
 				while (ob_get_level() > 0) {
 					ob_end_clean();
 				}
