@@ -319,13 +319,14 @@ class SmartyView extends AbstractView {
 		];
 		extract($params);
 
-		$uriBuilder = $this->controllerContext->getUriBuilder();
+		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		if (version_compare(TYPO3_version, '10.0.0', '<')) {
+			$uriBuilder->setUseCacheHash(!$noCacheHash);
+		}
 		$uri = $uriBuilder
-			->reset()
 			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
-			->setUseCacheHash(!$noCacheHash)
 			->setSection($section)
 			->setFormat($format)
 			->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
@@ -371,13 +372,14 @@ class SmartyView extends AbstractView {
 			$params = $params + $defaultUrlParams;
 			extract($params);
 
-			$uriBuilder = $this->controllerContext->getUriBuilder();
+			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+			if (version_compare(TYPO3_version, '10.0.0', '<')) {
+				$uriBuilder->setUseCacheHash(!$noCacheHash);
+			}
 			$uri = $uriBuilder
-				->reset()
 				->setTargetPageUid($pageUid)
 				->setTargetPageType($pageType)
 				->setNoCache($noCache)
-				->setUseCacheHash(!$noCacheHash)
 				->setSection($section)
 				->setFormat($format)
 				->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
@@ -420,12 +422,14 @@ class SmartyView extends AbstractView {
 		$addQueryString = $this->getParam($params, 'addQueryString');
 		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
-		$uriBuilder = $this->controllerContext->getUriBuilder();
+		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		if (version_compare(TYPO3_version, '10.0.0', '<')) {
+			$uriBuilder->setUseCacheHash(!$noCacheHash);
+		}
 		$uri = $uriBuilder
 			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
-			->setUseCacheHash(!$noCacheHash)
 			->setSection($section)
 			->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
 			->setArguments($additionalParams)
