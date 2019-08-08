@@ -1,19 +1,18 @@
 <?php
-declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\View;
 
 class TemplatePreprocessor {
 
-	public function __invoke(string $template): string {
+	public function __invoke($template) {
 		$template = $this->replaceCacheBlocks($template);
 		$template = $this->stripWhitespace($template);
 
 		return $template;
 	}
 
-	protected function replaceCacheBlocks(string $template): string {
-		$template = preg_replace_callback('/{cacheCode cache_id=(?<cacheId>[^}]+)}(?<templateCode>.*?){\/cacheCode}/s', function(array $matches): string {
+	protected function replaceCacheBlocks($template) {
+		$template = preg_replace_callback('/{cacheCode cache_id=(?<cacheId>[^}]+)}(?<templateCode>.*?){\/cacheCode}/s', function(array $matches) {
 			$cacheId = $matches['cacheId'];
 			$templateCode = $matches['templateCode'];
 
@@ -26,7 +25,7 @@ class TemplatePreprocessor {
 		return $template;
 	}
 
-	protected function stripWhitespace(string $template): string {
+	protected function stripWhitespace($template) {
 		$replacements = [
 			'{typoscript' => '{/strip}{typoscript',
 			'{/typoscript}' => '{/typoscript}{strip}',
