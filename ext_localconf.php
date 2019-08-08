@@ -26,13 +26,13 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['vierwd_sma
 	'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
 	'backend' => \Vierwd\VierwdSmarty\Cache\CacheBackend::class,
 	'options' => ['cacheType' => 'cache'],
-	'groups' => ['all', 'pages', 'vierwd_smarty'],
+	'groups' => ['all', 'vierwd_smarty'],
 ];
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['vierwd_smarty_compile'] = [
 	'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
 	'backend' => \Vierwd\VierwdSmarty\Cache\CacheBackend::class,
 	'options' => ['cacheType' => 'templates_c'],
-	'groups' => ['all', 'pages', 'vierwd_smarty'],
+	'groups' => ['all', 'vierwd_smarty'],
 ];
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc'][] = 'Vierwd\\VierwdSmarty\\Cache\\ClearCacheHook->clear';
