@@ -1,4 +1,4 @@
-{$taskType = constant('TYPO3\\CMS\\Core\\Resource\\ProcessedFile::CONTEXT_IMAGECROPSCALEMASK')}
+{$taskType = \TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGECROPSCALEMASK}
 
 {foreach $files as $image}
 	{$link = $image->getLink()}

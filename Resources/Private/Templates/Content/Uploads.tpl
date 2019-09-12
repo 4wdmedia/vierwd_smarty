@@ -1,7 +1,7 @@
 {extends file='Layouts/HeaderContentFooter.tpl'}
 {block name=content}
 	{if $files}
-		{$taskType = constant('TYPO3\\CMS\\Core\\Resource\\ProcessedFile::CONTEXT_IMAGECROPSCALEMASK')}
+		{$taskType = \TYPO3\CMS\Core\Resource\ProcessedFile::CONTEXT_IMAGECROPSCALEMASK}
 		<ul class="ce-uploads">
 			{foreach $files as $file}
 				<li>
@@ -11,7 +11,7 @@
 
 					{if $data.uploads_type == 2}
 						{* thumbnail *}
-						{if $file->getOriginalFile() && $file->getType() == constant('TYPO3\\CMS\\Core\\Resource\\AbstractFile::FILETYPE_IMAGE')}
+						{if $file->getOriginalFile() && $file->getType() == \TYPO3\CMS\Core\Resource\AbstractFile::FILETYPE_IMAGE}
 							<a href="{$file->getPublicUrl()}">
 								{$scaledImage = $file->getOriginalFile()->process($taskType, ['maxWidth' => 150])}
 								<img src="{$scaledImage->getPublicUrl()}" alt="{$file->getAlternative()}">
@@ -38,7 +38,7 @@
 
 						{if $data.filelink_size}
 							<span class="ce-uploads-filesize">
-								{call_user_func(['TYPO3\\CMS\\Core\\Utility\\GeneralUtility', 'formatSize'], $file->getSize(), ['', ' Kb', 'Mb', 'Gb'])}
+								{\TYPO3\CMS\Core\Utility\GeneralUtility::formatSize($file->getSize(), ['', ' Kb', 'Mb', 'Gb'])}
 							</span>
 						{/if}
 					</div>
