@@ -450,14 +450,11 @@ class SmartyView extends AbstractView {
 		$params = $params + [
 			'renderMode' => 'ul',
 			'class' => 'typo3-messages',
+			'queueIdentifier' => null,
 		];
 		extract($params);
 
-		if (method_exists($this->controllerContext, 'getFlashMessageQueue')) {
-			$flashMessages = $this->controllerContext->getFlashMessageQueue()->getAllMessagesAndFlush();
-		} else {
-			$flashMessages = $this->controllerContext->getFlashMessageContainer()->getAllMessagesAndFlush();
-		}
+		$flashMessages = $this->controllerContext->getFlashMessageQueue($queueIdentifier)->getAllMessagesAndFlush();
 
 		if ($flashMessages === null || count($flashMessages) === 0) {
 			return '';
@@ -477,7 +474,7 @@ class SmartyView extends AbstractView {
 			if ($renderMode == 'ul') {
 				$content .= '<li>' . htmlspecialchars($singleFlashMessage->getMessage()) . '</li>';
 			} else {
-				$content .= $singleFlashMessage->render();
+				$content .= htmlspecialchars($singleFlashMessage->getMessage());
 			}
 		}
 
