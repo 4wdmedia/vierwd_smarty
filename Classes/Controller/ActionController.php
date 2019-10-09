@@ -30,7 +30,7 @@ class ActionController extends ExtbaseActionController {
 
 	/**
 	 * initialize the view.
-	 * Just call the parent. And assign the configurationManager.
+	 * Set ContentObject, run dataProcessing and set variables
 	 * Afterwards you can register some custom template functions/modifiers.
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
@@ -39,9 +39,10 @@ class ActionController extends ExtbaseActionController {
 		if ($view instanceof SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
 
-			// set template root paths, if available
-			if (isset($this->settings['templateRootPaths'])) {
-				$this->view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			// set template root paths, if used with settings (old way)
+			// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths", then it's automatically handled by extbase
+			if (!$view->getTemplateRootPaths() && isset($this->settings['templateRootPaths'])) {
+				$view->setTemplateRootPaths($this->settings['templateRootPaths']);
 			}
 		}
 

@@ -38,13 +38,15 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		$controllerContext->setUriBuilder($uriBuilder);
 
 		$configuration = $objectManager->get(ConfigurationManagerInterface::class);
-		$settings = $configuration->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $request->getControllerExtensionName());
+		$extensionName = GeneralUtility::underscoredToUpperCamelCase($request->getControllerExtensionName());
+		$configuration = $configuration->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
 
 		$view = $objectManager->get(SmartyView::class);
 		$view->setControllerContext($controllerContext);
+		$templateRootPaths = $configuration['view']['templateRootPaths'] ?? $configuration['settings']['templateRootPaths'] ?? [];
 		// set template root paths, if available
-		if (isset($settings['templateRootPaths'])) {
-			$view->setTemplateRootPaths($settings['templateRootPaths']);
+		if ($templateRootPaths) {
+			$view->setTemplateRootPaths($templateRootPaths);
 		}
 		$view->initializeView();
 
