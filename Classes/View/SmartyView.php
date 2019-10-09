@@ -219,7 +219,6 @@ class SmartyView extends AbstractView {
 
 		// custom functions
 		$this->Smarty->registerPlugin('function', 'email',       [$this, 'smarty_email']);
-		$this->Smarty->registerPlugin('function', 'pagebrowser', [$this, 'smarty_pagebrowser']);
 
 		$this->Smarty->registerPlugin('modifier', 'nl2p', [$this, 'smarty_nl2p']);
 		// phpcs:enable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
@@ -618,30 +617,6 @@ class SmartyView extends AbstractView {
 		];
 
 		return $this->contentObject->typoLink($label, $conf);
-	}
-
-	public function smarty_pagebrowser($params, $smarty) {
-		$numberOfPages = $params['numberOfPages'];
-
-		// Get default configuration
-		$conf = (array)$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_pagebrowse_pi1.'];
-
-		// Modify this configuration
-		$prefix = $this->Smarty->getTemplateVars('formPrefix');
-		$params = $this->controllerContext->getRequest()->getArguments();
-		// for search
-		unset($params['search']['pointer']);
-		unset($params['page']);
-		$conf = [
-			'pageParameterName' => $prefix . '|page',
-			'numberOfPages' => $numberOfPages,
-			'extraQueryString' => '&' . http_build_query([$prefix => $params]),
-		] + $conf;
-
-		// Get page browser
-		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		$cObj->start([], '');
-		return $cObj->cObjGetSingle('USER', $conf);
 	}
 
 	public function render($view = '') {
