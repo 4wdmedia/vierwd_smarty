@@ -16,6 +16,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\View\AbstractView;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
+use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatcher;
@@ -669,6 +670,7 @@ class SmartyView extends AbstractView {
 			'siteLanguage' => $siteLanguage,
 			'typo3Request' => $request,
 			'typolinkService' => GeneralUtility::makeInstance(TypoLinkCodecService::class),
+			'imageService' => GeneralUtility::makeInstance(ImageService::class),
 			//'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],
 		];
