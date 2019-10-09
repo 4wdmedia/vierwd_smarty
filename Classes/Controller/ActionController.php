@@ -36,8 +36,6 @@ class ActionController extends ExtbaseActionController {
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
 	protected function initializeView(ViewInterface $view) {
-		parent::initializeView($view);
-
 		if ($view instanceof SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
 
@@ -47,7 +45,7 @@ class ActionController extends ExtbaseActionController {
 			}
 		}
 
-		// $view->Smarty->registerPlugin('function', 'categorylink', [$this, 'smarty_categorylink']);
+		parent::initializeView($view);
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		if (!empty($configuration['dataProcessing'])) {

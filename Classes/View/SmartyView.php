@@ -228,6 +228,11 @@ class SmartyView extends AbstractView {
 	}
 
 	public function initializeView() {
+		if (!$this->contentObject) {
+			// initialize a new ContentObject
+			$this->contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+			$this->contentObject->start([], '_NO_TABLE');
+		}
 		$this->createSmarty();
 		if (!$this->hasTopLevelViewHelper) {
 			$this->Smarty->clearAllAssign();
