@@ -36,19 +36,20 @@ class ActionController extends ExtbaseActionController {
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
 	protected function initializeView(ViewInterface $view) {
+		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+
 		if ($view instanceof SmartyView) {
 			$view->setContentObject($this->configurationManager->getContentObject());
 
 			// set template root paths, if used with settings (old way)
 			// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths", then it's automatically handled by extbase
-			if (!$view->getTemplateRootPaths() && isset($this->settings['templateRootPaths'])) {
+			if (!$configuration['view']['templateRootPaths'] && isset($this->settings['templateRootPaths'])) {
 				$view->setTemplateRootPaths($this->settings['templateRootPaths']);
 			}
 		}
 
 		parent::initializeView($view);
 
-		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		if (!empty($configuration['dataProcessing'])) {
 			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
 				// reference to existing value
