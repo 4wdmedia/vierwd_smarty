@@ -43,8 +43,9 @@ class ActionController extends ExtbaseActionController {
 
 			// set template root paths, if used with settings (old way)
 			// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths", then it's automatically handled by extbase
-			if (!$configuration['view']['templateRootPaths'] && isset($this->settings['templateRootPaths'])) {
-				$view->setTemplateRootPaths($this->settings['templateRootPaths']);
+			if (isset($this->settings['templateRootPaths'])) {
+				$templateRootPaths = array_unique(array_merge($view->getTemplateRootPaths(), $this->settings['templateRootPaths']));
+				$view->setTemplateRootPaths($templateRootPaths);
 			}
 		}
 
