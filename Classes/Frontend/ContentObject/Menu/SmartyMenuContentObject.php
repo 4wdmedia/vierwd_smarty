@@ -14,6 +14,8 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyMenuContentObject extends TextMenuContentObject {
 
+	public $menuArr;
+
 	public function writeMenu() {
 		if (empty($this->menuArr)) {
 			return '';
