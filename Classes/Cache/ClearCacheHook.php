@@ -13,6 +13,7 @@ namespace Vierwd\VierwdSmarty\Cache;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ClearCacheHook implements ClearCacheActionsHookInterface {
@@ -40,8 +41,13 @@ class ClearCacheHook implements ClearCacheActionsHookInterface {
 
 	public function clear(array $params) {
 		if ($params['cacheCmd'] === 'vierwd_smarty' || $params['cacheCmd'] === 'all') {
-			$cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-			$cacheManager->flushCachesInGroup('vierwd_smarty');
+			try {
+				$cacheManager = GeneralUtility::makeInstance(CacheManager::class);
+				$cacheManager->flushCachesInGroup('vierwd_smarty');
+			} catch (NoSuchCacheGroupException $e) {
+				// ignore
+				// TODO: Check if this hook is still needed
+			}
 		}
 	}
 }
