@@ -33,14 +33,14 @@
 			<img src="{$imageMD->getPublicUrl()}" class="textmedia__image" alt="{$image->getAlternative()}"{if $image->getTitle()} title="{$image->getTitle()}"{/if}>
 		</picture>
 
+		{if $link}
+			</a>
+		{/if}
+
 		{if $image->getDescription()}
 			<figcaption class="textmedia__caption">
 				{$image->getDescription()}
 			</figcaption>
-		{/if}
-
-		{if $link}
-			</a>
 		{/if}
 	</figure>
 {/foreach}
