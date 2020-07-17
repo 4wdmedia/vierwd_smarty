@@ -3,8 +3,8 @@
 namespace Vierwd\VierwdSmarty\View;
 
 use Exception;
-use Throwable;
 use Smarty;
+use Throwable;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
@@ -176,7 +176,7 @@ class SmartyView extends AbstractView {
 		}
 
 		// no view found
-		throw new Exception('Template not found for '.$controller.'->'.$action);
+		throw new Exception('Template not found for ' . $controller . '->' . $action);
 	}
 
 	protected function createSmarty() {
@@ -397,9 +397,9 @@ class SmartyView extends AbstractView {
 		}
 
 		foreach ($attributes as $name => $value) {
-			$attr .= ' '.$name.'="'.htmlspecialchars($value).'"';
+			$attr .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
 		}
-		return '<a'.$attr.'>' . $content . '</a>';
+		return '<a' . $attr . '>' . $content . '</a>';
 	}
 
 	/**
@@ -471,7 +471,7 @@ class SmartyView extends AbstractView {
 
 		$content = '<' . $renderMode;
 		if ($class) {
-			$content .= ' class="' . htmlspecialchars($class) .'"';
+			$content .= ' class="' . htmlspecialchars($class) . '"';
 		}
 		$content .= '>';
 
@@ -671,7 +671,7 @@ class SmartyView extends AbstractView {
 			'typo3Request' => $request,
 			'typolinkService' => GeneralUtility::makeInstance(TypoLinkCodecService::class),
 			'imageService' => GeneralUtility::makeInstance(ImageService::class),
-			//'settings' => $typoScript['settings'],
+			// 'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],
 		];
 
@@ -723,11 +723,11 @@ class SmartyView extends AbstractView {
 				}
 			}
 
-			if (!glob($view.'*')) {
+			if (!glob($view . '*')) {
 				$controller = $this->controllerContext->getRequest()->getControllerName();
 				$action     = $this->controllerContext->getRequest()->getControllerActionName();
 
-				throw new Exception('Template not found for '.$controller.'->'.$action."\nMaybe incorrect case of filename?");
+				throw new Exception('Template not found for ' . $controller . '->' . $action . "\nMaybe incorrect case of filename?");
 			}
 		}
 
