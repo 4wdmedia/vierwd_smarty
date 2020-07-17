@@ -310,7 +310,7 @@ class SmartyView extends AbstractView {
 			'controller' => null,
 			'extensionName' => null,
 			'pluginName' => null,
-			'pageUid' => null,
+			'pageUid' => 0,
 			'pageType' => 0,
 			'noCache' => false,
 			'noCacheHash' => false,
