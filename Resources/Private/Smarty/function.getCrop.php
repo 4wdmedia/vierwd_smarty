@@ -3,7 +3,7 @@
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 
 /**
- * Usage: {$crop = "{getCrop image=$resource cropArea=default}"}
+ * Usage: {$crop = {getCrop image=$resource cropArea=default}}
  */
 function smarty_function_getCrop($params, $smarty) {
 	$imageOrReference = $params['image'];
