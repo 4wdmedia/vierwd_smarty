@@ -12,6 +12,9 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
+use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
+use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
