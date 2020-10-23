@@ -10,6 +10,23 @@ styles.content.get {
 lib.stdheader =< plugin.tx_vierwdsmarty
 lib.stdheader.settings.template = Partials/Header.tpl
 
+lib.contentElement = FLUIDTEMPLATE
+lib.contentElement {
+	templateName = Default
+	templateRootPaths {
+		0 = EXT:fluid_styled_content/Resources/Private/Templates/
+		10 = {$styles.templates.templateRootPath}
+	}
+	partialRootPaths {
+		0 = EXT:fluid_styled_content/Resources/Private/Partials/
+		10 = {$styles.templates.partialRootPath}
+	}
+	layoutRootPaths {
+		0 = EXT:fluid_styled_content/Resources/Private/Layouts/
+		10 = {$styles.templates.layoutRootPath}
+	}
+}
+
 tt_content >
 tt_content = CASE
 tt_content {
