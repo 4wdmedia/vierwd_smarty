@@ -5,21 +5,12 @@ defined('TYPO3_MODE') || die('Access denied.');
 $GLOBALS['TYPO3_CONF_VARS']['FE']['contentRenderingTemplates'][] = 'vierwdsmarty/Configuration/TypoScript/';
 $GLOBALS['TYPO3_CONF_VARS']['FE']['contentRenderingTemplates'][] = 'vierwdsmarty/Configuration/TypoScript/v8/';
 
-if (version_compare(TYPO3_version, '10.0.0', '>=')) {
-	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-		'VierwdSmarty',
-		'smarty_render',
-		[\Vierwd\VierwdSmarty\Controller\SmartyController::class => 'render',],
-		[]
-	);
-} else {
-	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-		'VierwdSmarty',
-		'smarty_render',
-		['Smarty' => 'render',],
-		[]
-	);
-}
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+	'VierwdSmarty',
+	'smarty_render',
+	['Smarty' => 'render',],
+	[]
+);
 
 // SMARTY Menu Object
 $menuContentObjectFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\Menu\MenuContentObjectFactory::class);

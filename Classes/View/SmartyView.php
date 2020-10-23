@@ -325,9 +325,7 @@ class SmartyView extends AbstractView {
 		extract($params);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-		if (version_compare(TYPO3_version, '10.0.0', '<')) {
-			$uriBuilder->setUseCacheHash(!$noCacheHash);
-		}
+		$uriBuilder->setUseCacheHash(!$noCacheHash);
 		$uri = $uriBuilder
 			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
@@ -378,9 +376,7 @@ class SmartyView extends AbstractView {
 			extract($params);
 
 			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-			if (version_compare(TYPO3_version, '10.0.0', '<')) {
-				$uriBuilder->setUseCacheHash(!$noCacheHash);
-			}
+			$uriBuilder->setUseCacheHash(!$noCacheHash);
 			$uri = $uriBuilder
 				->setTargetPageUid($pageUid)
 				->setTargetPageType($pageType)
@@ -428,9 +424,7 @@ class SmartyView extends AbstractView {
 		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-		if (version_compare(TYPO3_version, '10.0.0', '<')) {
-			$uriBuilder->setUseCacheHash(!$noCacheHash);
-		}
+		$uriBuilder->setUseCacheHash(!$noCacheHash);
 		$uri = $uriBuilder
 			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)

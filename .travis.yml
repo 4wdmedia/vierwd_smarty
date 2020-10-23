@@ -2,9 +2,10 @@ language: php
 
 php:
   - 7.2
+  - 7.4
 
 env:
-  - TYPO3_VERSION="^9.3.0"
+  - TYPO3_VERSION="^9.5.0"
 
 matrix:
   exclude:
