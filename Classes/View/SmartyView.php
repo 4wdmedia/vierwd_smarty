@@ -313,7 +313,6 @@ class SmartyView extends AbstractView {
 			'pageUid' => 0,
 			'pageType' => 0,
 			'noCache' => false,
-			'noCacheHash' => false,
 			'section' => '',
 			'format' => '',
 			'linkAccessRestrictedPages' => false,
@@ -325,8 +324,10 @@ class SmartyView extends AbstractView {
 		extract($params);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		if ($pageUid) {
+			$uriBuilder->setTargetPageUid($pageUid);
+		}
 		$uri = $uriBuilder
-			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
 			->setSection($section)
@@ -358,7 +359,6 @@ class SmartyView extends AbstractView {
 			'pageUid' => null,
 			'pageType' => 0,
 			'noCache' => false,
-			'noCacheHash' => false,
 			'section' => '',
 			'format' => '',
 			'linkAccessRestrictedPages' => false,
@@ -375,11 +375,10 @@ class SmartyView extends AbstractView {
 			extract($params);
 
 			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-			if (version_compare(TYPO3_version, '10.0.0', '<')) {
-				$uriBuilder->setUseCacheHash(!$noCacheHash);
+			if ($pageUid) {
+				$uriBuilder->setTargetPageUid($pageUid);
 			}
 			$uri = $uriBuilder
-				->setTargetPageUid($pageUid)
 				->setTargetPageType($pageType)
 				->setNoCache($noCache)
 				->setSection($section)
@@ -404,7 +403,6 @@ class SmartyView extends AbstractView {
 	 * @param array $additionalParams query parameters to be attached to the resulting URI
 	 * @param int $pageType type of the target page. See typolink.parameter
 	 * @param bool $noCache set this to disable caching for the target page. You should not need this.
-	 * @param bool $noCacheHash set this to supress the cHash query parameter created by TypoLink. You should not need this.
 	 * @param string $section the anchor to be added to the URI
 	 * @param bool $linkAccessRestrictedPages If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed.
 	 * @param bool $absolute If set, the URI of the rendered link is absolute
@@ -417,7 +415,6 @@ class SmartyView extends AbstractView {
 		$additionalParams = $this->getParam($params, 'additionalParams', []);
 		$pageType = $this->getParam($params, 'pageType', 0);
 		$noCache = $this->getParam($params, 'noCache');
-		$noCacheHash = $this->getParam($params, 'noCacheHash');
 		$linkAccessRestrictedPages = $this->getParam($params, 'linkAccessRestrictedPages');
 		$absolute = $this->getParam($params, 'absolute');
 		$section = $this->getParam($params, 'section');
@@ -425,11 +422,10 @@ class SmartyView extends AbstractView {
 		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-		if (version_compare(TYPO3_version, '10.0.0', '<')) {
-			$uriBuilder->setUseCacheHash(!$noCacheHash);
+		if ($pageUid) {
+			$uriBuilder->setTargetPageUid($pageUid);
 		}
 		$uri = $uriBuilder
-			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
 			->setSection($section)
