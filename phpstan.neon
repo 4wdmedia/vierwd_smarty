@@ -1,0 +1,10 @@
+includes:
+    - .Build/vendor/saschaegerer/phpstan-typo3/extension.neon
+
+parameters:
+    bootstrapFiles:
+        - phpstan.bootstrap.php
+
+    paths:
+        - Classes
+        - Tests
