@@ -31,7 +31,7 @@ class SmartyViewTest extends UnitTestCase {
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
 
-		$mockControllerContext = $this->createMock(ControllerContext::class, ['getRequest'], [], '', false);
+		$mockControllerContext = $this->createMock(ControllerContext::class);
 		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		return $mockControllerContext;

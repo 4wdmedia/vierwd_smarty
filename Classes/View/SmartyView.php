@@ -244,10 +244,10 @@ class SmartyView extends AbstractView {
 		$this->Smarty->cache_dir   = $extCacheDir . '/cache/' . $extensionKey . '/';
 
 		if (!is_dir($this->Smarty->cache_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->cache_dir, '');
+			GeneralUtility::mkdir_deep($this->Smarty->cache_dir);
 		}
 		if (!is_dir($this->Smarty->compile_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->compile_dir, '');
+			GeneralUtility::mkdir_deep($this->Smarty->compile_dir);
 		}
 	}
 
@@ -396,10 +396,7 @@ class SmartyView extends AbstractView {
 			$attributes['href'] = $uri;
 		}
 
-		foreach ($attributes as $name => $value) {
-			$attr .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
-		}
-		return '<a' . $attr . '>' . $content . '</a>';
+		return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>' . $content . '</a>';
 	}
 
 	/**
