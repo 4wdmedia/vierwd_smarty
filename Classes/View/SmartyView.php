@@ -185,7 +185,7 @@ class SmartyView extends AbstractView {
 
 		if ($GLOBALS['TSFE'] && !$GLOBALS['TSFE']->headerNoCache()) {
 			$this->Smarty->setCacheLifetime(120);
-			$this->Smarty->setCompileCheck(false);
+			$this->Smarty->setCompileCheck(0);
 		}
 
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
@@ -481,7 +481,7 @@ class SmartyView extends AbstractView {
 		return !empty($params[$key]) ? $params[$key] : $default;
 	}
 
-	public function smarty_fluid($params, $content, $smarty, &$repeat) {
+	public function smarty_fluid(array $params, $content, $smarty, &$repeat) {
 		if (!isset($content)) {
 			return;
 		}
