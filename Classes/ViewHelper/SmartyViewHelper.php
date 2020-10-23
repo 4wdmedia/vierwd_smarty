@@ -29,10 +29,10 @@ class SmartyViewHelper extends AbstractViewHelper {
 	/**
 	 * @var \Vierwd\VierwdSmarty\View\SmartyView
 	 */
-	static protected $smartyView;
+	static protected $smartyView = null;
 
 	public function initialize() {
-		if (!self::$smartyView) {
+		if (self::$smartyView === null) {
 			self::$smartyView = GeneralUtility::makeInstance(SmartyView::class);
 		}
 	}

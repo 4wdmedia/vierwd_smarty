@@ -57,26 +57,26 @@ class SmartyView extends AbstractView {
 	/**
 	 * Path(s) to the template root. If NULL, then $this->templateRootPathPattern will be used.
 	 *
-	 * @var array
+	 * @var ?array
 	 */
 	protected $templateRootPaths = null;
 
 	/**
-	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+	 * @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
-	protected $contentObject;
+	protected $contentObject = null;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+	 * @var ?\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
 	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
-	protected $configurationManager;
+	protected $configurationManager = null;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var ?\TYPO3\CMS\Extbase\Object\ObjectManagerInterface
 	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
-	protected $objectManager;
+	protected $objectManager = null;
 
 	/**
 	 * Set the root path(s) to the templates.
@@ -226,7 +226,7 @@ class SmartyView extends AbstractView {
 	}
 
 	public function initializeView() {
-		if (!$this->contentObject) {
+		if ($this->contentObject === null) {
 			// initialize a new ContentObject
 			$this->contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$this->contentObject->start([], '_NO_TABLE');
@@ -439,7 +439,7 @@ class SmartyView extends AbstractView {
 
 		$flashMessages = $this->controllerContext->getFlashMessageQueue($queueIdentifier)->getAllMessagesAndFlush();
 
-		if ($flashMessages === null || count($flashMessages) === 0) {
+		if (count($flashMessages) === 0) {
 			return '';
 		}
 
