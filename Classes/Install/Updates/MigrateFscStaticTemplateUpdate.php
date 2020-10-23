@@ -5,8 +5,8 @@ namespace Vierwd\VierwdSmarty\Install\Updates;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Install\Service\UpgradeWizardsService;
-use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;
+use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 /**
  * Migrate "vierwd_smarty" static template location. "Old" location was "Configuration/TypoScript/v8". New location is default "Configuration/TypoScript"
@@ -29,6 +29,7 @@ class MigrateFscStaticTemplateUpdate implements UpgradeWizardInterface {
 		$queries = [];
 		$message = '';
 		$this->performUpdate($queries, $message);
+		return true;
 	}
 
 	public function updateNecessary(): bool {
@@ -46,7 +47,7 @@ class MigrateFscStaticTemplateUpdate implements UpgradeWizardInterface {
 	/**
 	 * Checks if an update is needed
 	 *
-	 * @param string &$description The description for the update
+	 * @param string $description The description for the update
 	 * @return bool Whether an update is needed (TRUE) or not (FALSE)
 	 */
 	public function checkForUpdate(&$description) {
@@ -85,8 +86,8 @@ class MigrateFscStaticTemplateUpdate implements UpgradeWizardInterface {
 	/**
 	 * Performs the database update
 	 *
-	 * @param array &$databaseQueries Queries done in this update
-	 * @param string &$customMessage Custom message
+	 * @param array $databaseQueries Queries done in this update
+	 * @param string $customMessage Custom message
 	 * @return bool
 	 */
 	public function performUpdate(array &$databaseQueries, &$customMessage) {

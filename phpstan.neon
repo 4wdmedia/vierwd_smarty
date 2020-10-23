@@ -2,9 +2,10 @@ includes:
     - .Build/vendor/saschaegerer/phpstan-typo3/extension.neon
 
 parameters:
+    level: 3
+
     bootstrapFiles:
         - phpstan.bootstrap.php
 
     paths:
         - Classes
-        - Tests

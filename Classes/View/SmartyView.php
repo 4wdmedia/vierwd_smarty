@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\View\AbstractView;
+use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -289,7 +290,7 @@ class SmartyView extends AbstractView {
 			$uri = '../' . $uri;
 		}
 
-		if ($absolute === true) {
+		if ($absolute === true && $this->controllerContext->getRequest() instanceof WebRequest) {
 			$uri = $this->controllerContext->getRequest()->getBaseURI() . $uri;
 		}
 
