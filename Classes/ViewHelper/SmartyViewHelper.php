@@ -3,6 +3,8 @@
 namespace Vierwd\VierwdSmarty\ViewHelper;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
+use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -25,7 +27,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 class SmartyViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @var Vierwd\VierwdSmarty\View\SmartyView
+	 * @var \Vierwd\VierwdSmarty\View\SmartyView
 	 */
 	static protected $smartyView;
 
@@ -41,8 +43,12 @@ class SmartyViewHelper extends AbstractViewHelper {
 		$parentView = $this->renderingContext->getViewHelperVariableContainer()->getView();
 
 		$view = self::$smartyView;
-		$view->setControllerContext($this->renderingContext->getControllerContext());
-		$view->setTemplateRootPaths($parentView->getTemplateRootPaths());
+		if ($this->renderingContext instanceof FluidRenderingContext) {
+			$view->setControllerContext($this->renderingContext->getControllerContext());
+		}
+		if ($parentView instanceof AbstractTemplateView) {
+			$view->setTemplateRootPaths($parentView->getTemplateRootPaths());
+		}
 		$view->initializeView();
 
 		if (!$view->hasTopLevelViewHelper) {

@@ -6,9 +6,15 @@ use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
+use Vierwd\VierwdSmarty\View\SmartyView;
+
 class SmartyController extends ActionController {
 
 	public function renderAction() {
+		if (!$this->view instanceof SmartyView) {
+			throw new \Exception('Invalid view for renderAction', 1603466955);
+		}
+
 		$baseContentObject = $this->configurationManager->getContentObject();
 
 		if (is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
