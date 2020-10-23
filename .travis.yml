@@ -53,7 +53,7 @@ script:
     export typo3DatabasePassword="";
     find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; .Build/bin/phpunit --colors  -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}'
 
-  - if [[ "$SNIFF" == "1" ]]; then .Build/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=.Build/vendor/vierwd/coding-standard/ForwardMedia Classes/; fi
+  - if [[ "$SNIFF" == "1" ]]; then .Build/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=.Build/vendor/vierwd/coding-standard/ForwardMedia Classes/ Tests/; fi
 
 notifications:
   slack:
