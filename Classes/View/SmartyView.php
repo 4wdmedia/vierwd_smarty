@@ -482,9 +482,13 @@ class SmartyView extends AbstractView {
 	}
 
 	public function smarty_svg($params, $smarty) {
-		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		$svgObject = GeneralUtility::makeInstance(ScalableVectorGraphicsContentObject::class, $cObj);
-		return $svgObject->render($params);
+		if (class_exists(ScalableVectorGraphicsContentObject::class)) {
+			$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+			$svgObject = GeneralUtility::makeInstance(ScalableVectorGraphicsContentObject::class, $cObj);
+			return $svgObject->render($params);
+		}
+
+		return '';
 	}
 
 
