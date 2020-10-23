@@ -2,11 +2,13 @@
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
-use Vierwd\VierwdSmarty\View\SmartyView;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+
+use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyViewTest extends UnitTestCase {
 
@@ -151,7 +153,7 @@ class SmartyViewTest extends UnitTestCase {
 			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
 		]);
 
-		$mockContentObject = $this->getAccessibleMock(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class, null, [], '', false);
+		$mockContentObject = $this->getAccessibleMock(ContentObjectRenderer::class, null, [], '', false);
 		$templateView->setContentObject($mockContentObject);
 
 		$templateView->initializeView();
