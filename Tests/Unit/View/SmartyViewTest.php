@@ -41,7 +41,7 @@ class SmartyViewTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getTemplateRootPathsReturnsUserSpecifiedTemplatePaths() {
-		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface $templateView */
+		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface $templateView */
 		$templateView = $this->getAccessibleMock(SmartyView::class, ['dummy'], [], '', false);
 		$templateView->setTemplateRootPaths(['/foo/bar']);
 		$expected = ['/foo/bar'];

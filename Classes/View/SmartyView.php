@@ -398,18 +398,6 @@ class SmartyView extends AbstractView {
 		return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>' . $content . '</a>';
 	}
 
-	/**
-	 * @param int $page target PID
-	 * @param array $additionalParams query parameters to be attached to the resulting URI
-	 * @param int $pageType type of the target page. See typolink.parameter
-	 * @param bool $noCache set this to disable caching for the target page. You should not need this.
-	 * @param string $section the anchor to be added to the URI
-	 * @param bool $linkAccessRestrictedPages If set, links pointing to access restricted pages will still link to the page even though the page cannot be accessed.
-	 * @param bool $absolute If set, the URI of the rendered link is absolute
-	 * @param bool $addQueryString If set, the current query parameters will be kept in the URI
-	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = true
-	 * @return string Rendered page URI
-	 */
 	public function smarty_helper_typolink($params, $smarty) {
 		$pageUid = $this->getParam($params, 'pageUid', null);
 		$additionalParams = $this->getParam($params, 'additionalParams', []);
