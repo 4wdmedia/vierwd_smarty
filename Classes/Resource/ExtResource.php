@@ -23,6 +23,9 @@ class ExtResource extends \Smarty_Resource_Custom {
 			return filemtime($file);
 		}
 
+		// the docComment for Smarty_Resource_Custom::fetchTimestamp is incorrect.
+		// it specifies integer|boolean, but returns null. Other methods check for null instead of false.
+		// @phpstan-ignore-next-line
 		return null;
 	}
 }
