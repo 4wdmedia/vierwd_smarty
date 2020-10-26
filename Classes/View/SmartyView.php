@@ -41,9 +41,6 @@ function clean($str) {
 	}
 }
 
-/**
- * phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
- */
 class SmartyView extends AbstractView {
 
 	public $Smarty;
@@ -260,13 +257,12 @@ class SmartyView extends AbstractView {
 	 */
 	public function smarty_translate($params, $smarty) {
 		$request = $this->controllerContext->getRequest();
-		$params = $params + [
-			'default' => null,
-			'htmlEscape' => true,
-			'arguments' => null,
-			'extensionName' => $request->getControllerExtensionName(),
-		];
-		extract($params);
+
+		$key = $params['key'] ?? null;
+		$default = $params['default'] ?? null;
+		$htmlEscape = $params['htmlEscape'] ?? true;
+		$arguments = $params['arguments'] ?? null;
+		$extensionName = $params['extensionName'] ?? $request->getControllerExtensionName();
 
 		$value = LocalizationUtility::translate($key, $extensionName, $arguments);
 		if ($value === null) {
@@ -278,12 +274,9 @@ class SmartyView extends AbstractView {
 	}
 
 	public function smarty_uri_resource($params, $smarty) {
-		$params = $params + [
-			'path' => null,
-			'extensionName' => null,
-			'absolute' => false,
-		];
-		extract($params);
+		$path = $params['path'] ?? null;
+		$extensionName = $params['extensionName'] ?? null;
+		$absolute = $params['absolute'] ?? false;
 
 		if ($extensionName === null) {
 			$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
@@ -304,25 +297,22 @@ class SmartyView extends AbstractView {
 	}
 
 	public function smarty_uri_action($params, $smarty) {
-		$params = $params + [
-			'action' => null,
-			'arguments' => [],
-			'controller' => null,
-			'extensionName' => null,
-			'pluginName' => null,
-			'pageUid' => 0,
-			'pageType' => 0,
-			'noCache' => false,
-			'noCacheHash' => false,
-			'section' => '',
-			'format' => '',
-			'linkAccessRestrictedPages' => false,
-			'additionalParams' => [],
-			'absolute' => false,
-			'addQueryString' => false,
-			'argumentsToBeExcludedFromQueryString' => [],
-		];
-		extract($params);
+		$action = $params['action'] ?? null;
+		$arguments = $params['arguments'] ?? [];
+		$controller = $params['controller'] ?? null;
+		$extensionName = $params['extensionName'] ?? null;
+		$pluginName = $params['pluginName'] ?? null;
+		$pageUid = $params['pageUid'] ?? 0;
+		$pageType = $params['pageType'] ?? 0;
+		$noCache = $params['noCache'] ?? false;
+		$noCacheHash = $params['noCacheHash'] ?? false;
+		$section = $params['section'] ?? '';
+		$format = $params['format'] ?? '';
+		$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? false;
+		$additionalParams = $params['additionalParams'] ?? [];
+		$absolute = $params['absolute'] ?? false;
+		$addQueryString = $params['addQueryString'] ?? false;
+		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
 		$uriBuilder->setUseCacheHash(!$noCacheHash);
@@ -372,8 +362,22 @@ class SmartyView extends AbstractView {
 		$attributes = array_diff_key($params, $defaultUrlParams);
 
 		if (!isset($attributes['href'])) {
-			$params = $params + $defaultUrlParams;
-			extract($params);
+			$action = $params['action'] ?? $defaultUrlParams['action'];
+			$arguments = $params['arguments'] ?? $defaultUrlParams['arguments'];
+			$controller = $params['controller'] ?? $defaultUrlParams['controller'];
+			$extensionName = $params['extensionName'] ?? $defaultUrlParams['extensionName'];
+			$pluginName = $params['pluginName'] ?? $defaultUrlParams['pluginName'];
+			$pageUid = $params['pageUid'] ?? $defaultUrlParams['pageUid'];
+			$pageType = $params['pageType'] ?? $defaultUrlParams['pageType'];
+			$noCache = $params['noCache'] ?? $defaultUrlParams['noCache'];
+			$noCacheHash = $params['noCacheHash'] ?? $defaultUrlParams['noCacheHash'];
+			$section = $params['section'] ?? $defaultUrlParams['section'];
+			$format = $params['format'] ?? $defaultUrlParams['format'];
+			$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? $defaultUrlParams['linkAccessRestrictedPages'];
+			$additionalParams = $params['additionalParams'] ?? $defaultUrlParams['additionalParams'];
+			$absolute = $params['absolute'] ?? $defaultUrlParams['absolute'];
+			$addQueryString = $params['addQueryString'] ?? $defaultUrlParams['addQueryString'];
+			$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? $defaultUrlParams['argumentsToBeExcludedFromQueryString'];
 
 			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
 			$uriBuilder->setUseCacheHash(!$noCacheHash);
@@ -446,12 +450,9 @@ class SmartyView extends AbstractView {
 	}
 
 	public function smarty_flashMessages($params, $smarty) {
-		$params = $params + [
-			'renderMode' => 'ul',
-			'class' => 'typo3-messages',
-			'queueIdentifier' => null,
-		];
-		extract($params);
+		$renderMode = $params['renderMode'] ?? 'ul';
+		$class = $params['class'] ?? 'typo3-messages';
+		$queueIdentifier = $params['queueIdentifier'] ?? null;
 
 		$flashMessages = $this->controllerContext->getFlashMessageQueue($queueIdentifier)->getAllMessagesAndFlush();
 
