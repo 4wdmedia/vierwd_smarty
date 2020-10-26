@@ -38,6 +38,9 @@ class SmartyViewHelper extends AbstractViewHelper {
 	}
 
 	public function render(): string {
+		if (self::$smartyView === null) {
+			return '';
+		}
 		$template = $this->renderChildren();
 
 		$parentView = $this->renderingContext->getViewHelperVariableContainer()->getView();

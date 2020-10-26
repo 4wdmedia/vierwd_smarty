@@ -13,7 +13,7 @@ class TemplatePreprocessor {
 	}
 
 	protected function replaceCacheBlocks(string $template): string {
-		$template = preg_replace_callback('/{cacheCode cache_id=(?<cacheId>[^}]+)}(?<templateCode>.*?){\/cacheCode}/s', function(array $matches): string {
+		$template = (string)preg_replace_callback('/{cacheCode cache_id=(?<cacheId>[^}]+)}(?<templateCode>.*?){\/cacheCode}/s', function(array $matches): string {
 			$cacheId = $matches['cacheId'];
 			$templateCode = $matches['templateCode'];
 
@@ -38,7 +38,7 @@ class TemplatePreprocessor {
 		// Whitespace after comments is not stripped.
 		// @see https://github.com/smarty-php/smarty/issues/436
 		// We do not want this behaviour. That's why we strip all comments
-		$template = preg_replace('-\{\*.*?\*\}-s', '', $template);
+		$template = (string)preg_replace('-\{\*.*?\*\}-s', '', $template);
 
 		$search = array_keys($replacements);
 		$replace = array_values($replacements);

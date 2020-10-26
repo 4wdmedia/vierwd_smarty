@@ -33,7 +33,7 @@ use Vierwd\VierwdSmarty\Resource\ExtResource;
  */
 function clean($str): string {
 	if (is_scalar($str)) {
-		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', (string)$str);
+		$str = (string)preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', (string)$str);
 		// replace html-characters
 		$str = str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $str);
 
@@ -48,7 +48,7 @@ function clean($str): string {
 class SmartyView extends AbstractView {
 
 	/**
-	 * @var ?Smarty
+	 * @var Smarty
 	 */
 	public $Smarty = null;
 
@@ -77,13 +77,13 @@ class SmartyView extends AbstractView {
 	protected $contentObject = null;
 
 	/**
-	 * @var ?\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
 	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
 	protected $configurationManager = null;
 
 	/**
-	 * @var ?\TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
 	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
 	protected $objectManager = null;
@@ -129,16 +129,10 @@ class SmartyView extends AbstractView {
 		return array_filter($templateRootPaths);
 	}
 
-	/**
-	 * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject
-	 */
-	public function setContentObject(ContentObjectRenderer $contentObject): void {
+	public function setContentObject(?ContentObjectRenderer $contentObject): void {
 		$this->contentObject = $contentObject;
 	}
 
-	/**
-	 * @var \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext
-	 */
 	public function getControllerContext(): ControllerContext {
 		return $this->controllerContext;
 	}
@@ -190,7 +184,7 @@ class SmartyView extends AbstractView {
 	}
 
 	protected function createSmarty(): void {
-		if ($this->Smarty) {
+		if ($this->Smarty !== null) {
 			return;
 		}
 
@@ -557,10 +551,12 @@ class SmartyView extends AbstractView {
 		unset($data['table']);
 
 		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
-		$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
-		$cObj->currentRecordTotal = $this->contentObject->currentRecordTotal;
-		$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
+		if ($this->contentObject) {
+			$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
+			$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
+			$cObj->currentRecordTotal = $this->contentObject->currentRecordTotal;
+			$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
+		}
 		if ($table != '_NO_TABLE') {
 			$data['_MIGRATED'] = false;
 		}
@@ -610,7 +606,7 @@ class SmartyView extends AbstractView {
 			return '';
 		}
 
-		return '<p>' . nl2br(preg_replace('/\n{2,}/', '</p><p>', str_replace("\r", '', $content))) . '</p>';
+		return '<p>' . nl2br((string)preg_replace('/\n{2,}/', '</p><p>', str_replace("\r", '', $content))) . '</p>';
 	}
 
 	public function smarty_email(array $params, Smarty_Internal_Template $smarty): string {
@@ -624,7 +620,9 @@ class SmartyView extends AbstractView {
 			'ATagParams' => $ATagParams,
 		];
 
-		return $this->contentObject->typoLink($label, $conf);
+		$cObj = $this->contentObject ?? GeneralUtility::makeInstance(ContentObjectRenderer::class);
+
+		return $cObj->typoLink($label, $conf);
 	}
 
 	/**
@@ -633,7 +631,7 @@ class SmartyView extends AbstractView {
 	public function render(string $view = '') {
 		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
 
-		if (!$this->contentObject->data && $this->variables['data']) {
+		if ($this->contentObject && !$this->contentObject->data && $this->variables['data']) {
 			$this->contentObject->data = $this->variables['data'];
 		}
 
@@ -641,12 +639,12 @@ class SmartyView extends AbstractView {
 		$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
 		$pluginName = $this->controllerContext->getRequest()->getPluginName();
 
-		if ($this->configurationManager) {
+		if ($this->configurationManager !== null) {
 			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 			$this->Smarty->assign('frameworkSettings', $typoScript);
 		}
 
-		if ($this->objectManager) {
+		if ($this->objectManager !== null) {
 			$formPrefix = $this->objectManager->get(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
 			$this->Smarty->assign('formPrefix', $formPrefix);
 		}
@@ -663,7 +661,7 @@ class SmartyView extends AbstractView {
 
 		$templateVars = [
 			'cObj' => $this->contentObject,
-			'data' => $this->contentObject->data,
+			'data' => $this->contentObject ? $this->contentObject->data : [],
 			'extensionPath' => $extPath,
 			'extensionName' => $extensionName,
 			'pluginName' => $pluginName,

@@ -72,7 +72,9 @@ class ActionController extends ExtbaseActionController {
 
 			$variables = [];
 			$baseContentObject = $this->configurationManager->getContentObject();
-			$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
+			if ($baseContentObject) {
+				$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
+			}
 
 			$this->view->assignMultiple($variables);
 		}
@@ -111,6 +113,10 @@ class ActionController extends ExtbaseActionController {
 	 */
 	protected function getContentObjectVariables(array $conf) {
 		$contentObject = $this->configurationManager->getContentObject();
+		if (!$contentObject) {
+			return [];
+		}
+
 		$variables = [];
 		$reservedVariables = ['data', 'current'];
 		// Accumulate the variables to be process and loop them through cObjGetSingle

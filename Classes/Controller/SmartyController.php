@@ -16,6 +16,9 @@ class SmartyController extends ActionController {
 		}
 
 		$baseContentObject = $this->configurationManager->getContentObject();
+		if (!$baseContentObject) {
+			return '';
+		}
 
 		if (is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
 			// Gridelements changed pi_flexform to array. Extbase only uses the xml-structure to fill the settings array.
