@@ -61,7 +61,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 		}
 
 		$templateVariableContainer = $this->renderingContext->getVariableProvider();
-		$variables = $templateVariableContainer->getAll();
+		$variables = (array)$templateVariableContainer->getAll();
 		foreach ($variables as $key => &$value) {
 			// @phpstan-ignore-next-line
 			if (!$view->hasTopLevelViewHelper || !isset($smartyVariables[$key])) {

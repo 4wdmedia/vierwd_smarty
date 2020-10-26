@@ -33,7 +33,7 @@ use Vierwd\VierwdSmarty\Resource\ExtResource;
  */
 function clean($str): string {
 	if (is_scalar($str)) {
-		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', $str);
+		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', (string)$str);
 		// replace html-characters
 		$str = str_replace(['<', '>', '"'], ['&lt;', '&gt;', '&quot;'], $str);
 
@@ -697,12 +697,12 @@ class SmartyView extends AbstractView {
 			$dirs = (array)$this->Smarty->getTemplateDir();
 			$found = false;
 			foreach ($dirs as $dir) {
-				if (realpath($dir) == $fileDir) {
+				if (realpath($dir) === $fileDir) {
 					$found = true;
 					break;
 				}
 			}
-			if (!$found) {
+			if (!$found && $fileDir !== false) {
 				$this->Smarty->addTemplateDir($fileDir);
 			}
 		}
