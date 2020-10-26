@@ -37,23 +37,26 @@ install:
 script:
   - >
     echo;
-    echo "Running unit tests";
-    .Build/bin/phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit/
-
-  - >
-    echo;
     echo "Running php lint";
-    find . -name \*.php ! -path "./.Build/*" | parallel --gnu php -d display_errors=stderr -l {} > /dev/null \;
+    compose run-script phplint
+
+  - >
+    echo:
+    echo "Running phpstan";
+    composer run-script phpstan
 
   - >
     echo;
-    export typo3DatabaseName="typo3";
-    export typo3DatabaseHost="localhost";
-    export typo3DatabaseUsername="root";
-    export typo3DatabasePassword="";
-    find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; .Build/bin/phpunit --colors  -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}'
+    echo "Running unit tests";
+    composer run-script unit-tests
 
-  - if [[ "$SNIFF" == "1" ]]; then .Build/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=.Build/vendor/vierwd/coding-standard/ForwardMedia Classes/ Tests/; fi
+  - >
+    echo;
+    echo "Running functional tests";
+    composer run-script test
+
+
+  - if [[ "$SNIFF" == "1" ]]; then composer run-script phpcs; fi
 
 notifications:
   slack:
