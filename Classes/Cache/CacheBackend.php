@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Cache;
 
@@ -13,11 +14,11 @@ class CacheBackend extends NullBackend {
 	 */
 	protected $cacheType = '';
 
-	public function setCacheType($cacheType) {
+	public function setCacheType(string $cacheType): void {
 		$this->cacheType = $cacheType;
 	}
 
-	public function flush() {
+	public function flush(): void {
 		// just remove all files
 		$directory = Environment::getVarPath() . '/cache/vierwd_smarty/' . $this->cacheType . '/';
 		GeneralUtility::flushDirectory($directory, true);

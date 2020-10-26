@@ -89,19 +89,15 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		return false;
 	}
 
-	public function subMenu($uid, $objSuffix = '', $key = false) {
+	public function subMenu($uid, $objSuffix = '') {
 		$tsfe = $this->getTypoScriptFrontendController();
 		$tsfe->register['parentMenu'] = $this;
 
 		$this->I = [];
-		if ($key !== false) {
-			$this->I['key'] = $key;
-		} else {
-			// subMenu expects a valid I[key] to work on _SUB_MENU
-			foreach ($this->menuArr as $key => $value) {
-				if ($value['uid'] == $uid) {
-					$this->I['key'] = $key;
-				}
+		// subMenu expects a valid I[key] to work on _SUB_MENU
+		foreach ($this->menuArr as $key => $value) {
+			if ($value['uid'] == $uid) {
+				$this->I['key'] = $key;
 			}
 		}
 

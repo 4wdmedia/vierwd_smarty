@@ -1,14 +1,7 @@
 <?php
+declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Cache;
-
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2018 Robert Vock <robert.vock@4wdmedia.de>
-*  All rights reserved
-*
-***************************************************************/
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookInterface;
@@ -23,6 +16,7 @@ class ClearCacheHook implements ClearCacheActionsHookInterface {
 	 *
 	 * @param array $cacheActions
 	 * @param array $optionValues
+	 * @phpstan-return void
 	 */
 	public function manipulateCacheActions(&$cacheActions, &$optionValues) {
 		if ($GLOBALS['BE_USER']->isAdmin()) {
@@ -39,7 +33,7 @@ class ClearCacheHook implements ClearCacheActionsHookInterface {
 		}
 	}
 
-	public function clear(array $params) {
+	public function clear(array $params): void {
 		if ($params['cacheCmd'] === 'vierwd_smarty' || $params['cacheCmd'] === 'all') {
 			try {
 				$cacheManager = GeneralUtility::makeInstance(CacheManager::class);

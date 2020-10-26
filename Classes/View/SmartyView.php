@@ -4,6 +4,7 @@ namespace Vierwd\VierwdSmarty\View;
 
 use Exception;
 use Smarty;
+use Smarty_Internal_Template;
 use Throwable;
 
 use TYPO3\CMS\Core\Context\Context;
@@ -27,7 +28,10 @@ use Vierwd\VierwdBase\Frontend\ContentObject\ScalableVectorGraphicsContentObject
 use Vierwd\VierwdSmarty\Controller\SmartyController;
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 
-function clean($str) {
+/**
+ * @param mixed $str
+ */
+function clean($str): string {
 	if (is_scalar($str)) {
 		$str = preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', $str);
 		// replace html-characters
@@ -43,8 +47,14 @@ function clean($str) {
 
 class SmartyView extends AbstractView {
 
-	public $Smarty;
+	/**
+	 * @var ?Smarty
+	 */
+	public $Smarty = null;
 
+	/**
+	 * @var bool
+	 */
 	public $hasTopLevelViewHelper = false;
 
 	/**
@@ -122,17 +132,20 @@ class SmartyView extends AbstractView {
 	/**
 	 * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject
 	 */
-	public function setContentObject(ContentObjectRenderer $contentObject) {
+	public function setContentObject(ContentObjectRenderer $contentObject): void {
 		$this->contentObject = $contentObject;
 	}
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext
 	 */
-	public function getControllerContext() {
+	public function getControllerContext(): ControllerContext {
 		return $this->controllerContext;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function canRender(ControllerContext $controllerContext) {
 		$this->setControllerContext($controllerContext);
 		if ($controllerContext->getRequest()->getControllerObjectName() == SmartyController::class) {
@@ -153,7 +166,7 @@ class SmartyView extends AbstractView {
 		}
 	}
 
-	protected function getViewFileName(ControllerContext $controllerContext) {
+	protected function getViewFileName(ControllerContext $controllerContext): string {
 		// try to get the view name based upon the controller/action
 		$controller = $controllerContext->getRequest()->getControllerName();
 		$action     = $controllerContext->getRequest()->getControllerActionName();
@@ -176,7 +189,7 @@ class SmartyView extends AbstractView {
 		throw new Exception('Template not found for ' . $controller . '->' . $action);
 	}
 
-	protected function createSmarty() {
+	protected function createSmarty(): void {
 		if ($this->Smarty) {
 			return;
 		}
@@ -225,6 +238,9 @@ class SmartyView extends AbstractView {
 		$this->Smarty->registerResource('EXT', new ExtResource());
 	}
 
+	/**
+	 * @phpstan-return void
+	 */
 	public function initializeView() {
 		if ($this->contentObject === null) {
 			// initialize a new ContentObject
@@ -240,14 +256,14 @@ class SmartyView extends AbstractView {
 
 		// setup compile and caching dirs
 		$extCacheDir = Environment::getVarPath() . '/cache/vierwd_smarty';
-		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
-		$this->Smarty->cache_dir   = $extCacheDir . '/cache/' . $extensionKey . '/';
+		$this->Smarty->setCompileDir($extCacheDir . '/templates_c/' . $extensionKey . '/');
+		$this->Smarty->setCacheDir($extCacheDir . '/cache/' . $extensionKey . '/');
 
-		if (!is_dir($this->Smarty->cache_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->cache_dir);
+		if (!is_dir($this->Smarty->getCacheDir())) {
+			GeneralUtility::mkdir_deep($this->Smarty->getCacheDir());
 		}
-		if (!is_dir($this->Smarty->compile_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->compile_dir);
+		if (!is_dir($this->Smarty->getCompileDir())) {
+			GeneralUtility::mkdir_deep($this->Smarty->getCompileDir());
 		}
 	}
 
@@ -255,7 +271,7 @@ class SmartyView extends AbstractView {
 	 * translate function for smarty templates.
 	 * copy from fluid viewhelper
 	 */
-	public function smarty_translate($params, $smarty) {
+	public function smarty_translate(array $params, Smarty_Internal_Template $smarty): string {
 		$request = $this->controllerContext->getRequest();
 
 		$key = $params['key'] ?? null;
@@ -273,7 +289,7 @@ class SmartyView extends AbstractView {
 		return $value;
 	}
 
-	public function smarty_uri_resource($params, $smarty) {
+	public function smarty_uri_resource(array $params, Smarty_Internal_Template $smarty): string {
 		$path = $params['path'] ?? null;
 		$extensionName = $params['extensionName'] ?? null;
 		$absolute = $params['absolute'] ?? false;
@@ -296,7 +312,7 @@ class SmartyView extends AbstractView {
 		return $uri;
 	}
 
-	public function smarty_uri_action($params, $smarty) {
+	public function smarty_uri_action(array $params, Smarty_Internal_Template $smarty): string {
 		$action = $params['action'] ?? null;
 		$arguments = $params['arguments'] ?? [];
 		$controller = $params['controller'] ?? null;
@@ -335,9 +351,9 @@ class SmartyView extends AbstractView {
 	 * link action for smarty templates.
 	 * modified from fluids LinkActionViewHelper
 	 */
-	public function smarty_link_action($params, $content, $smarty, &$repeat) {
+	public function smarty_link_action(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
 		if (!isset($content)) {
-			return;
+			return '';
 		}
 
 		$defaultUrlParams = [
@@ -398,7 +414,7 @@ class SmartyView extends AbstractView {
 		return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>' . $content . '</a>';
 	}
 
-	public function smarty_helper_typolink($params, $smarty) {
+	public function smarty_helper_typolink(array $params, Smarty_Internal_Template $smarty): string {
 		$pageUid = $this->getParam($params, 'pageUid', null);
 		$additionalParams = $this->getParam($params, 'additionalParams', []);
 		$pageType = $this->getParam($params, 'pageType', 0);
@@ -427,12 +443,12 @@ class SmartyView extends AbstractView {
 		return $uri;
 	}
 
-	public function smarty_helper_typolink_url($parameter) {
+	public function smarty_helper_typolink_url(string $parameter): string {
 		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		return $cObj->getTypoLink_URL($parameter);
 	}
 
-	public function smarty_flashMessages($params, $smarty) {
+	public function smarty_flashMessages(array $params, Smarty_Internal_Template $smarty): string {
 		$renderMode = $params['renderMode'] ?? 'ul';
 		$class = $params['class'] ?? 'typo3-messages';
 		$queueIdentifier = $params['queueIdentifier'] ?? null;
@@ -466,7 +482,7 @@ class SmartyView extends AbstractView {
 		return $content;
 	}
 
-	public function smarty_svg($params, $smarty) {
+	public function smarty_svg(array $params, Smarty_Internal_Template $smarty): string {
 		if (class_exists(ScalableVectorGraphicsContentObject::class)) {
 			$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$svgObject = GeneralUtility::makeInstance(ScalableVectorGraphicsContentObject::class, $cObj);
@@ -477,13 +493,17 @@ class SmartyView extends AbstractView {
 	}
 
 
-	protected function getParam($params, $key, $default = false) {
+	/**
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	protected function getParam(array $params, string $key, $default = false) {
 		return !empty($params[$key]) ? $params[$key] : $default;
 	}
 
-	public function smarty_fluid(array $params, $content, $smarty, &$repeat) {
+	public function smarty_fluid(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
 		if (!isset($content)) {
-			return;
+			return '';
 		}
 
 		$data = isset($params['data']) ? $params['data'] : [];
@@ -524,9 +544,9 @@ class SmartyView extends AbstractView {
 		return $fluidView->render();
 	}
 
-	public function smarty_typoscript($params, $content, $smarty, &$repeat) {
+	public function smarty_typoscript(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
 		if (!isset($content)) {
-			return;
+			return '';
 		}
 
 		$data = isset($params['data']) ? $params['data'] : [];
@@ -584,7 +604,7 @@ class SmartyView extends AbstractView {
 		}
 	}
 
-	public function smarty_nl2p($content) {
+	public function smarty_nl2p(string $content): string {
 		$content = trim($content);
 		if (!$content) {
 			return '';
@@ -593,7 +613,7 @@ class SmartyView extends AbstractView {
 		return '<p>' . nl2br(preg_replace('/\n{2,}/', '</p><p>', str_replace("\r", '', $content))) . '</p>';
 	}
 
-	public function smarty_email($params, $smarty) {
+	public function smarty_email(array $params, Smarty_Internal_Template $smarty): string {
 		$address = $this->getParam($params, 'address');
 		$label = $this->getParam($params, 'label', $address);
 		$parameter = $this->getParam($params, 'parameter', $address . ' - mail');
@@ -607,7 +627,10 @@ class SmartyView extends AbstractView {
 		return $this->contentObject->typoLink($label, $conf);
 	}
 
-	public function render($view = '') {
+	/**
+	 * @phpstan-return string
+	 */
+	public function render(string $view = '') {
 		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
 
 		if (!$this->contentObject->data && $this->variables['data']) {

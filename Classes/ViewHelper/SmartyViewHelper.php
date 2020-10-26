@@ -37,7 +37,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 		}
 	}
 
-	public function render() {
+	public function render(): string {
 		$template = $this->renderChildren();
 
 		$parentView = $this->renderingContext->getViewHelperVariableContainer()->getView();
@@ -63,6 +63,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 		$templateVariableContainer = $this->renderingContext->getVariableProvider();
 		$variables = $templateVariableContainer->getAll();
 		foreach ($variables as $key => &$value) {
+			// @phpstan-ignore-next-line
 			if (!$view->hasTopLevelViewHelper || !isset($smartyVariables[$key])) {
 				$view->Smarty->assignByRef($key, $value);
 			}

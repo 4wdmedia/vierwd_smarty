@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty;
 
@@ -14,7 +15,7 @@ class Bootstrap {
 	 */
 	public $cObj;
 
-	public function run($content, $configuration) {
+	public function run(string $content, array $configuration): string {
 		$piFlexformBackup = false;
 		if (is_string($this->cObj->data['pi_flexform']) && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
 			// remove switchable controller actions

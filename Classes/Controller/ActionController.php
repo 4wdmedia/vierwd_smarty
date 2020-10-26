@@ -37,6 +37,7 @@ class ActionController extends ExtbaseActionController {
 	 * Afterwards you can register some custom template functions/modifiers.
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
+	 * @phpstan-return void
 	 */
 	protected function initializeView(ViewInterface $view) {
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);

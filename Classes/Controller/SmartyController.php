@@ -10,7 +10,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyController extends ActionController {
 
-	public function renderAction() {
+	public function renderAction(): string {
 		if (!$this->view instanceof SmartyView) {
 			throw new \Exception('Invalid view for renderAction', 1603466955);
 		}

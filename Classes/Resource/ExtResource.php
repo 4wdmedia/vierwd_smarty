@@ -9,6 +9,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ExtResource extends \Smarty_Resource_Custom {
 
+	/**
+	 * @param string  $name
+	 * @param string  $source
+	 * @param int $mtime
+	 * @phpstan-return void
+	 */
 	protected function fetch($name, &$source, &$mtime) {
 		$file = GeneralUtility::getFileAbsFileName('EXT:' . $name);
 		if (file_exists($file)) {
@@ -17,6 +23,9 @@ class ExtResource extends \Smarty_Resource_Custom {
 		}
 	}
 
+	/**
+	 * @param string $name
+	 */
 	protected function fetchTimestamp($name) {
 		$file = GeneralUtility::getFileAbsFileName('EXT:' . $name);
 		if (file_exists($file)) {
