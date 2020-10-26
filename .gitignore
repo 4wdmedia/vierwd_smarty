@@ -1,3 +1,4 @@
-.Build/*
-composer.lock
-vierwd_smarty_*.zip
+/.Build/
+/composer.lock
+/var/
+/vierwd_smarty_*.zip
