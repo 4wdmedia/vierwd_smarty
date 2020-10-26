@@ -48,7 +48,7 @@ script:
   - >
     echo;
     echo "Running unit tests";
-    composer run-script unit-tests
+    composer run-script unit-test
 
   - >
     echo;
