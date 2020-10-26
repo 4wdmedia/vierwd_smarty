@@ -38,10 +38,10 @@ script:
   - >
     echo;
     echo "Running php lint";
-    compose run-script phplint
+    composer run-script phplint
 
   - >
-    echo:
+    echo;
     echo "Running phpstan";
     composer run-script phpstan
 
