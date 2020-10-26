@@ -41,7 +41,7 @@ script:
     composer run-script phplint
 
   - >
-    echo:
+    echo;
     echo "Running phpstan";
     composer run-script phpstan
 
