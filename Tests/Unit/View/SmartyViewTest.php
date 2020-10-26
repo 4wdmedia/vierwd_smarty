@@ -3,6 +3,7 @@
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
@@ -11,6 +12,15 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyViewTest extends UnitTestCase {
+
+	protected function setUp() {
+		$resourceFactory = $this->createMock(ResourceFactory::class);
+		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
+	}
+
+	protected function tearDown() {
+		GeneralUtility::purgeInstances();
+	}
 
 	/**
 	 * Helper to build mock controller context needed to test expandGenericPathPattern.
