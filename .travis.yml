@@ -32,7 +32,7 @@ before_install:
 
 install:
   - if [[ "$TYPO3_VERSION" ]]; then composer require "typo3/minimal" "$TYPO3_VERSION"; git checkout .; export TYPO3_PATH_WEB=$PWD/.Build/Web; fi
-  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer update; fi
 
 script:
   - >
