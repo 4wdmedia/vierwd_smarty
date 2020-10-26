@@ -2,9 +2,13 @@ includes:
     - .Build/vendor/saschaegerer/phpstan-typo3/extension.neon
 
 parameters:
+    level: 8
+
     bootstrapFiles:
         - phpstan.bootstrap.php
 
     paths:
         - Classes
-        - Tests
+        # - Tests
+
+    checkMissingIterableValueType: false
