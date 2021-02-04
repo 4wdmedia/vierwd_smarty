@@ -316,9 +316,11 @@ class SmartyView extends AbstractView {
 		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		if ($pageUid) {
+			$uriBuilder->setTargetPageUid($pageUid);
+		}
 		$uriBuilder->setUseCacheHash(!$noCacheHash);
 		$uri = $uriBuilder
-			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
 			->setSection($section)
@@ -381,9 +383,11 @@ class SmartyView extends AbstractView {
 			$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? $defaultUrlParams['argumentsToBeExcludedFromQueryString'];
 
 			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+			if ($pageUid) {
+				$uriBuilder->setTargetPageUid($pageUid);
+			}
 			$uriBuilder->setUseCacheHash(!$noCacheHash);
 			$uri = $uriBuilder
-				->setTargetPageUid($pageUid)
 				->setTargetPageType($pageType)
 				->setNoCache($noCache)
 				->setSection($section)
@@ -413,9 +417,11 @@ class SmartyView extends AbstractView {
 		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		if ($pageUid) {
+			$uriBuilder->setTargetPageUid($pageUid);
+		}
 		$uriBuilder->setUseCacheHash(!$noCacheHash);
 		$uri = $uriBuilder
-			->setTargetPageUid($pageUid)
 			->setTargetPageType($pageType)
 			->setNoCache($noCache)
 			->setSection($section)
