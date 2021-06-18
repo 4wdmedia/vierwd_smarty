@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\ViewHelper;
 
@@ -17,7 +18,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
  *
  *    <f:format.raw>
  *        <vierwd:smarty>
- *            $variable = 'test';
+ *            {$variable = 'test'}
  *            {$variable|upper}
  *            {include 'Partials/SmartyFile.tpl'}
  *        </vierwd:smarty>
