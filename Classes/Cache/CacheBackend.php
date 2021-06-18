@@ -8,9 +8,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CacheBackend extends NullBackend {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	protected $cacheType = '';
 
 	public function setCacheType($cacheType) {
