@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
@@ -9,7 +10,9 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
+use Vierwd\VierwdSmarty\Controller\SmartyController;
 use Vierwd\VierwdSmarty\View\SmartyView;
+use function Vierwd\VierwdSmarty\View\clean;
 
 class SmartyViewTest extends UnitTestCase {
 
@@ -32,7 +35,11 @@ class SmartyViewTest extends UnitTestCase {
 	 * @return ControllerContext
 	 */
 	protected function setupMockControllerContext($packageKey, $subPackageKey, $controllerName, $action, $format) {
-		$controllerObjectName = "TYPO3\\$packageKey\\" . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+		if (strpos($controllerName, '\\') === false) {
+			$controllerObjectName = "TYPO3\\$packageKey\\" . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+		} else {
+			$controllerObjectName = $controllerName;
+		}
 		$mockRequest = $this->createMock(WebRequest::class);
 		$mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
 		$mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
@@ -168,5 +175,41 @@ class SmartyViewTest extends UnitTestCase {
 
 		$templateView->initializeView();
 		$this->assertEquals('<a href="mailto:example@example.com" class="mail">example@example.com</a>', $templateView->render('string:{email address="example@example.com"}'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function cleanValues() {
+		$this->assertEquals('&lt;test&gt;', clean('<test>'));
+		$this->assertEquals('100', clean(100));
+		$this->assertEquals('', clean(null));
+
+		$this->expectException(\Exception::class); // phpcs:ignore
+		clean(['Array cannot be cleaned']);
+	}
+
+	/**
+	 * @test
+	 */
+	public function canRenderWithSmartyController() {
+		$mockControllerContext = $this->setupMockControllerContext('VierwdSmarty', null, SmartyController::class, 'action', 'tpl');
+
+		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface $templateView */
+		$templateView = $this->getAccessibleMock(SmartyView::class, ['dummy'], [], '', false);
+
+		$this->assertEquals(true, $templateView->canRender($mockControllerContext));
+	}
+
+	/**
+	 * @test
+	 */
+	public function canRenderWithNonSmartyController() {
+		$mockControllerContext = $this->setupMockControllerContext('VierwdWebsite', null, 'Website', 'action', 'html');
+
+		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface $templateView */
+		$templateView = $this->getAccessibleMock(SmartyView::class, ['dummy'], [], '', false);
+
+		$this->assertEquals(false, $templateView->canRender($mockControllerContext));
 	}
 }
