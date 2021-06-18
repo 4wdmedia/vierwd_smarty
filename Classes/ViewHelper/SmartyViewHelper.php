@@ -26,9 +26,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
  */
 class SmartyViewHelper extends AbstractViewHelper {
 
-	/**
-	 * @var \Vierwd\VierwdSmarty\View\SmartyView
-	 */
+	/** @var \Vierwd\VierwdSmarty\View\SmartyView */
 	static protected $smartyView = null;
 
 	public function initialize() {

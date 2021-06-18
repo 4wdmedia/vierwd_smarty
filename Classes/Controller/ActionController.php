@@ -21,15 +21,15 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class ActionController extends ExtbaseActionController {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	protected $entityNotFoundMessage = 'The requested entity could not be found.';
 
 	/**
 	 * this is needed to use the smarty view
+	 *
+	 * @var string
 	 */
-	protected $defaultViewObjectName = 'Vierwd\\VierwdSmarty\\View\\SmartyView';
+	protected $defaultViewObjectName = SmartyView::class;
 
 	/**
 	 * initialize the view.

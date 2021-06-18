@@ -47,14 +47,10 @@ function clean($str): string {
 
 class SmartyView extends AbstractView {
 
-	/**
-	 * @var Smarty
-	 */
+	/** @var Smarty */
 	public $Smarty = null;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	public $hasTopLevelViewHelper = false;
 
 	/**
@@ -71,9 +67,7 @@ class SmartyView extends AbstractView {
 	 */
 	protected $templateRootPaths = null;
 
-	/**
-	 * @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
-	 */
+	/** @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
 	protected $contentObject = null;
 
 	/**
