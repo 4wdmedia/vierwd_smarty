@@ -24,7 +24,6 @@ use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatch
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
-use Vierwd\VierwdBase\Frontend\ContentObject\ScalableVectorGraphicsContentObject;
 use Vierwd\VierwdSmarty\Controller\SmartyController;
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 
@@ -202,7 +201,6 @@ class SmartyView extends AbstractView {
 		$this->Smarty->registerPlugin('function', 'typolink',      [$this, 'smarty_helper_typolink']);
 		$this->Smarty->registerPlugin('modifier', 'typolink',      [$this, 'smarty_helper_typolink_url']);
 		$this->Smarty->registerPlugin('function', 'flashMessages', [$this, 'smarty_flashMessages']);
-		$this->Smarty->registerPlugin('function', 'svg',           [$this, 'smarty_svg']);
 
 		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
 
@@ -469,17 +467,6 @@ class SmartyView extends AbstractView {
 
 		return $content;
 	}
-
-	public function smarty_svg(array $params, Smarty_Internal_Template $smarty): string {
-		if (class_exists(ScalableVectorGraphicsContentObject::class)) {
-			$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-			$svgObject = GeneralUtility::makeInstance(ScalableVectorGraphicsContentObject::class, $cObj);
-			return $svgObject->render($params);
-		}
-
-		return '';
-	}
-
 
 	/**
 	 * @param mixed $default
