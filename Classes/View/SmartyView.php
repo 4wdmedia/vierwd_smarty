@@ -120,9 +120,6 @@ class SmartyView extends AbstractView {
 		return array_filter($templateRootPaths);
 	}
 
-	/**
-	 * @param \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $contentObject
-	 */
 	public function setContentObject(ContentObjectRenderer $contentObject) {
 		$this->contentObject = $contentObject;
 	}
@@ -241,14 +238,14 @@ class SmartyView extends AbstractView {
 
 		// setup compile and caching dirs
 		$extCacheDir = Environment::getVarPath() . '/cache/vierwd_smarty';
-		$this->Smarty->compile_dir = $extCacheDir . '/templates_c/' . $extensionKey . '/';
-		$this->Smarty->cache_dir   = $extCacheDir . '/cache/' . $extensionKey . '/';
+		$this->Smarty->setCompileDir($extCacheDir . '/templates_c/' . $extensionKey . '/');
+		$this->Smarty->setCacheDir($extCacheDir . '/cache/' . $extensionKey . '/');
 
-		if (!is_dir($this->Smarty->cache_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->cache_dir);
+		if (!is_dir($this->Smarty->getCacheDir())) {
+			GeneralUtility::mkdir_deep($this->Smarty->getCacheDir());
 		}
-		if (!is_dir($this->Smarty->compile_dir)) {
-			GeneralUtility::mkdir_deep($this->Smarty->compile_dir);
+		if (!is_dir($this->Smarty->getCompileDir())) {
+			GeneralUtility::mkdir_deep($this->Smarty->getCompileDir());
 		}
 	}
 
