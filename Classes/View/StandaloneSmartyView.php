@@ -5,7 +5,7 @@ namespace Vierwd\VierwdSmarty\View;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
+use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -24,9 +24,7 @@ class StandaloneSmartyView extends SmartyView {
 		}
 		$this->configurationManager->setContentObject($contentObject);
 
-		$request = $this->objectManager->get(WebRequest::class);
-		$request->setRequestUri(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-		$request->setBaseUri(GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
+		$request = $this->objectManager->get(Request::class, $GLOBALS['TYPO3_REQUEST']);
 		$request->setControllerExtensionName('VierwdSmarty');
 
 		$uriBuilder = $this->objectManager->get(UriBuilder::class);

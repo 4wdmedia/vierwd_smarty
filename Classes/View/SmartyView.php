@@ -5,7 +5,6 @@ namespace Vierwd\VierwdSmarty\View;
 use Exception;
 use Smarty;
 use Smarty_Internal_Template;
-use Throwable;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
@@ -15,7 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\View\AbstractView;
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -24,7 +23,6 @@ use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatch
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
-use Vierwd\VierwdSmarty\Controller\SmartyController;
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 
 /**
@@ -44,7 +42,7 @@ function clean($str): string {
 	}
 }
 
-class SmartyView extends AbstractView {
+class SmartyView implements ViewInterface {
 
 	/** @var Smarty */
 	public $Smarty = null;
@@ -66,6 +64,12 @@ class SmartyView extends AbstractView {
 	 */
 	protected $templateRootPaths = null;
 
+	/** @var \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext */
+	protected $controllerContext;
+
+	/** @var array */
+	protected $variables = [];
+
 	/** @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
 	protected $contentObject = null;
 
@@ -76,10 +80,26 @@ class SmartyView extends AbstractView {
 	protected $configurationManager = null;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface<StandaloneView|ExtensionService>
 	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
 	protected $objectManager = null;
+
+	public function setControllerContext(ControllerContext $controllerContext): void {
+		$this->controllerContext = $controllerContext;
+	}
+
+	public function assign($key, $value): self {
+		$this->variables[$key] = $value;
+		return $this;
+	}
+
+	public function assignMultiple(array $values): self {
+		foreach ($values as $key => $value) {
+			$this->assign($key, $value);
+		}
+		return $this;
+	}
 
 	/**
 	 * Set the root path(s) to the templates.
@@ -128,29 +148,6 @@ class SmartyView extends AbstractView {
 
 	public function getControllerContext(): ControllerContext {
 		return $this->controllerContext;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function canRender(ControllerContext $controllerContext) {
-		$this->setControllerContext($controllerContext);
-		if ($controllerContext->getRequest()->getControllerObjectName() == SmartyController::class) {
-			return true;
-		}
-		// setting in TypoScript: plugin.tx_vierwdPLUGIN.format = tpl
-		// this will force the SmartyView for all views. Otherwise this method will check if
-		// there is a template with the same name as the action. (Which will not exist, if the action
-		// calls $view->render() with another name)
-		if ($controllerContext->getRequest()->getFormat() == 'tpl') {
-			return true;
-		}
-		try {
-			$this->getViewFileName($controllerContext);
-			return true;
-		} catch (Throwable $e) {
-			return false;
-		}
 	}
 
 	protected function getViewFileName(ControllerContext $controllerContext): string {
@@ -224,10 +221,7 @@ class SmartyView extends AbstractView {
 		$this->Smarty->registerResource('EXT', new ExtResource());
 	}
 
-	/**
-	 * @phpstan-return void
-	 */
-	public function initializeView() {
+	public function initializeView(): void {
 		if ($this->contentObject === null) {
 			// initialize a new ContentObject
 			$this->contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);

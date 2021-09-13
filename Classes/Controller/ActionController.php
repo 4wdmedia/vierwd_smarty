@@ -4,13 +4,13 @@ namespace Vierwd\VierwdSmarty\Controller;
 
 use InvalidArgumentException;
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
-use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
 use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
@@ -86,15 +86,12 @@ class ActionController extends ExtbaseActionController {
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface $request
-	 * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response
-	 * @return void
 	 * @override \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 	 * @see http://nerdcenter.de/extbase-fehlerbehandlung/
 	 */
-	public function processRequest(RequestInterface $request, ResponseInterface $response) {
+	public function processRequest(RequestInterface $request): ResponseInterface {
 		try {
-			parent::processRequest($request, $response);
+			return parent::processRequest($request);
 		} catch(PropertyException $exception) {
 			// If the property mapper did throw a \TYPO3\CMS\Extbase\Property\Exception, because it was unable to find the requested entity, call the page-not-found handler.
 			$previousException = $exception->getPrevious();
