@@ -71,6 +71,14 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 			if ((string)$item['ITEM_STATE'] === (string)$kind) {
 				return true;
 			}
+
+			if ($kind === 'ACT' && $item['ITEM_STATE'] === 'ACTIFSUB') {
+				return true;
+			}
+
+			if ($kind === 'IFSUB' && $item['ITEM_STATE'] === 'ACTIFSUB') {
+				return true;
+			}
 		}
 
 		foreach ($this->menuArr as $key => $menuItem) {
