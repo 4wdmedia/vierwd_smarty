@@ -718,8 +718,8 @@ class SmartyView extends AbstractView {
 
 				if (!headers_sent()) {
 					header('Content-Type: text/html; charset=utf-8');
-					header('Content-Encoding: identity');
 					header_remove('Content-Length');
+					header_remove('Content-Encoding');
 				}
 
 				echo '<h1>Invalid Smarty Template change detected</h1>';
@@ -727,7 +727,7 @@ class SmartyView extends AbstractView {
 				echo 'View: <b>' . htmlspecialchars($viewFileName) . '</b><br>You cannot commit this file.</p>';
 				echo '<p>To fix this error create a template within the website extension.</p>';
 				echo '<p>To ignore this message, update the filemtime of the ext_emconf of the Smarty extension:</p>';
-				echo '<pre>touch ' . htmlspecialchars($view) . '</pre>';
+				echo '<pre>touch ' . htmlspecialchars($emConf) . '</pre>';
 				exit;
 			}
 		}
