@@ -9,6 +9,7 @@ use Smarty_Internal_Template;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -282,7 +283,7 @@ class SmartyView implements ViewInterface {
 		$uri = GeneralUtility::getFileAbsFileName($uri);
 		$uri = PathUtility::stripPathSitePrefix($uri);
 
-		if (TYPO3_MODE === 'BE' && $absolute === false && $uri !== false) {
+		if ($absolute === false && $uri !== false && GeneralUtility::makeInstance(ApplicationType::class)->isBackend()) {
 			$uri = '../' . $uri;
 		}
 
