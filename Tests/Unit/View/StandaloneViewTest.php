@@ -81,6 +81,7 @@ class StandaloneViewTest extends UnitTestCase {
 		$view->setTemplateRootPaths(['EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/']);
 
 		$view->assign('variable', 'TEST');
+		// @extensionScannerIgnoreLine
 		$content = trim($view->render('StandaloneView.tpl'));
 		$expected = "Template will be rendered with StandaloneView.\nTemplate evaluation\nTEST";
 		$this->assertEquals($expected, $content);

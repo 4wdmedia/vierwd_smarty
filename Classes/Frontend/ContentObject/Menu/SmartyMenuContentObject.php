@@ -57,6 +57,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		$view->assign('menu', $this->menuArr);
 		$view->assign('menuObject', $this);
 
+		// @extensionScannerIgnoreLine
 		return $view->render($template);
 	}
 
@@ -84,6 +85,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 
 		foreach ($this->menuArr as $key => $menuItem) {
 			if ($menuItem === $item) {
+				// @extensionScannerIgnoreLine
 				return $this->isItemState($kind, $key);
 			}
 		}
@@ -91,6 +93,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		// item not found. return first item matching the uid
 		foreach ($this->menuArr as $key => $menuItem) {
 			if ($menuItem['uid'] === $item['uid']) {
+				// @extensionScannerIgnoreLine
 				return $this->isItemState($kind, $key);
 			}
 		}

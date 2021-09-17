@@ -16,6 +16,7 @@ class SmartyController extends ActionController {
 			throw new \Exception('Invalid view for renderAction', 1603466955);
 		}
 
+		// @extensionScannerIgnoreLine
 		$baseContentObject = $this->configurationManager->getContentObject();
 		if (!$baseContentObject) {
 			return '';
@@ -72,10 +73,12 @@ class SmartyController extends ActionController {
 
 		$file = GeneralUtility::getFileAbsFileName($template);
 		if ($file && file_exists($file)) {
+			// @extensionScannerIgnoreLine
 			return $this->view->render($file);
 		}
 
 		// try to render the template. maybe it is relative
+		// @extensionScannerIgnoreLine
 		return $this->view->render($template);
 	}
 }

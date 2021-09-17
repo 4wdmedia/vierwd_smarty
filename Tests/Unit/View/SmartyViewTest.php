@@ -140,6 +140,7 @@ class SmartyViewTest extends UnitTestCase {
 
 		$templateView->initializeView();
 
+		// @extensionScannerIgnoreLine
 		$this->assertEquals('44321', $templateView->render('TemplateLogic.tpl'));
 	}
 
@@ -156,6 +157,7 @@ class SmartyViewTest extends UnitTestCase {
 
 		$templateView->initializeView();
 
+		// @extensionScannerIgnoreLine
 		$this->assertEquals('LineBreaks and trailing spacesmultiple breaksWhitespace after commentWhitespace after multiline comment', $templateView->render('Whitespace.tpl'));
 	}
 
@@ -174,6 +176,7 @@ class SmartyViewTest extends UnitTestCase {
 		$templateView->setContentObject($mockContentObject);
 
 		$templateView->initializeView();
+		// @extensionScannerIgnoreLine
 		$this->assertEquals('<a href="mailto:example@example.com" class="mail">example@example.com</a>', $templateView->render('string:{email address="example@example.com"}'));
 	}
 

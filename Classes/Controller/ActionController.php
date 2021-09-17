@@ -44,6 +44,7 @@ class ActionController extends ExtbaseActionController {
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
 		if ($view instanceof SmartyView) {
+			// @extensionScannerIgnoreLine
 			$view->setContentObject($this->configurationManager->getContentObject());
 
 			// set template root paths, if used with settings (old way)
@@ -72,6 +73,7 @@ class ActionController extends ExtbaseActionController {
 			$contentDataProcessor = GeneralUtility::makeInstance(ContentDataProcessor::class);
 
 			$variables = [];
+			// @extensionScannerIgnoreLine
 			$baseContentObject = $this->configurationManager->getContentObject();
 			if ($baseContentObject) {
 				$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
@@ -110,6 +112,7 @@ class ActionController extends ExtbaseActionController {
 	 * @return array the variables to be assigned
 	 */
 	protected function getContentObjectVariables(array $conf) {
+			// @extensionScannerIgnoreLine
 		$contentObject = $this->configurationManager->getContentObject();
 		if (!$contentObject) {
 			return [];

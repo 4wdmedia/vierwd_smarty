@@ -72,6 +72,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 			unset($value);
 		}
 
+		// @extensionScannerIgnoreLine
 		$result = $view->render($template);
 
 		// if the variables have changed in a template, update the original variables in the outer templateVariableContainer
