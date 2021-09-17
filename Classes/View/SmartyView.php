@@ -531,7 +531,6 @@ class SmartyView implements ViewInterface {
 		if ($this->contentObject) {
 			$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
 			$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
-			$cObj->currentRecordTotal = $this->contentObject->currentRecordTotal;
 			$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
 		}
 		if ($table != '_NO_TABLE') {
