@@ -16,9 +16,6 @@ $menuContentObjectFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance
 $menuContentObjectFactory->registerMenuType('SMARTY', \Vierwd\VierwdSmarty\Frontend\ContentObject\Menu\SmartyMenuContentObject::class);
 unset($menuContentObjectFactory);
 
-// ClearCache action
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['additionalBackendItems']['cacheActions'][] = \Vierwd\VierwdSmarty\Cache\ClearCacheHook::class;
-
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['vierwd_smarty_cache'] = [
 	'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
 	'backend' => \Vierwd\VierwdSmarty\Cache\CacheBackend::class,

@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Vierwd\VierwdSmarty\Cache\ClearCacheHook:
+    tags:
+      - name: event.listener
+        identifier: 'vierwdSmartyClearCache'
+        event: TYPO3\CMS\Backend\Backend\Event\ModifyClearCacheActionsEvent
