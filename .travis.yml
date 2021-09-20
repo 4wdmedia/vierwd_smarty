@@ -1,20 +1,13 @@
 language: php
 
 php:
-  - 7.2
   - 7.4
-
-env:
-  - TYPO3_VERSION="^10.4.0"
+  - 8.0
 
 matrix:
-  exclude:
-    # - php: 7.2
-    #   env: TYPO3_VERSION="^7.6.0"
   include:
-    - php: 7.2
+    - php: 7.4
       env: SNIFF=1
-sudo: false
 
 addons:
   apt:
@@ -31,8 +24,7 @@ before_install:
   - composer --version
 
 install:
-  - if [[ "$TYPO3_VERSION" ]]; then composer require "typo3/minimal" "$TYPO3_VERSION"; git checkout .; export TYPO3_PATH_WEB=$PWD/.Build/Web; fi
-  - if [[ "$SNIFF" == "1" ]]; then composer update; fi
+  - composer install
 
 script:
   - >
@@ -41,20 +33,25 @@ script:
     composer run-script phplint
 
   - >
-    echo;
+    if [[ "$SNIFF" != "1" ]];
+    then echo;
     echo "Running phpstan";
-    composer run-script phpstan
+    composer run-script phpstan;
+    fi;
 
   - >
-    echo;
+    if [[ "$SNIFF" != "1" ]];
+    then echo;
     echo "Running unit tests";
-    composer run-script unit-test
+    composer run-script unit-test;
+    fi;
 
   - >
-    echo;
+    if [[ "$SNIFF" != "1" ]];
+    then echo;
     echo "Running functional tests";
-    composer run-script test
-
+    composer run-script test;
+    fi;
 
   - if [[ "$SNIFF" == "1" ]]; then composer run-script phpcs; fi
 
