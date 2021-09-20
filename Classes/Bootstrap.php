@@ -4,16 +4,19 @@ declare(strict_types = 1);
 namespace Vierwd\VierwdSmarty;
 
 use TYPO3\CMS\Extbase\Core\Bootstrap as ExtbaseBootstrap;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class Bootstrap {
 
 	/**
 	 * Back reference to the parent content object
-	 * This has to be public as it is set directly from TYPO3
-	 *
 	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
-	public $cObj;
+	protected $cObj;
+
+	public function setContentObjectRenderer(ContentObjectRenderer $cObj): void {
+		$this->cObj = $cObj;
+	}
 
 	public function run(string $content, array $configuration): string {
 		$piFlexformBackup = false;
