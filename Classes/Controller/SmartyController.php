@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Http\Response;
+use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -11,7 +14,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyController extends ActionController {
 
-	public function renderAction(): string {
+	public function renderAction(): ResponseInterface {
 		if (!$this->view instanceof SmartyView) {
 			throw new \Exception('Invalid view for renderAction', 1603466955);
 		}
@@ -19,7 +22,7 @@ class SmartyController extends ActionController {
 		// @extensionScannerIgnoreLine
 		$baseContentObject = $this->configurationManager->getContentObject();
 		if (!$baseContentObject) {
-			return '';
+			return new Response();
 		}
 
 		if (isset($baseContentObject->data['pi_flexform']) && is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
@@ -68,17 +71,26 @@ class SmartyController extends ActionController {
 		}
 
 		if (!$template) {
-			return '';
+			return new Response();
 		}
+
+		$response = new Response();
 
 		$file = GeneralUtility::getFileAbsFileName($template);
 		if ($file && file_exists($file)) {
 			// @extensionScannerIgnoreLine
-			return $this->view->render($file);
+			$body = $this->view->render($file);
+		} else {
+			// try to render the template. maybe it is relative
+			// @extensionScannerIgnoreLine
+			$body = $this->view->render($template);
 		}
 
-		// try to render the template. maybe it is relative
-		// @extensionScannerIgnoreLine
-		return $this->view->render($template);
+		$stream = new Stream('php://temp', 'r+');
+		$stream->write($body);
+		$stream->rewind();
+		$response = $response->withBody($stream);
+
+		return $response;
 	}
 }
