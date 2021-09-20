@@ -3,19 +3,25 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\ViewHelper;
 
-use Nimut\TestingFramework\TestCase\ViewHelperBaseTestcase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Service\ImageService;
+use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
+use TYPO3\TestingFramework\Fluid\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3Fluid\Fluid\Core\Variables\StandardVariableProvider;
 
+use Vierwd\VierwdSmarty\View\SmartyView;
 use Vierwd\VierwdSmarty\ViewHelper\SmartyViewHelper;
 
 class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 
+	use ProphecyTrait;
+
 	/** @var \PHPUnit_Framework_MockObject_MockObject */
 	protected $viewHelper;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->request->getControllerExtensionName()->willReturn('VierwdSmarty');
@@ -31,11 +37,16 @@ class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
+
+		$imageService = $this->getMockBuilder(ImageService::class)->disableOriginalConstructor()->getMock();
+		$typoLinkCodecService = $this->getMockBuilder(TypoLinkCodecService::class)->disableOriginalConstructor()->getMock();
+		$smartyView = new SmartyView($imageService, $typoLinkCodecService);
+		GeneralUtility::addInstance(SmartyView::class, $smartyView);
 	}
 
-	protected function tearDown() {
-		parent::tearDown();
+	protected function tearDown(): void {
 		GeneralUtility::purgeInstances();
+		parent::tearDown();
 
 		$reflection = new \ReflectionProperty(SmartyViewHelper::class, 'smartyView');
 		$reflection->setAccessible(true);

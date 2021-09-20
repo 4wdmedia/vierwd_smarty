@@ -25,7 +25,7 @@ class StandaloneSmartyView extends SmartyView {
 		}
 		$this->configurationManager->setContentObject($contentObject);
 
-		$request = $this->objectManager->get(Request::class, $GLOBALS['TYPO3_REQUEST']);
+		$request = $this->objectManager->get(Request::class);
 		$request->setControllerExtensionName('VierwdSmarty');
 
 		$uriBuilder = $this->objectManager->get(UriBuilder::class);

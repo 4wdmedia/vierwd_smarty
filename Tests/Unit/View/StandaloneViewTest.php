@@ -3,36 +3,39 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
+use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 use Vierwd\VierwdSmarty\View\StandaloneSmartyView;
 
 class StandaloneViewTest extends UnitTestCase {
 
-	protected function setUp() {
+	protected function setUp(): void {
+		$GLOBALS['TYPO3_REQUEST'] = $this->createMock(ServerRequestInterface::class);
+
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
 
 		$configurationManager = $this->getAccessibleMock(FrontendConfigurationManager::class, [], [], '', false);
-		$request = $this->getAccessibleMock(WebRequest::class, [], [], '', false);
+		$request = $this->getAccessibleMock(Request::class, [], [], '', false);
 		$uriBuilder = $this->getAccessibleMock(UriBuilder::class, [], [], '', false);
-		$controllerContext = $this->setupMockControllerContext('VierwdSmarty', '', 'Smarty', 'render', 'tpl');
+		$controllerContext = $this->setupMockControllerContext('VierwdSmarty', 'Smarty', 'render', 'tpl');
 
 		$extensionService = $this->getAccessibleMock(ExtensionService::class, [], [], '', false);
 
 		$objectManager = $this->getAccessibleMock(ObjectManager::class, [], [], '', false);
 		$objectManager->method('get')->will($this->returnValueMap([
 			[ConfigurationManagerInterface::class, $configurationManager],
-			[WebRequest::class, $request],
+			[Request::class, $request],
 			[UriBuilder::class, $uriBuilder],
 			[ControllerContext::class, $controllerContext],
 			[ExtensionService::class, $extensionService],
@@ -40,28 +43,28 @@ class StandaloneViewTest extends UnitTestCase {
 		GeneralUtility::setSingletonInstance(ObjectManager::class, $objectManager);
 	}
 
-	protected function tearDown() {
+	protected function tearDown(): void {
 		GeneralUtility::purgeInstances();
+		unset($GLOBALS['TYPO3_REQUEST']);
+		parent::tearDown();
 	}
 
 	/**
 	 * Helper to build mock controller context needed to test expandGenericPathPattern.
 	 *
 	 * @param string $packageKey
-	 * @param string $subPackageKey
 	 * @param string $controllerName
 	 * @param string $format
 	 * @return ControllerContext
 	 */
-	protected function setupMockControllerContext($packageKey, $subPackageKey, $controllerName, $action, $format) {
+	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format) {
 		if (strpos($controllerName, '\\') === false) {
-			$controllerObjectName = "TYPO3\\$packageKey\\" . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+			$controllerObjectName = "TYPO3\\$packageKey\\Controller\\" . $controllerName . 'Controller';
 		} else {
 			$controllerObjectName = $controllerName;
 		}
-		$mockRequest = $this->createMock(WebRequest::class);
+		$mockRequest = $this->createMock(Request::class);
 		$mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
-		$mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
 		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($action));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));

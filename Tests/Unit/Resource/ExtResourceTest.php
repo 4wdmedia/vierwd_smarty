@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
-use Nimut\TestingFramework\TestCase\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 use Smarty;
 use SmartyException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 
@@ -16,7 +16,7 @@ class ExtResourceTest extends UnitTestCase {
 	/** @var Smarty */
 	protected $smarty;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		$this->smarty = new Smarty();
 		$this->smarty->registerResource('EXT', new ExtResource());
 
@@ -26,7 +26,7 @@ class ExtResourceTest extends UnitTestCase {
 		$this->smarty->setCacheDir(vfsStream::url('root/cache'));
 	}
 
-	protected function tearDown() {
+	protected function tearDown(): void {
 		$this->smarty = null;
 		GeneralUtility::purgeInstances();
 	}

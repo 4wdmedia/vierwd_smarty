@@ -87,6 +87,17 @@ class SmartyView implements ViewInterface {
 	 */
 	protected $objectManager = null;
 
+	/** @var ImageService $imageService */
+	protected $imageService;
+
+	/** @var TypoLinkCodecService $typoLinkCodecService */
+	protected $typoLinkCodecService;
+
+	public function __construct(ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+		$this->imageService = $imageService;
+		$this->typoLinkCodecService = $typoLinkCodecService;
+	}
+
 	public function setControllerContext(ControllerContext $controllerContext): void {
 		$this->controllerContext = $controllerContext;
 	}
@@ -182,12 +193,12 @@ class SmartyView implements ViewInterface {
 
 		$this->Smarty = new Smarty();
 
-		if ($GLOBALS['TSFE'] && !$GLOBALS['TSFE']->headerNoCache()) {
+		if (isset($GLOBALS['TSFE']) && !$GLOBALS['TSFE']->headerNoCache()) {
 			$this->Smarty->setCacheLifetime(120);
 			$this->Smarty->setCompileCheck(0);
 		}
 
-		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs']) {
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] ?? null) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'] as $pluginDir) {
 				$this->Smarty->addPluginsDir($pluginDir);
 			}
@@ -607,7 +618,7 @@ class SmartyView implements ViewInterface {
 	public function render(string $view = '') {
 		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
 
-		if ($this->contentObject && !$this->contentObject->data && $this->variables['data']) {
+		if ($this->contentObject && !$this->contentObject->data && isset($this->variables['data'])) {
 			$this->contentObject->data = $this->variables['data'];
 		}
 
@@ -648,15 +659,15 @@ class SmartyView implements ViewInterface {
 			'context' => GeneralUtility::makeInstance(Context::class),
 			'siteLanguage' => $siteLanguage,
 			'typo3Request' => $request,
-			'typolinkService' => GeneralUtility::makeInstance(TypoLinkCodecService::class),
-			'imageService' => GeneralUtility::makeInstance(ImageService::class),
+			'typolinkService' => $this->typoLinkCodecService,
+			'imageService' => $this->imageService,
 			// 'settings' => $typoScript['settings'],
-			'TSFE' => $GLOBALS['TSFE'],
+			'TSFE' => $GLOBALS['TSFE'] ?? null,
 		];
 
 		$this->Smarty->assign($templateVars);
 		$settings = $this->Smarty->getTemplateVars('settings');
-		$userVars = $settings['typoscript'];
+		$userVars = $settings['typoscript'] ?? [];
 		if ($userVars) {
 			$overwrite = array_intersect_key($templateVars, $userVars);
 			if ($overwrite) {
