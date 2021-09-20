@@ -62,7 +62,7 @@ class ActionController extends ExtbaseActionController {
 				$cF = GeneralUtility::makeInstance(TypoScriptParser::class);
 				[, $dataProcessing] = $cF->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
 			} else {
-				$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+				$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 				$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
 			}
 
@@ -120,7 +120,7 @@ class ActionController extends ExtbaseActionController {
 		$variables = [];
 		$reservedVariables = ['data', 'current'];
 		// Accumulate the variables to be process and loop them through cObjGetSingle
-		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+		$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 		$variablesToProcess = $typoScriptService->convertPlainArrayToTypoScriptArray($conf['variables']);
 		foreach ($variablesToProcess as $variableName => $cObjType) {
 			if (is_array($cObjType)) {

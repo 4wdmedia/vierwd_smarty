@@ -20,7 +20,7 @@ class SmartyController extends ActionController {
 			return '';
 		}
 
-		if (is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
+		if (isset($baseContentObject->data['pi_flexform']) && is_array($baseContentObject->data['pi_flexform']) && isset($baseContentObject->data['pi_flexform_array'], $baseContentObject->data['pi_flexform_array']['settings'])) {
 			// Gridelements changed pi_flexform to array. Extbase only uses the xml-structure to fill the settings array.
 			// merge the settings
 			$this->settings = array_merge_recursive($this->settings, $baseContentObject->data['pi_flexform_array']['settings']);
@@ -29,7 +29,7 @@ class SmartyController extends ActionController {
 		// first check, if the template was given using the settings
 		// 10 < plugin.tx_vierwdsmarty
 		// 10.settings.template = fileadmin/templates/fce.tpl
-		$typoScriptService = $this->objectManager->get(TypoScriptService::class);
+		$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 		$settings = $typoScriptService->convertPlainArrayToTypoScriptArray($this->settings);
 		$template = $settings['template'];
 

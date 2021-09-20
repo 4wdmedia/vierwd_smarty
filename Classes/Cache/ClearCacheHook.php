@@ -34,7 +34,8 @@ class ClearCacheHook implements ClearCacheActionsHookInterface {
 	}
 
 	public function clear(array $params): void {
-		if ($params['cacheCmd'] === 'vierwd_smarty' || $params['cacheCmd'] === 'all') {
+		$cacheCmd = $params['cacheCmd'] ?? null;
+		if (in_array($cacheCmd, ['vierwd_smarty', 'all'])) {
 			try {
 				$cacheManager = GeneralUtility::makeInstance(CacheManager::class);
 				$cacheManager->flushCachesInGroup('vierwd_smarty');

@@ -17,7 +17,7 @@ class Bootstrap {
 
 	public function run(string $content, array $configuration): string {
 		$piFlexformBackup = false;
-		if (is_string($this->cObj->data['pi_flexform']) && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
+		if (isset($this->cObj->data['pi_flexform']) && is_string($this->cObj->data['pi_flexform']) && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
 			// remove switchable controller actions
 			$piFlexformBackup = $this->cObj->data['pi_flexform'];
 			$this->cObj->data['pi_flexform_backup'] = $piFlexformBackup;
