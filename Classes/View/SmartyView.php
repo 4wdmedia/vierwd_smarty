@@ -414,7 +414,7 @@ class SmartyView implements ViewInterface {
 		$noCache = $this->getParam($params, 'noCache');
 		$linkAccessRestrictedPages = $this->getParam($params, 'linkAccessRestrictedPages');
 		$absolute = $this->getParam($params, 'absolute');
-		$section = $this->getParam($params, 'section');
+		$section = $this->getParam($params, 'section', '');
 		$addQueryString = $this->getParam($params, 'addQueryString');
 		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
 
