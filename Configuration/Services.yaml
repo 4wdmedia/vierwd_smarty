@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Vierwd\VierwdSmarty\:
+    resource: '../Classes/*'
+
+  Vierwd\VierwdSmarty\Controller\:
+    resource: '../Classes/Controller/*'
+    public: true
+    shared: false
