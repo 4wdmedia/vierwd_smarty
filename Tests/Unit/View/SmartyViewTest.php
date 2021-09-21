@@ -7,6 +7,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -21,6 +22,9 @@ class SmartyViewTest extends UnitTestCase {
 		$GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
+
+		$extensionService = $this->createMock(ExtensionService::class);
+		GeneralUtility::setSingletonInstance(ExtensionService::class, $extensionService);
 	}
 
 	protected function tearDown(): void {
