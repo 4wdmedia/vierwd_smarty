@@ -490,11 +490,11 @@ class SmartyView implements ViewInterface {
 		$fluidView->setTemplateSource($content);
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-		if ($configuration['view']) {
+		if (isset($configuration['view'])) {
 			$layoutRootPaths = [];
-			if ($configuration['view']['layoutRootPaths']) {
+			if (isset($configuration['view']['layoutRootPaths'])) {
 				$layoutRootPaths = $configuration['view']['layoutRootPaths'];
-			} else if ($configuration['view']['layoutRootPath']) {
+			} else if (isset($configuration['view']['layoutRootPath'])) {
 				$layoutRootPaths = [$configuration['view']['layoutRootPath']];
 			}
 			$layoutRootPaths = array_map(function($path) {
@@ -504,9 +504,9 @@ class SmartyView implements ViewInterface {
 
 			// Partials
 			$partialRootPaths = [];
-			if ($configuration['view']['partialRootPaths']) {
+			if (isset($configuration['view']['partialRootPaths'])) {
 				$partialRootPaths = $configuration['view']['partialRootPaths'];
-			} else if ($configuration['view']['partialRootPath']) {
+			} else if (isset($configuration['view']['partialRootPath'])) {
 				$partialRootPaths = [$configuration['view']['partialRootPath']];
 			}
 			$partialRootPaths = array_map(function($path) {
