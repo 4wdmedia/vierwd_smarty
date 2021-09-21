@@ -75,17 +75,8 @@ class SmartyView implements ViewInterface {
 	/** @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
 	protected $contentObject = null;
 
-	/**
-	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
-	 * @TYPO3\CMS\Extbase\Annotation\Inject
-	 */
+	/** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface */
 	protected $configurationManager = null;
-
-	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface<StandaloneView|ExtensionService>
-	 * @TYPO3\CMS\Extbase\Annotation\Inject
-	 */
-	protected $objectManager = null;
 
 	/** @var ImageService $imageService */
 	protected $imageService;
@@ -93,7 +84,8 @@ class SmartyView implements ViewInterface {
 	/** @var TypoLinkCodecService $typoLinkCodecService */
 	protected $typoLinkCodecService;
 
-	public function __construct(ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+		$this->configurationManager = $configurationManager;
 		$this->imageService = $imageService;
 		$this->typoLinkCodecService = $typoLinkCodecService;
 	}
@@ -492,7 +484,7 @@ class SmartyView implements ViewInterface {
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
-		$fluidView = $this->objectManager->get(StandaloneView::class);
+		$fluidView = GeneralUtility::makeInstance(StandaloneView::class);
 		$fluidView->setControllerContext($this->controllerContext);
 		$fluidView->assignMultiple($data);
 		$fluidView->setTemplateSource($content);
@@ -631,10 +623,8 @@ class SmartyView implements ViewInterface {
 			$this->Smarty->assign('frameworkSettings', $typoScript);
 		}
 
-		if ($this->objectManager !== null) {
-			$formPrefix = $this->objectManager->get(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
-			$this->Smarty->assign('formPrefix', $formPrefix);
-		}
+		$formPrefix = GeneralUtility::makeInstance(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
+		$this->Smarty->assign('formPrefix', $formPrefix);
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 		if ($extensionKey) {
