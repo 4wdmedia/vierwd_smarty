@@ -7,7 +7,8 @@ use Nimut\TestingFramework\TestCase\UnitTestCase;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 use Vierwd\VierwdSmarty\Controller\SmartyController;
@@ -19,6 +20,9 @@ class SmartyViewTest extends UnitTestCase {
 	protected function setUp() {
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
+
+		$extensionService = $this->createMock(ExtensionService::class);
+		GeneralUtility::setSingletonInstance(ExtensionService::class, $extensionService);
 	}
 
 	protected function tearDown() {
@@ -40,7 +44,7 @@ class SmartyViewTest extends UnitTestCase {
 		} else {
 			$controllerObjectName = $controllerName;
 		}
-		$mockRequest = $this->createMock(WebRequest::class);
+		$mockRequest = $this->createMock(Request::class);
 		$mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
 		$mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));

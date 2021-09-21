@@ -4,40 +4,28 @@ declare(strict_types = 1);
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
+use TYPO3\CMS\Extbase\Service\ImageService;
+use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 use Vierwd\VierwdSmarty\View\StandaloneSmartyView;
 
 class StandaloneViewTest extends UnitTestCase {
 
-	protected function setUp() {
+	protected function setUp(): void {
+		$GLOBALS['TYPO3_REQUEST'] = new ServerRequest();
+
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
 
-		$configurationManager = $this->getAccessibleMock(FrontendConfigurationManager::class, [], [], '', false);
-		$request = $this->getAccessibleMock(WebRequest::class, [], [], '', false);
-		$uriBuilder = $this->getAccessibleMock(UriBuilder::class, [], [], '', false);
-		$controllerContext = $this->setupMockControllerContext('VierwdSmarty', '', 'Smarty', 'render', 'tpl');
-
-		$extensionService = $this->getAccessibleMock(ExtensionService::class, [], [], '', false);
-
-		$objectManager = $this->getAccessibleMock(ObjectManager::class, [], [], '', false);
-		$objectManager->method('get')->will($this->returnValueMap([
-			[ConfigurationManagerInterface::class, $configurationManager],
-			[WebRequest::class, $request],
-			[UriBuilder::class, $uriBuilder],
-			[ControllerContext::class, $controllerContext],
-			[ExtensionService::class, $extensionService],
-		]));
-		GeneralUtility::setSingletonInstance(ObjectManager::class, $objectManager);
+		$extensionService = $this->createMock(ExtensionService::class);
+		GeneralUtility::setSingletonInstance(ExtensionService::class, $extensionService);
 	}
 
 	protected function tearDown() {
@@ -59,7 +47,7 @@ class StandaloneViewTest extends UnitTestCase {
 		} else {
 			$controllerObjectName = $controllerName;
 		}
-		$mockRequest = $this->createMock(WebRequest::class);
+		$mockRequest = $this->createMock(Request::class);
 		$mockRequest->expects($this->any())->method('getControllerExtensionKey')->will($this->returnValue('vierwd_smarty'));
 		$mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
@@ -77,7 +65,11 @@ class StandaloneViewTest extends UnitTestCase {
 	 * @test
 	 */
 	public function renderWithStandaloneView() {
-		$view = new StandaloneSmartyView();
+		$configurationManager = $this->getMockBuilder(ConfigurationManagerInterface::class)->disableOriginalConstructor()->getMock();
+		$imageService = $this->getMockBuilder(ImageService::class)->disableOriginalConstructor()->getMock();
+		$typoLinkCodecService = $this->getMockBuilder(TypoLinkCodecService::class)->disableOriginalConstructor()->getMock();
+
+		$view = new StandaloneSmartyView($configurationManager, $imageService, $typoLinkCodecService);
 		$view->setTemplateRootPaths(['EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/']);
 
 		$view->assign('variable', 'TEST');
