@@ -69,17 +69,20 @@ class SmartyView extends AbstractView {
 	/** @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
 	protected $contentObject = null;
 
-	/**
-	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
-	 * @TYPO3\CMS\Extbase\Annotation\Inject
-	 */
+	/** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface */
 	protected $configurationManager = null;
 
-	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-	 * @TYPO3\CMS\Extbase\Annotation\Inject
-	 */
-	protected $objectManager = null;
+	/** @var ImageService $imageService */
+	protected $imageService;
+
+	/** @var TypoLinkCodecService $typoLinkCodecService */
+	protected $typoLinkCodecService;
+
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+		$this->configurationManager = $configurationManager;
+		$this->imageService = $imageService;
+		$this->typoLinkCodecService = $typoLinkCodecService;
+	}
 
 	/**
 	 * Set the root path(s) to the templates.
@@ -485,7 +488,7 @@ class SmartyView extends AbstractView {
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
-		$fluidView = $this->objectManager->get(StandaloneView::class);
+		$fluidView = GeneralUtility::makeInstance(StandaloneView::class);
 		$fluidView->setControllerContext($this->controllerContext);
 		$fluidView->assignMultiple($data);
 		$fluidView->setTemplateSource($content);
@@ -625,10 +628,8 @@ class SmartyView extends AbstractView {
 			$this->Smarty->assign('frameworkSettings', $typoScript);
 		}
 
-		if ($this->objectManager !== null) {
-			$formPrefix = $this->objectManager->get(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
-			$this->Smarty->assign('formPrefix', $formPrefix);
-		}
+		$formPrefix = GeneralUtility::makeInstance(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
+		$this->Smarty->assign('formPrefix', $formPrefix);
 
 		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
 		if ($extensionKey) {
@@ -653,8 +654,8 @@ class SmartyView extends AbstractView {
 			'context' => GeneralUtility::makeInstance(Context::class),
 			'siteLanguage' => $siteLanguage,
 			'typo3Request' => $request,
-			'typolinkService' => GeneralUtility::makeInstance(TypoLinkCodecService::class),
-			'imageService' => GeneralUtility::makeInstance(ImageService::class),
+			'typolinkService' => $this->typoLinkCodecService,
+			'imageService' => $this->imageService,
 			// 'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'],
 		];

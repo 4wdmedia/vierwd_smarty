@@ -7,32 +7,25 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Web\Request as WebRequest;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 class StandaloneSmartyView extends SmartyView {
 
-	/**
-	 * @param ContentObjectRenderer $contentObject The current cObject. If NULL a new instance will be created
-	 */
-	public function __construct(ContentObjectRenderer $contentObject = null) {
-		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+		parent::__construct($configurationManager, $imageService, $typoLinkCodecService);
 
-		$this->configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
-		if ($contentObject === null) {
-			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		}
-		$this->configurationManager->setContentObject($contentObject);
+		$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+		$configurationManager->setContentObject($contentObject);
 
-		$request = $this->objectManager->get(WebRequest::class);
-		$request->setRequestUri(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-		$request->setBaseUri(GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
+		$request = GeneralUtility::makeInstance(WebRequest::class);
 		$request->setControllerExtensionName('VierwdSmarty');
 
-		$uriBuilder = $this->objectManager->get(UriBuilder::class);
+		$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 		$uriBuilder->setRequest($request);
 
-		$controllerContext = $this->objectManager->get(ControllerContext::class);
+		$controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
 		$controllerContext->setRequest($request);
 		$controllerContext->setUriBuilder($uriBuilder);
 
