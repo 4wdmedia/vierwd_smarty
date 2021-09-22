@@ -1,0 +1,57 @@
+parameters:
+	ignoreErrors:
+		-
+			message:
+				"""
+					#^Call to deprecated method get\\(\\) of class TYPO3\\\\CMS\\\\Extbase\\\\Object\\\\ObjectManager\\:
+					since TYPO3 10\\.4, will be removed in version 12\\.0$#
+				"""
+			count: 5
+			path: Classes/Frontend/ContentObject/Menu/SmartyMenuContentObject.php
+
+		-
+			message:
+				"""
+					#^Fetching class constant class of deprecated class TYPO3\\\\CMS\\\\Extbase\\\\Object\\\\ObjectManager\\:
+					since v11, will be removed in v12\\. Use symfony DI and GeneralUtility\\:\\:makeInstance\\(\\) instead\\.
+					             See TYPO3 explained documentation for more information\\.$#
+				"""
+			count: 1
+			path: Classes/Frontend/ContentObject/Menu/SmartyMenuContentObject.php
+
+		-
+			message:
+				"""
+					#^Call to deprecated method getBaseUri\\(\\) of class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Request\\:
+					since v11, will be removed in v12\\.$#
+				"""
+			count: 1
+			path: Classes/View/SmartyView.php
+
+		-
+			message:
+				"""
+					#^Call to deprecated method getFlashMessageQueue\\(\\) of class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Controller\\\\ControllerContext\\:
+					since v11, will be removed in v12$#
+				"""
+			count: 1
+			path: Classes/View/SmartyView.php
+
+		-
+			message:
+				"""
+					#^Call to deprecated method getUriBuilder\\(\\) of class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Controller\\\\ControllerContext\\:
+					since v11, will be removed in v12$#
+				"""
+			count: 3
+			path: Classes/View/SmartyView.php
+
+		-
+			message:
+				"""
+					#^Call to deprecated method getControllerContext\\(\\) of class TYPO3\\\\CMS\\\\Fluid\\\\Core\\\\Rendering\\\\RenderingContext\\:
+					since v11, will be removed in v12$#
+				"""
+			count: 1
+			path: Classes/ViewHelper/SmartyViewHelper.php
+

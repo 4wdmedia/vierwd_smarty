@@ -30,7 +30,8 @@
 		"saschaegerer/phpstan-typo3": "^0.13.1",
 		"phpstan/extension-installer": "^1.0",
 		"typo3/testing-framework": "^6.11",
-		"phpspec/prophecy-phpunit": "^2.0"
+		"phpspec/prophecy-phpunit": "^2.0",
+		"phpstan/phpstan-deprecation-rules": "^0.12.6"
 	},
 	"autoload": {
 		"psr-4": {
