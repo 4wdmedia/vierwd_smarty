@@ -7,8 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Request;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -28,23 +26,17 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 			return '';
 		}
 
-		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
 
-		$controllerContext = $objectManager->get(ControllerContext::class);
-
-		$request = $objectManager->get(Request::class);
+		$request = GeneralUtility::makeInstance(Request::class);
 		$request->setControllerExtensionName($this->mconf['extensionName'] ?: 'vierwd_smarty');
 		$controllerContext->setRequest($request);
 
-		$uriBuilder = $objectManager->get(UriBuilder::class);
-		$uriBuilder->setRequest($request);
-		$controllerContext->setUriBuilder($uriBuilder);
-
-		$configuration = $objectManager->get(ConfigurationManagerInterface::class);
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
 		$extensionName = GeneralUtility::underscoredToUpperCamelCase($request->getControllerExtensionName());
-		$configuration = $configuration->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
+		$configuration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
 
-		$view = $objectManager->get(SmartyView::class);
+		$view = GeneralUtility::makeInstance(SmartyView::class);
 		$view->setControllerContext($controllerContext);
 		$templateRootPaths = $configuration['view']['templateRootPaths'] ?? $configuration['settings']['templateRootPaths'] ?? [];
 		// set template root paths, if available
