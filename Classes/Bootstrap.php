@@ -10,15 +10,17 @@ class Bootstrap {
 
 	/**
 	 * Back reference to the parent content object
-	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
-	protected $cObj;
+	protected ?ContentObjectRenderer $cObj = null;
 
 	public function setContentObjectRenderer(ContentObjectRenderer $cObj): void {
 		$this->cObj = $cObj;
 	}
 
 	public function run(string $content, array $configuration): string {
+		if ($this->cObj === null) {
+			throw new \Exception('cObj must be set before running bootstrap', 1644590996);
+		}
 		$piFlexformBackup = false;
 		if (isset($this->cObj->data['pi_flexform']) && is_string($this->cObj->data['pi_flexform']) && preg_match('/<field index="switchableControllerActions">/', $this->cObj->data['pi_flexform'])) {
 			// remove switchable controller actions

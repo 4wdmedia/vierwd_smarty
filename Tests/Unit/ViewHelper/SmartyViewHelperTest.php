@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\ViewHelper;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Prophecy\PhpUnit\ProphecyTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -20,11 +21,10 @@ class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 
 	use ProphecyTrait;
 
-	/** @var \PHPUnit_Framework_MockObject_MockObject */
-	protected $viewHelper;
+	protected ?MockObject $viewHelper = null;
 
 	protected function setUp(): void {
-		parent::setUp();
+		@parent::setUp();
 
 		$this->request->getControllerExtensionName()->willReturn('VierwdSmarty');
 		$this->request->getControllerExtensionKey()->willReturn('vierwd_smarty');
@@ -62,14 +62,14 @@ class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 	/**
 	 * @test
 	 */
-	public function smartyInFluidCode() {
+	public function smartyInFluidCode(): void {
 		$this->assertEquals('TESTtest', $this->viewHelper->initializeArgumentsAndRender());
 	}
 
 	/**
 	 * @test
 	 */
-	public function smartyInFluidCodeWithoutInitialization() {
+	public function smartyInFluidCodeWithoutInitialization(): void {
 		// calling render without initalizing the ViewHelper.
 		// no SmartyView = no output
 		$this->assertEquals('', $this->viewHelper->render());
@@ -78,7 +78,7 @@ class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 	/**
 	 * @test
 	 */
-	public function updateTemplateVariables() {
+	public function updateTemplateVariables(): void {
 		$this->templateVariableContainer = $this->getMockBuilder(StandardVariableProvider::class)->getMock();
 		$this->templateVariableContainer->method('getAll')->will($this->returnValue(['variable' => 'valueBefore']));
 		$this->renderingContext->setVariableProvider($this->templateVariableContainer);

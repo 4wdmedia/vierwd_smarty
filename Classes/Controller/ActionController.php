@@ -22,13 +22,13 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class ActionController extends ExtbaseActionController {
 
-	/** @var string */
-	protected $entityNotFoundMessage = 'The requested entity could not be found.';
+	protected string $entityNotFoundMessage = 'The requested entity could not be found.';
 
 	/**
 	 * this is needed to use the smarty view
 	 *
 	 * @var string
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
 	 */
 	protected $defaultViewObjectName = SmartyView::class;
 
@@ -38,9 +38,8 @@ class ActionController extends ExtbaseActionController {
 	 * Afterwards you can register some custom template functions/modifiers.
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
-	 * @phpstan-return void
 	 */
-	protected function initializeView(ViewInterface $view) {
+	protected function initializeView(ViewInterface $view): void {
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
 		if ($view instanceof SmartyView) {
@@ -111,7 +110,7 @@ class ActionController extends ExtbaseActionController {
 	 * @param array $conf Configuration array
 	 * @return array the variables to be assigned
 	 */
-	protected function getContentObjectVariables(array $conf) {
+	protected function getContentObjectVariables(array $conf): array {
 			// @extensionScannerIgnoreLine
 		$contentObject = $this->configurationManager->getContentObject();
 		if (!$contentObject) {

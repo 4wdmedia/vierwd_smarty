@@ -8,6 +8,7 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
 use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+use Smarty;
 use Vierwd\VierwdSmarty\View\SmartyView;
 
 /**
@@ -27,10 +28,9 @@ use Vierwd\VierwdSmarty\View\SmartyView;
  */
 class SmartyViewHelper extends AbstractViewHelper {
 
-	/** @var \Vierwd\VierwdSmarty\View\SmartyView */
-	static protected $smartyView = null;
+	static protected ?SmartyView $smartyView = null;
 
-	public function initialize() {
+	public function initialize(): void {
 		if (self::$smartyView === null) {
 			self::$smartyView = GeneralUtility::makeInstance(SmartyView::class);
 		}
@@ -52,6 +52,8 @@ class SmartyViewHelper extends AbstractViewHelper {
 			$view->setTemplateRootPaths($parentView->getTemplateRootPaths());
 		}
 		$view->initializeView();
+
+		assert($view->Smarty instanceof Smarty);
 
 		if (!$view->hasTopLevelViewHelper) {
 			$isTopLevel = true;

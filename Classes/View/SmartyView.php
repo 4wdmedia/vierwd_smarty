@@ -46,43 +46,31 @@ function clean($str): string {
 
 class SmartyView implements ViewInterface {
 
-	/** @var Smarty */
-	public $Smarty = null;
+	public ?Smarty $Smarty = null;
 
-	/** @var bool */
-	public $hasTopLevelViewHelper = false;
+	public bool $hasTopLevelViewHelper = false;
 
 	/**
 	 * Pattern to be resolved for "@templateRoot" in the other patterns.
-	 *
-	 * @var string
 	 */
-	protected $templateRootPathPattern = '@packageResourcesPath/Private/Templates';
+	protected string $templateRootPathPattern = '@packageResourcesPath/Private/Templates';
 
 	/**
 	 * Path(s) to the template root. If NULL, then $this->templateRootPathPattern will be used.
-	 *
-	 * @var ?array
 	 */
-	protected $templateRootPaths = null;
+	protected ?array $templateRootPaths = null;
 
-	/** @var \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext */
-	protected $controllerContext;
+	protected ?ControllerContext $controllerContext;
 
-	/** @var array */
-	protected $variables = [];
+	protected array $variables = [];
 
-	/** @var ?\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-	protected $contentObject = null;
+	protected ?ContentObjectRenderer $contentObject = null;
 
-	/** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface */
-	protected $configurationManager = null;
+	protected ?ConfigurationManagerInterface $configurationManager = null;
 
-	/** @var ImageService $imageService */
-	protected $imageService;
+	protected ?ImageService $imageService = null;
 
-	/** @var TypoLinkCodecService $typoLinkCodecService */
-	protected $typoLinkCodecService;
+	protected ?TypoLinkCodecService $typoLinkCodecService = null;
 
 	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
 		$this->configurationManager = $configurationManager;
@@ -111,10 +99,8 @@ class SmartyView implements ViewInterface {
 	 * If set, overrides the one determined from $this->templateRootPathPattern
 	 *
 	 * @param array $templateRootPaths Root path(s) to the templates. If set, overrides the one determined from $this->templateRootPathPattern
-	 * @return void
-	 * @api
 	 */
-	public function setTemplateRootPaths(array $templateRootPaths) {
+	public function setTemplateRootPaths(array $templateRootPaths): void {
 		$this->templateRootPaths = $templateRootPaths;
 	}
 
@@ -123,7 +109,7 @@ class SmartyView implements ViewInterface {
 	 *
 	 * @return array Path(s) to template root directory
 	 */
-	public function getTemplateRootPaths() {
+	public function getTemplateRootPaths(): array {
 		if ($this->templateRootPaths !== null) {
 			return $this->templateRootPaths;
 		}
@@ -134,10 +120,8 @@ class SmartyView implements ViewInterface {
 
 	/**
 	 * get template root paths and resolve all relative paths and paths containing EXT:
-	 *
-	 * @return array
 	 */
-	public function resolveTemplateRootPaths() {
+	public function resolveTemplateRootPaths(): array {
 		$templateRootPaths = $this->getTemplateRootPaths();
 		ksort($templateRootPaths);
 		$templateRootPaths = array_reverse($templateRootPaths, true);
@@ -233,6 +217,7 @@ class SmartyView implements ViewInterface {
 			$this->contentObject->start([], '_NO_TABLE');
 		}
 		$this->createSmarty();
+		assert($this->Smarty instanceof Smarty);
 		if (!$this->hasTopLevelViewHelper) {
 			$this->Smarty->clearAllAssign();
 		}
@@ -332,6 +317,7 @@ class SmartyView implements ViewInterface {
 
 		return $uri;
 	}
+
 	/**
 	 * link action for smarty templates.
 	 * modified from fluids LinkActionViewHelper
@@ -489,6 +475,7 @@ class SmartyView implements ViewInterface {
 		$fluidView->assignMultiple($data);
 		$fluidView->setTemplateSource($content);
 
+		assert($this->configurationManager instanceof ConfigurationManagerInterface);
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		if (isset($configuration['view'])) {
 			$layoutRootPaths = [];
@@ -522,6 +509,8 @@ class SmartyView implements ViewInterface {
 		if (!isset($content)) {
 			return '';
 		}
+
+		assert($this->Smarty instanceof Smarty);
 
 		$data = isset($params['data']) ? $params['data'] : [];
 		unset($params['data']);
@@ -608,6 +597,8 @@ class SmartyView implements ViewInterface {
 	 * @phpstan-return string
 	 */
 	public function render(string $view = '') {
+		assert($this->Smarty instanceof Smarty);
+
 		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
 
 		if ($this->contentObject && !$this->contentObject->data && isset($this->variables['data'])) {

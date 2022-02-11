@@ -10,8 +10,7 @@ use TYPO3\CMS\Core\Utility\StringUtility;
 
 class CacheBackend extends NullBackend {
 
-	/** @var string */
-	protected $cacheType = '';
+	protected string $cacheType = '';
 
 	public function setCacheType(string $cacheType): void {
 		$this->cacheType = $cacheType;
