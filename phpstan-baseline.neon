@@ -18,6 +18,30 @@ parameters:
 
 		-
 			message: """
+				#^Call to deprecated method setControllerContext\\(\\) of class Vierwd\\\\VierwdSmarty\\\\View\\\\SmartyView\\:
+				since v11, will be removed with v12\\.$#
+			"""
+			count: 1
+			path: Classes/Mail/SmartyEmail.php
+
+		-
+			message: """
+				#^Parameter \\$controllerContext of method Vierwd\\\\VierwdSmarty\\\\Mail\\\\SmartyEmail\\:\\:__construct\\(\\) has typehint with deprecated class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Controller\\\\ControllerContext\\:
+				since v11, will be removed with v12$#
+			"""
+			count: 1
+			path: Classes/Mail/SmartyEmail.php
+
+		-
+			message: """
+				#^Parameter \\$controllerContext of method Vierwd\\\\VierwdSmarty\\\\Mail\\\\SmartyEmail\\:\\:initializeView\\(\\) has typehint with deprecated class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Controller\\\\ControllerContext\\:
+				since v11, will be removed with v12$#
+			"""
+			count: 1
+			path: Classes/Mail/SmartyEmail.php
+
+		-
+			message: """
 				#^Call to deprecated method getBaseUri\\(\\) of class TYPO3\\\\CMS\\\\Extbase\\\\Mvc\\\\Request\\:
 				since v11, will be removed in v12\\.$#
 			"""
