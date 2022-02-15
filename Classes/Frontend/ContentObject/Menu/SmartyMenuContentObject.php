@@ -94,7 +94,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		return false;
 	}
 
-	public function subMenu(int $uid, string $objSuffix): string {
+	public function subMenu(int $uid, string $objSuffix = ''): string {
 		$tsfe = $this->getTypoScriptFrontendController();
 		$tsfe->register['parentMenu'] = $this;
 
