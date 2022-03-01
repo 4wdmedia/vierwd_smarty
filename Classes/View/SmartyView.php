@@ -260,7 +260,7 @@ class SmartyView extends AbstractView {
 	 * translate function for smarty templates.
 	 * copy from fluid viewhelper
 	 */
-	public function smarty_translate(array $params, Smarty_Internal_Template $smarty): string {
+	public function smarty_translate(array $params, Smarty_Internal_Template $smarty): ?string {
 		$request = $this->controllerContext->getRequest();
 
 		$key = $params['key'] ?? null;
