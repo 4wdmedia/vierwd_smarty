@@ -199,4 +199,5 @@ class SmartyEmail extends Email {
 		}
 		return '';
 	}
+
 }

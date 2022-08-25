@@ -28,7 +28,7 @@ use Vierwd\VierwdSmarty\View\SmartyView;
  */
 class SmartyViewHelper extends AbstractViewHelper {
 
-	static protected ?SmartyView $smartyView = null;
+	protected static ?SmartyView $smartyView = null;
 
 	public function initialize(): void {
 		if (self::$smartyView === null) {
@@ -93,4 +93,5 @@ class SmartyViewHelper extends AbstractViewHelper {
 
 		return $result;
 	}
+
 }

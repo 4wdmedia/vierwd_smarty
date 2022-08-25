@@ -40,9 +40,8 @@ class StandaloneViewTest extends UnitTestCase {
 	 * @param string $packageKey
 	 * @param string $controllerName
 	 * @param string $format
-	 * @return ControllerContext
 	 */
-	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format) {
+	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format): ControllerContext {
 		if (strpos($controllerName, '\\') === false) {
 			$controllerObjectName = "TYPO3\\$packageKey\\Controller\\" . $controllerName . 'Controller';
 		} else {
@@ -64,7 +63,7 @@ class StandaloneViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function renderWithStandaloneView() {
+	public function renderWithStandaloneView(): void {
 		$configurationManager = $this->getMockBuilder(ConfigurationManagerInterface::class)->disableOriginalConstructor()->getMock();
 		$imageService = $this->getMockBuilder(ImageService::class)->disableOriginalConstructor()->getMock();
 		$typoLinkCodecService = $this->getMockBuilder(TypoLinkCodecService::class)->disableOriginalConstructor()->getMock();
@@ -78,4 +77,5 @@ class StandaloneViewTest extends UnitTestCase {
 		$expected = "Template will be rendered with StandaloneView.\nTemplate evaluation\nTEST";
 		$this->assertEquals($expected, $content);
 	}
+
 }

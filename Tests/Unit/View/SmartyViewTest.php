@@ -39,9 +39,8 @@ class SmartyViewTest extends UnitTestCase {
 	 * @param string $packageKey
 	 * @param string $controllerName
 	 * @param string $format
-	 * @return ControllerContext
 	 */
-	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format) {
+	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format): ControllerContext {
 		if (strpos($controllerName, '\\') === false) {
 			$controllerObjectName = "TYPO3\\$packageKey\\Controller\\" . $controllerName . 'Controller';
 		} else {
@@ -63,7 +62,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getTemplateRootPathsReturnsUserSpecifiedTemplatePaths() {
+	public function getTemplateRootPathsReturnsUserSpecifiedTemplatePaths(): void {
 		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface $templateView */
 		$templateView = $this->getAccessibleMock(SmartyView::class, ['dummy'], [], '', false);
 		$templateView->setTemplateRootPaths(['/foo/bar']);
@@ -75,7 +74,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function calculateTemplatePath() {
+	public function calculateTemplatePath(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'My', 'action', 'tpl');
 
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
@@ -90,7 +89,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function renderTemplate() {
+	public function renderTemplate(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
@@ -113,7 +112,7 @@ class SmartyViewTest extends UnitTestCase {
 	 * @see https://github.com/smarty-php/smarty/issues/291
 	 * @test
 	 */
-	public function checkSimpleTemplateLogic() {
+	public function checkSimpleTemplateLogic(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
@@ -130,7 +129,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function checkTemplateWhitespaceIsStripped() {
+	public function checkTemplateWhitespaceIsStripped(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
@@ -147,7 +146,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function testEmailLink() {
+	public function testEmailLink(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
 		$templateView->setControllerContext($mockControllerContext);
@@ -166,7 +165,7 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function cleanValues() {
+	public function cleanValues(): void {
 		$this->assertEquals('&lt;test&gt;', clean('<test>'));
 		$this->assertEquals('100', clean(100));
 		$this->assertEquals('', clean(null));
@@ -174,4 +173,5 @@ class SmartyViewTest extends UnitTestCase {
 		$this->expectException(\Exception::class); // phpcs:ignore
 		clean(['Array cannot be cleaned']);
 	}
+
 }

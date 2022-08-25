@@ -731,4 +731,5 @@ class SmartyView implements ViewInterface {
 
 		return $this->Smarty->fetch($view);
 	}
+
 }

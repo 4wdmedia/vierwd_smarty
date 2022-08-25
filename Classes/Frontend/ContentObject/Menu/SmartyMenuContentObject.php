@@ -108,4 +108,5 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 
 		return parent::subMenu($uid, $objSuffix);
 	}
+
 }

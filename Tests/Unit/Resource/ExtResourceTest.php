@@ -13,8 +13,8 @@ use Vierwd\VierwdSmarty\Resource\ExtResource;
 
 class ExtResourceTest extends UnitTestCase {
 
-	/** @var Smarty */
-	protected $smarty;
+	/** @phpstan-var Smarty */
+	protected ?Smarty $smarty;
 
 	protected function setUp(): void {
 		$this->smarty = new Smarty();
@@ -34,7 +34,7 @@ class ExtResourceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function fetchReturnsTemplateContent() {
+	public function fetchReturnsTemplateContent(): void {
 		$actual = trim($this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplate.tpl'));
 		$expected = "Template will be rendered with EXT: resource.\nTemplate evaluation";
 		$this->assertEquals($expected, $actual, 'Fetching templates with EXT: url does not work.');
@@ -43,7 +43,7 @@ class ExtResourceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function includeUsingExtReturnsTemplateContent() {
+	public function includeUsingExtReturnsTemplateContent(): void {
 		$actual = trim($this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplateWithInclude.tpl'));
 		$expected = "Before\nTemplate will be rendered with EXT: resource.\nTemplate evaluation\nAfter";
 		$this->assertEquals($expected, $actual, 'Fetching templates with EXT: url does not work.');
@@ -52,8 +52,9 @@ class ExtResourceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function fetchNonExistentTemplate() {
+	public function fetchNonExistentTemplate(): void {
 		$this->expectException(SmartyException::class);
 		$this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplateDoesNotExist.tpl');
 	}
+
 }

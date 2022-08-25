@@ -93,4 +93,5 @@ class SmartyController extends ActionController {
 
 		return $response;
 	}
+
 }

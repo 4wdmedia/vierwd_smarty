@@ -89,4 +89,5 @@ class SmartyViewHelperTest extends ViewHelperBaseTestcase {
 
 		$this->assertEquals('valueBefore', $this->viewHelper->initializeArgumentsAndRender());
 	}
+
 }

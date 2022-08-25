@@ -37,4 +37,5 @@ class Bootstrap {
 
 		return $result;
 	}
+
 }

@@ -37,4 +37,5 @@ class ExtResource extends \Smarty_Resource_Custom {
 		// it specifies integer|boolean, but returns null. Other methods check for null instead of false.
 		return null;
 	}
+
 }
