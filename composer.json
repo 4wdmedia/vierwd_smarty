@@ -47,7 +47,13 @@
 	},
 	"config": {
 		"vendor-dir": ".Build/vendor",
-		"bin-dir": ".Build/bin"
+		"bin-dir": ".Build/bin",
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		}
 	},
 	"scripts": {
 		"phplint": "find . -name \\*.php ! -path \"./.Build/*\" | parallel --gnu php -d display_errors=stderr -l {} > /dev/null \\;",
