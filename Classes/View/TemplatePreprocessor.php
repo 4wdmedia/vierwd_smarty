@@ -47,4 +47,5 @@ class TemplatePreprocessor {
 		$template = '{strip}' . $template . '{/strip}';
 		return $template;
 	}
+
 }

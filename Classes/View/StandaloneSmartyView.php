@@ -33,4 +33,5 @@ class StandaloneSmartyView extends SmartyView {
 
 		$this->initializeView();
 	}
+
 }

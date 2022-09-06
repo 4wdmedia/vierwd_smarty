@@ -90,4 +90,5 @@ class SmartyViewHelper extends AbstractViewHelper {
 
 		return $result;
 	}
+
 }

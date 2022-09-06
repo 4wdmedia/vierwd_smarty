@@ -45,4 +45,5 @@ class ClearCacheHook implements ClearCacheActionsHookInterface {
 			}
 		}
 	}
+
 }

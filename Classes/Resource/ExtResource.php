@@ -37,4 +37,5 @@ class ExtResource extends \Smarty_Resource_Custom {
 		// @phpstan-ignore-next-line
 		return null;
 	}
+
 }

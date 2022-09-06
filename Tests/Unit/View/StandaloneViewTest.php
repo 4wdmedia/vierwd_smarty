@@ -77,4 +77,5 @@ class StandaloneViewTest extends UnitTestCase {
 		$expected = "Template will be rendered with StandaloneView.\nTemplate evaluation\nTEST";
 		$this->assertEquals($expected, $content);
 	}
+
 }

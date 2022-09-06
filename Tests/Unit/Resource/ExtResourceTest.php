@@ -56,4 +56,5 @@ class ExtResourceTest extends UnitTestCase {
 		$this->expectException(SmartyException::class);
 		$this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplateDoesNotExist.tpl');
 	}
+
 }

@@ -21,4 +21,5 @@ class CacheBackend extends NullBackend {
 		$directory = Environment::getVarPath() . '/cache/vierwd_smarty/' . $this->cacheType . '/';
 		GeneralUtility::flushDirectory($directory, true);
 	}
+
 }

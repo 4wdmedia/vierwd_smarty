@@ -77,4 +77,5 @@ class SmartyController extends ActionController {
 		// try to render the template. maybe it is relative
 		return $this->view->render($template);
 	}
+
 }

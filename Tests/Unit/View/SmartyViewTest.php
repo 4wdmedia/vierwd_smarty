@@ -216,4 +216,5 @@ class SmartyViewTest extends UnitTestCase {
 
 		$this->assertEquals(false, $templateView->canRender($mockControllerContext));
 	}
+
 }

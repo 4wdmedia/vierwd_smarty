@@ -336,6 +336,7 @@ class SmartyView extends AbstractView {
 
 		return $uri;
 	}
+
 	/**
 	 * link action for smarty templates.
 	 * modified from fluids LinkActionViewHelper
@@ -745,4 +746,5 @@ class SmartyView extends AbstractView {
 
 		return $this->Smarty->fetch($view);
 	}
+
 }
