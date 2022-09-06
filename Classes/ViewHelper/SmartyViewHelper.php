@@ -28,9 +28,9 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 class SmartyViewHelper extends AbstractViewHelper {
 
 	/** @var \Vierwd\VierwdSmarty\View\SmartyView */
-	static protected $smartyView = null;
+	protected static $smartyView = null;
 
-	public function initialize() {
+	public function initialize(): void {
 		if (self::$smartyView === null) {
 			self::$smartyView = GeneralUtility::makeInstance(SmartyView::class);
 		}
