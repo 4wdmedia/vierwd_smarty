@@ -38,11 +38,13 @@ class SmartyEmail extends Email {
 	public const FORMAT_BOTH = 'both';
 
 	/** @var string[] */
-	protected array $format = ['html', 'plain'];
+	protected $format = ['html', 'plain'];
 
-	protected string $templateName = 'Default.tpl';
+	/** @var string */
+	protected $templateName = 'Default.tpl';
 
-	protected SmartyView $view;
+	/** @var SmartyView */
+	protected $view;
 
 	public function __construct(ControllerContext $controllerContext, Headers $headers = null, AbstractPart $body = null) {
 		parent::__construct($headers, $body);
