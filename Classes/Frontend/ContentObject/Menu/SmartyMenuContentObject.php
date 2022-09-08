@@ -3,7 +3,7 @@
 namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
@@ -31,9 +31,9 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		$request->setControllerExtensionName($this->mconf['extensionName'] ?: 'vierwd_smarty');
 		$controllerContext->setRequest($request);
 
-		$configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		$extensionName = GeneralUtility::underscoredToUpperCamelCase($request->getControllerExtensionName());
-		$configuration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
+		$configuration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
 
 		$view = GeneralUtility::makeInstance(SmartyView::class);
 		$view->setControllerContext($controllerContext);
