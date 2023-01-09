@@ -185,7 +185,6 @@ class SmartyView implements ViewInterface {
 		$this->Smarty->registerPlugin('function', 'uri_resource',  [$this, 'smarty_uri_resource']);
 		$this->Smarty->registerPlugin('function', 'uri_action',    [$this, 'smarty_uri_action']);
 		$this->Smarty->registerPlugin('function', 'typolink',      [$this, 'smarty_helper_typolink']);
-		$this->Smarty->registerPlugin('modifier', 'typolink',      [$this, 'smarty_helper_typolink_url']);
 		$this->Smarty->registerPlugin('function', 'flashMessages', [$this, 'smarty_flashMessages']);
 
 		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
@@ -200,10 +199,6 @@ class SmartyView implements ViewInterface {
 		// Typoscript filters
 		$this->Smarty->registerPlugin('block', 'typoscript', [$this, 'smarty_typoscript']);
 
-		// custom functions
-		$this->Smarty->registerPlugin('function', 'email',       [$this, 'smarty_email']);
-
-		$this->Smarty->registerPlugin('modifier', 'nl2p', [$this, 'smarty_nl2p']);
 		// phpcs:enable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
 
 		// Resource type
@@ -414,11 +409,6 @@ class SmartyView implements ViewInterface {
 		return $uri;
 	}
 
-	public function smarty_helper_typolink_url(string $parameter): string {
-		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		return $cObj->getTypoLink_URL($parameter);
-	}
-
 	public function smarty_flashMessages(array $params, Smarty_Internal_Template $smarty): string {
 		$renderMode = $params['renderMode'] ?? 'ul';
 		$class = $params['class'] ?? 'typo3-messages';
@@ -558,31 +548,6 @@ class SmartyView implements ViewInterface {
 		} else {
 			return $content;
 		}
-	}
-
-	public function smarty_nl2p(string $content): string {
-		$content = trim($content);
-		if (!$content) {
-			return '';
-		}
-
-		return '<p>' . nl2br((string)preg_replace('/\n{2,}/', '</p><p>', str_replace("\r", '', $content))) . '</p>';
-	}
-
-	public function smarty_email(array $params, Smarty_Internal_Template $smarty): string {
-		$address = $params['address'] ?? false;
-		$label = $params['label'] ?? $address;
-		$parameter = $params['parameter'] ?? $address . ' - mail';
-		$ATagParams = $params['ATagParams'] ?? false;
-
-		$conf = [
-			'parameter' => $parameter,
-			'ATagParams' => $ATagParams,
-		];
-
-		$cObj = $this->contentObject ?? GeneralUtility::makeInstance(ContentObjectRenderer::class);
-
-		return $cObj->typoLink($label, $conf);
 	}
 
 	/**
