@@ -386,15 +386,15 @@ class SmartyView implements ViewInterface {
 	}
 
 	public function smarty_helper_typolink(array $params, Smarty_Internal_Template $smarty): string {
-		$pageUid = $this->getParam($params, 'pageUid', null);
-		$additionalParams = $this->getParam($params, 'additionalParams', []);
-		$pageType = $this->getParam($params, 'pageType', 0);
-		$noCache = $this->getParam($params, 'noCache');
-		$linkAccessRestrictedPages = $this->getParam($params, 'linkAccessRestrictedPages');
-		$absolute = $this->getParam($params, 'absolute');
-		$section = $this->getParam($params, 'section', '');
-		$addQueryString = $this->getParam($params, 'addQueryString');
-		$argumentsToBeExcludedFromQueryString = $this->getParam($params, 'argumentsToBeExcludedFromQueryString', []);
+		$pageUid = $params['pageUid'] ?? null;
+		$additionalParams = $params['additionalParams'] ?? [];
+		$pageType = $params['pageType'] ?? 0;
+		$noCache = $params['noCache'] ?? false;
+		$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? false;
+		$absolute = $params['absolute'] ?? false;
+		$section = $params['section'] ?? '';
+		$addQueryString = $params['addQueryString'] ?? false;
+		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
 
 		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
 		if ($pageUid) {
@@ -451,14 +451,6 @@ class SmartyView implements ViewInterface {
 		$content .= '</' . $renderMode . '>';
 
 		return $content;
-	}
-
-	/**
-	 * @param mixed $default
-	 * @return mixed
-	 */
-	protected function getParam(array $params, string $key, $default = false) {
-		return !empty($params[$key]) ? $params[$key] : $default;
 	}
 
 	public function smarty_fluid(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
@@ -578,10 +570,10 @@ class SmartyView implements ViewInterface {
 	}
 
 	public function smarty_email(array $params, Smarty_Internal_Template $smarty): string {
-		$address = $this->getParam($params, 'address');
-		$label = $this->getParam($params, 'label', $address);
-		$parameter = $this->getParam($params, 'parameter', $address . ' - mail');
-		$ATagParams = $this->getParam($params, 'ATagParams');
+		$address = $params['address'] ?? false;
+		$label = $params['label'] ?? $address;
+		$parameter = $params['parameter'] ?? $address . ' - mail';
+		$ATagParams = $params['ATagParams'] ?? false;
 
 		$conf = [
 			'parameter' => $parameter,
