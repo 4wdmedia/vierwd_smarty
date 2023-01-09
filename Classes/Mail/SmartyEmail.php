@@ -12,6 +12,8 @@ use TYPO3\CMS\Core\Information\Typo3Information;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 
+use Vierwd\VierwdSmarty\View\Plugin\Functions\TypolinkPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\UriActionPlugin;
 use Vierwd\VierwdSmarty\View\SmartyView;
 
 use Smarty;
@@ -60,18 +62,18 @@ class SmartyEmail extends Email {
 
 		// overwrite {uri_action}
 		$this->view->Smarty->unregisterPlugin('function', 'uri_action');
-		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) {
+		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) use ($controllerContext) {
 			$params['absolute'] = true;
-			assert($this->view !== null);
-			return $this->view->smarty_uri_action($params, $smarty);
+			$uriActionPlugin = new UriActionPlugin($controllerContext);
+			return $uriActionPlugin($params, $smarty);
 		});
 
 		// overwrite {typolink}
 		$this->view->Smarty->unregisterPlugin('function', 'typolink');
-		$this->view->Smarty->registerPlugin('function', 'typolink', function($params, $smarty) {
+		$this->view->Smarty->registerPlugin('function', 'typolink', function($params, $smarty) use ($controllerContext) {
 			$params['absolute'] = true;
-			assert($this->view !== null);
-			return $this->view->smarty_helper_typolink($params, $smarty);
+			$typolinkPlugin = new TypolinkPlugin($controllerContext);
+			return $typolinkPlugin($params, $smarty);
 		});
 	}
 

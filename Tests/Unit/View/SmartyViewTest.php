@@ -6,6 +6,7 @@ namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Request;
@@ -23,6 +24,9 @@ class SmartyViewTest extends UnitTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
+
+		$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['vierwd_smarty']['pluginDirs'][] = ExtensionManagementUtility::extPath('vierwd_smarty', 'Resources/Private/Smarty');
+
 		$GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
 		$GLOBALS['TSFE']->tmpl = $this->createMock(TemplateService::class);
 		$resourceFactory = $this->createMock(ResourceFactory::class);

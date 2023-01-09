@@ -5,27 +5,28 @@ namespace Vierwd\VierwdSmarty\View;
 
 use Exception;
 use Smarty;
-use Smarty_Internal_Template;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\ApplicationType;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatcher;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 use Vierwd\VierwdSmarty\Resource\ExtResource;
+use Vierwd\VierwdSmarty\View\Plugin\Block\FluidPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Block\LinkActionPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Block\TyposcriptPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\FlashMessagesPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\TranslatePlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\TypolinkPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\UriActionPlugin;
+use Vierwd\VierwdSmarty\View\Plugin\Functions\UriResourcePlugin;
 
 /**
  * @param mixed $str
@@ -60,7 +61,7 @@ class SmartyView implements ViewInterface {
 	 */
 	protected ?array $templateRootPaths = null;
 
-	protected ?ControllerContext $controllerContext;
+	protected ControllerContext $controllerContext;
 
 	protected array $variables = [];
 
@@ -76,6 +77,8 @@ class SmartyView implements ViewInterface {
 		$this->configurationManager = $configurationManager;
 		$this->imageService = $imageService;
 		$this->typoLinkCodecService = $typoLinkCodecService;
+
+		$this->controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
 	}
 
 	public function setControllerContext(ControllerContext $controllerContext): void {
@@ -180,26 +183,39 @@ class SmartyView implements ViewInterface {
 			}
 		}
 
-		// phpcs:disable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
-		$this->Smarty->registerPlugin('function', 'translate',     [$this, 'smarty_translate']);
-		$this->Smarty->registerPlugin('function', 'uri_resource',  [$this, 'smarty_uri_resource']);
-		$this->Smarty->registerPlugin('function', 'uri_action',    [$this, 'smarty_uri_action']);
-		$this->Smarty->registerPlugin('function', 'typolink',      [$this, 'smarty_helper_typolink']);
-		$this->Smarty->registerPlugin('function', 'flashMessages', [$this, 'smarty_flashMessages']);
+		assert($this->controllerContext !== null);
 
-		$this->Smarty->registerPlugin('block', 'link_action', [$this, 'smarty_link_action']);
+		$translatePlugin = new TranslatePlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('function', 'translate', $translatePlugin);
+
+		$uriResourcePlugin = new UriResourcePlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('function', 'uri_resource', $uriResourcePlugin);
+
+		$uriActionPlugin = new UriActionPlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('function', 'uri_action', $uriActionPlugin);
+
+		$typolinkPlugin = new TypolinkPlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('function', 'typolink', $typolinkPlugin);
+
+		$flashMessagesPlugin = new FlashMessagesPlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('function', 'flashMessages', $flashMessagesPlugin);
+
+		$linkActionPlugin = new LinkActionPlugin($this->controllerContext);
+		$this->Smarty->registerPlugin('block', 'link_action', $linkActionPlugin);
 
 		$templateProcessor = new TemplatePreprocessor();
 		$this->Smarty->registerFilter('pre', $templateProcessor);
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
-		// fluid
-		$this->Smarty->registerPlugin('block', 'fluid', [$this, 'smarty_fluid']);
+		if ($this->configurationManager !== null) {
+			$fluidPlugin = new FluidPlugin($this->controllerContext, $this->configurationManager);
+			$this->Smarty->registerPlugin('block', 'fluid', $fluidPlugin);
+		}
 
-		// Typoscript filters
-		$this->Smarty->registerPlugin('block', 'typoscript', [$this, 'smarty_typoscript']);
-
-		// phpcs:enable Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma
+		if ($this->contentObject !== null) {
+			$typoscriptPlugin = new TyposcriptPlugin($this->contentObject);
+			$this->Smarty->registerPlugin('block', 'typoscript', $typoscriptPlugin);
+		}
 
 		// Resource type
 		$this->Smarty->registerResource('EXT', new ExtResource());
@@ -229,324 +245,6 @@ class SmartyView implements ViewInterface {
 		}
 		if (!is_dir($this->Smarty->getCompileDir())) {
 			GeneralUtility::mkdir_deep($this->Smarty->getCompileDir());
-		}
-	}
-
-	/**
-	 * translate function for smarty templates.
-	 * copy from fluid viewhelper
-	 */
-	public function smarty_translate(array $params, Smarty_Internal_Template $smarty): ?string {
-		$request = $this->controllerContext->getRequest();
-
-		$key = $params['key'] ?? null;
-		$default = $params['default'] ?? null;
-		$htmlEscape = $params['htmlEscape'] ?? true;
-		$arguments = $params['arguments'] ?? null;
-		$extensionName = $params['extensionName'] ?? $request->getControllerExtensionName();
-
-		$value = LocalizationUtility::translate($key, $extensionName, $arguments);
-		if ($value === null) {
-			$value = $default;
-		} elseif ($htmlEscape) {
-			$value = htmlspecialchars($value);
-		}
-		return $value;
-	}
-
-	public function smarty_uri_resource(array $params, Smarty_Internal_Template $smarty): string {
-		$path = $params['path'] ?? null;
-		$extensionName = $params['extensionName'] ?? null;
-		$absolute = $params['absolute'] ?? false;
-
-		if ($extensionName === null) {
-			$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
-		}
-		$uri = 'EXT:' . GeneralUtility::camelCaseToLowerCaseUnderscored($extensionName) . '/Resources/Public/' . $path;
-		$uri = GeneralUtility::getFileAbsFileName($uri);
-		$uri = PathUtility::stripPathSitePrefix($uri);
-
-		if ($absolute === false && $uri !== false && GeneralUtility::makeInstance(ApplicationType::class)->isBackend()) {
-			$uri = '../' . $uri;
-		}
-
-		if ($absolute === true) {
-			$uri = $this->controllerContext->getRequest()->getBaseURI() . $uri;
-		}
-
-		return $uri;
-	}
-
-	public function smarty_uri_action(array $params, Smarty_Internal_Template $smarty): string {
-		$action = $params['action'] ?? null;
-		$arguments = $params['arguments'] ?? [];
-		$controller = $params['controller'] ?? null;
-		$extensionName = $params['extensionName'] ?? null;
-		$pluginName = $params['pluginName'] ?? null;
-		$pageUid = $params['pageUid'] ?? 0;
-		$pageType = $params['pageType'] ?? 0;
-		$noCache = $params['noCache'] ?? false;
-		$section = $params['section'] ?? '';
-		$format = $params['format'] ?? '';
-		$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? false;
-		$additionalParams = $params['additionalParams'] ?? [];
-		$absolute = $params['absolute'] ?? false;
-		$addQueryString = $params['addQueryString'] ?? false;
-		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
-
-		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-		if ($pageUid) {
-			$uriBuilder->setTargetPageUid($pageUid);
-		}
-		$uri = $uriBuilder
-			->setTargetPageType($pageType)
-			->setNoCache($noCache)
-			->setSection($section)
-			->setFormat($format)
-			->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
-			->setArguments($additionalParams)
-			->setCreateAbsoluteUri($absolute)
-			->setAddQueryString($addQueryString)
-			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-			->uriFor($action, $arguments, $controller, $extensionName, $pluginName);
-
-		return $uri;
-	}
-
-	/**
-	 * link action for smarty templates.
-	 * modified from fluids LinkActionViewHelper
-	 */
-	public function smarty_link_action(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
-		if (!isset($content)) {
-			return '';
-		}
-
-		$defaultUrlParams = [
-			'action' => null,
-			'arguments' => [],
-			'controller' => null,
-			'extensionName' => null,
-			'pluginName' => null,
-			'pageUid' => null,
-			'pageType' => 0,
-			'noCache' => false,
-			'section' => '',
-			'format' => '',
-			'linkAccessRestrictedPages' => false,
-			'additionalParams' => [],
-			'absolute' => false,
-			'addQueryString' => false,
-			'argumentsToBeExcludedFromQueryString' => [],
-		];
-
-		$attributes = array_diff_key($params, $defaultUrlParams);
-
-		if (!isset($attributes['href'])) {
-			$action = $params['action'] ?? $defaultUrlParams['action'];
-			$arguments = $params['arguments'] ?? $defaultUrlParams['arguments'];
-			$controller = $params['controller'] ?? $defaultUrlParams['controller'];
-			$extensionName = $params['extensionName'] ?? $defaultUrlParams['extensionName'];
-			$pluginName = $params['pluginName'] ?? $defaultUrlParams['pluginName'];
-			$pageUid = $params['pageUid'] ?? $defaultUrlParams['pageUid'];
-			$pageType = $params['pageType'] ?? $defaultUrlParams['pageType'];
-			$noCache = $params['noCache'] ?? $defaultUrlParams['noCache'];
-			$section = $params['section'] ?? $defaultUrlParams['section'];
-			$format = $params['format'] ?? $defaultUrlParams['format'];
-			$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? $defaultUrlParams['linkAccessRestrictedPages'];
-			$additionalParams = $params['additionalParams'] ?? $defaultUrlParams['additionalParams'];
-			$absolute = $params['absolute'] ?? $defaultUrlParams['absolute'];
-			$addQueryString = $params['addQueryString'] ?? $defaultUrlParams['addQueryString'];
-			$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? $defaultUrlParams['argumentsToBeExcludedFromQueryString'];
-
-			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-			if ($pageUid) {
-				$uriBuilder->setTargetPageUid($pageUid);
-			}
-			$uri = $uriBuilder
-				->setTargetPageType($pageType)
-				->setNoCache($noCache)
-				->setSection($section)
-				->setFormat($format)
-				->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
-				->setArguments($additionalParams)
-				->setCreateAbsoluteUri($absolute)
-				->setAddQueryString($addQueryString)
-				->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-				->uriFor($action, $arguments, $controller, $extensionName, $pluginName);
-			$attributes['href'] = $uri;
-		}
-
-		return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>' . $content . '</a>';
-	}
-
-	public function smarty_helper_typolink(array $params, Smarty_Internal_Template $smarty): string {
-		$pageUid = $params['pageUid'] ?? null;
-		$additionalParams = $params['additionalParams'] ?? [];
-		$pageType = $params['pageType'] ?? 0;
-		$noCache = $params['noCache'] ?? false;
-		$linkAccessRestrictedPages = $params['linkAccessRestrictedPages'] ?? false;
-		$absolute = $params['absolute'] ?? false;
-		$section = $params['section'] ?? '';
-		$addQueryString = $params['addQueryString'] ?? false;
-		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
-
-		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
-		if ($pageUid) {
-			$uriBuilder->setTargetPageUid($pageUid);
-		}
-		$uri = $uriBuilder
-			->setTargetPageType($pageType)
-			->setNoCache($noCache)
-			->setSection($section)
-			->setLinkAccessRestrictedPages($linkAccessRestrictedPages)
-			->setArguments($additionalParams)
-			->setCreateAbsoluteUri($absolute)
-			->setAddQueryString($addQueryString)
-			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-			->build();
-
-		return $uri;
-	}
-
-	public function smarty_flashMessages(array $params, Smarty_Internal_Template $smarty): string {
-		$renderMode = $params['renderMode'] ?? 'ul';
-		$class = $params['class'] ?? 'typo3-messages';
-		$queueIdentifier = $params['queueIdentifier'] ?? null;
-
-		$flashMessages = $this->controllerContext->getFlashMessageQueue($queueIdentifier)->getAllMessagesAndFlush();
-
-		if (count($flashMessages) === 0) {
-			return '';
-		}
-
-		if ($renderMode != 'div') {
-			$renderMode = 'ul';
-		}
-
-		$content = '<' . $renderMode;
-		if ($class) {
-			$content .= ' class="' . htmlspecialchars($class) . '"';
-		}
-		$content .= '>';
-
-		foreach ($flashMessages as $singleFlashMessage) {
-			if ($renderMode == 'ul') {
-				$content .= '<li>' . htmlspecialchars($singleFlashMessage->getMessage()) . '</li>';
-			} else {
-				$content .= htmlspecialchars($singleFlashMessage->getMessage());
-			}
-		}
-
-		$content .= '</' . $renderMode . '>';
-
-		return $content;
-	}
-
-	public function smarty_fluid(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
-		if (!isset($content)) {
-			return '';
-		}
-
-		$data = isset($params['data']) ? $params['data'] : [];
-		unset($params['data']);
-		$data = $params + $data + $smarty->getTemplateVars();
-
-		$fluidView = GeneralUtility::makeInstance(StandaloneView::class);
-		$fluidView->setControllerContext($this->controllerContext);
-		$fluidView->assignMultiple($data);
-		$fluidView->setTemplateSource($content);
-
-		assert($this->configurationManager instanceof ConfigurationManagerInterface);
-		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-		if (isset($configuration['view'])) {
-			$layoutRootPaths = [];
-			if (isset($configuration['view']['layoutRootPaths'])) {
-				$layoutRootPaths = $configuration['view']['layoutRootPaths'];
-			} else if (isset($configuration['view']['layoutRootPath'])) {
-				$layoutRootPaths = [$configuration['view']['layoutRootPath']];
-			}
-			$layoutRootPaths = array_map(function($path) {
-				return GeneralUtility::getFileAbsFileName($path);
-			}, $layoutRootPaths);
-			$fluidView->setLayoutRootPaths($layoutRootPaths);
-
-			// Partials
-			$partialRootPaths = [];
-			if (isset($configuration['view']['partialRootPaths'])) {
-				$partialRootPaths = $configuration['view']['partialRootPaths'];
-			} else if (isset($configuration['view']['partialRootPath'])) {
-				$partialRootPaths = [$configuration['view']['partialRootPath']];
-			}
-			$partialRootPaths = array_map(function($path) {
-				return GeneralUtility::getFileAbsFileName($path);
-			}, $partialRootPaths);
-			$fluidView->setPartialRootPaths($partialRootPaths);
-		}
-
-		return $fluidView->render();
-	}
-
-	public function smarty_typoscript(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
-		if (!isset($content)) {
-			return '';
-		}
-
-		assert($this->Smarty instanceof Smarty);
-
-		$data = isset($params['data']) ? $params['data'] : [];
-		unset($params['data']);
-		$data = $params + $data;
-
-		$table = isset($data['table']) ? $data['table'] : '_NO_TABLE';
-		unset($data['table']);
-
-		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-		if ($this->contentObject) {
-			$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
-			$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
-			$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
-		}
-		if ($table != '_NO_TABLE') {
-			$data['_MIGRATED'] = false;
-		}
-		$cObj->start($data, $table);
-
-		// $cObj->setCurrentVal($dataValues[$key][$valueKey]);
-
-		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class);
-
-		if (is_array($GLOBALS['TSFE']->tmpl->setup)) {
-			foreach ($GLOBALS['TSFE']->tmpl->setup as $tsObjectKey => $tsObjectValue) {
-				// do not copy int-keys
-				if ($tsObjectKey !== intval($tsObjectKey) && $tsObjectKey !== intval($tsObjectKey) . '.') {
-					$tsparserObj->setup[$tsObjectKey] = $tsObjectValue;
-				}
-			}
-		}
-
-		$conditionMatcher = GeneralUtility::makeInstance(ConditionMatcher::class);
-		$tsparserObj->parse($content, $conditionMatcher);
-
-		// save current typoscript setup and change to modified setup
-		$oldSetup = $GLOBALS['TSFE']->tmpl->setup;
-		$GLOBALS['TSFE']->tmpl->setup = $tsparserObj->setup;
-
-		$oldTplVars = $this->Smarty->tpl_vars;
-		$this->Smarty->tpl_vars = [];
-
-		$content = $cObj->cObjGet($tsparserObj->setup, 'COA');
-
-		$this->Smarty->tpl_vars = $oldTplVars;
-
-		// reset typoscript
-		$GLOBALS['TSFE']->tmpl->setup = $oldSetup;
-
-		if (!empty($params['assign'])) {
-			$smarty->assign($params['assign'], $content);
-			return '';
-		} else {
-			return $content;
 		}
 	}
 
