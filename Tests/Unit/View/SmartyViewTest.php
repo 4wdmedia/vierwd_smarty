@@ -3,12 +3,16 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\View;
 
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
+use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatcher;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\ContentObject\TextContentObject;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -20,15 +24,24 @@ class SmartyViewTest extends UnitTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
+		$GLOBALS['TSFE']->tmpl = $this->createMock(TemplateService::class);
 		$resourceFactory = $this->createMock(ResourceFactory::class);
 		GeneralUtility::setSingletonInstance(ResourceFactory::class, $resourceFactory);
 
 		$extensionService = $this->createMock(ExtensionService::class);
 		GeneralUtility::setSingletonInstance(ExtensionService::class, $extensionService);
+
+		$mockConditionMatcher = $this->createMock(ConditionMatcher::class);
+		GeneralUtility::addInstance(ConditionMatcher::class, $mockConditionMatcher);
+
+		$GLOBALS['TYPO3_CONF_VARS']['FE']['ContentObjects']['TEXT'] = TextContentObject::class;
+
+		$GLOBALS['TYPO3_REQUEST'] = new ServerRequest();
 	}
 
 	protected function tearDown(): void {
 		unset($GLOBALS['TSFE']);
+		unset($GLOBALS['TYPO3_REQUEST']);
 		GeneralUtility::purgeInstances();
 		parent::tearDown();
 	}
@@ -172,6 +185,30 @@ class SmartyViewTest extends UnitTestCase {
 
 		$this->expectException(\Exception::class); // phpcs:ignore
 		clean(['Array cannot be cleaned']);
+	}
+
+	/**
+	 * @test
+	 */
+	public function testTyposcript(): void {
+		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
+		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
+		$templateView->setControllerContext($mockControllerContext);
+		$templateView->setTemplateRootPaths([
+			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),
+		]);
+
+		$mockContentObject = $this->getAccessibleMock(ContentObjectRenderer::class, null, [], '', false);
+		$templateView->setContentObject($mockContentObject);
+
+		$templateView->initializeView();
+		// @extensionScannerIgnoreLine
+		$this->assertEquals('Test', $templateView->render('string:' . implode("\n", [
+			'{typoscript}',
+			'10 = TEXT',
+			'10.value = Test',
+			'{/typoscript}',
+		])));
 	}
 
 }

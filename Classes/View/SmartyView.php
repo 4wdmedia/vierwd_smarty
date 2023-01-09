@@ -560,7 +560,7 @@ class SmartyView implements ViewInterface {
 		// reset typoscript
 		$GLOBALS['TSFE']->tmpl->setup = $oldSetup;
 
-		if ($params['assign']) {
+		if (!empty($params['assign'])) {
 			$smarty->assign($params['assign'], $content);
 			return '';
 		} else {
