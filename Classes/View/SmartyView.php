@@ -11,12 +11,13 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
+use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 use Vierwd\VierwdSmarty\View\Plugin\Block\FluidPlugin;
@@ -45,124 +46,29 @@ function clean($str): string {
 	}
 }
 
-class SmartyView implements ViewInterface {
+class SmartyView extends AbstractTemplateView {
 
 	public ?Smarty $Smarty = null;
 
 	public bool $hasTopLevelViewHelper = false;
 
-	/**
-	 * Pattern to be resolved for "@templateRoot" in the other patterns.
-	 */
-	protected string $templateRootPathPattern = '@packageResourcesPath/Private/Templates';
-
-	/**
-	 * Path(s) to the template root. If NULL, then $this->templateRootPathPattern will be used.
-	 */
-	protected ?array $templateRootPaths = null;
-
-	protected ControllerContext $controllerContext;
-
-	protected array $variables = [];
-
 	protected ?ContentObjectRenderer $contentObject = null;
 
-	protected ?ConfigurationManagerInterface $configurationManager = null;
+	protected ConfigurationManagerInterface $configurationManager;
 
-	protected ?ImageService $imageService = null;
+	protected ImageService $imageService;
 
-	protected ?TypoLinkCodecService $typoLinkCodecService = null;
+	protected TypoLinkCodecService $typoLinkCodecService;
 
 	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+		parent::__construct();
 		$this->configurationManager = $configurationManager;
 		$this->imageService = $imageService;
 		$this->typoLinkCodecService = $typoLinkCodecService;
-
-		$this->controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
-	}
-
-	public function setControllerContext(ControllerContext $controllerContext): void {
-		$this->controllerContext = $controllerContext;
-	}
-
-	public function assign($key, $value): self {
-		$this->variables[$key] = $value;
-		return $this;
-	}
-
-	public function assignMultiple(array $values): self {
-		foreach ($values as $key => $value) {
-			$this->assign($key, $value);
-		}
-		return $this;
-	}
-
-	/**
-	 * Set the root path(s) to the templates.
-	 * If set, overrides the one determined from $this->templateRootPathPattern
-	 *
-	 * @param array $templateRootPaths Root path(s) to the templates. If set, overrides the one determined from $this->templateRootPathPattern
-	 */
-	public function setTemplateRootPaths(array $templateRootPaths): void {
-		$this->templateRootPaths = $templateRootPaths;
-	}
-
-	/**
-	 * Resolves the template root to be used inside other paths.
-	 *
-	 * @return array Path(s) to template root directory
-	 */
-	public function getTemplateRootPaths(): array {
-		if ($this->templateRootPaths !== null) {
-			return $this->templateRootPaths;
-		}
-		/** @var \TYPO3\CMS\Extbase\Mvc\Request $actionRequest */
-		$actionRequest = $this->controllerContext->getRequest();
-		return [str_replace(['@packageResourcesPath', '//'], [ExtensionManagementUtility::extPath($actionRequest->getControllerExtensionKey()) . 'Resources/', '/'], $this->templateRootPathPattern)];
-	}
-
-	/**
-	 * get template root paths and resolve all relative paths and paths containing EXT:
-	 */
-	public function resolveTemplateRootPaths(): array {
-		$templateRootPaths = $this->getTemplateRootPaths();
-		ksort($templateRootPaths);
-		$templateRootPaths = array_reverse($templateRootPaths, true);
-		$templateRootPaths = array_map(function($path) {
-			return GeneralUtility::getFileAbsFileName(GeneralUtility::fixWindowsFilePath($path));
-		}, $templateRootPaths);
-		return array_filter($templateRootPaths);
 	}
 
 	public function setContentObject(?ContentObjectRenderer $contentObject): void {
 		$this->contentObject = $contentObject;
-	}
-
-	public function getControllerContext(): ControllerContext {
-		return $this->controllerContext;
-	}
-
-	protected function getViewFileName(ControllerContext $controllerContext): string {
-		// try to get the view name based upon the controller/action
-		$controller = $controllerContext->getRequest()->getControllerName();
-		$action     = $controllerContext->getRequest()->getControllerActionName();
-
-		$file = $controller . '/' . ucfirst($action) . '.tpl';
-
-		$paths = $this->getTemplateRootPaths();
-		ksort($paths);
-		$paths = array_reverse($paths, true);
-
-		foreach ($paths as $rootPath) {
-			$fileName = GeneralUtility::fixWindowsFilePath($rootPath . '/' . $file);
-			$fileName = GeneralUtility::getFileAbsFileName($fileName);
-			if (file_exists($fileName)) {
-				return $fileName;
-			}
-		}
-
-		// no view found
-		throw new Exception('Template not found for ' . $controller . '->' . $action);
 	}
 
 	protected function createSmarty(): void {
@@ -182,8 +88,6 @@ class SmartyView implements ViewInterface {
 				$this->Smarty->addPluginsDir($pluginDir);
 			}
 		}
-
-		assert($this->controllerContext !== null);
 
 		$translatePlugin = new TranslatePlugin($this->controllerContext);
 		$this->Smarty->registerPlugin('function', 'translate', $translatePlugin);
@@ -207,10 +111,8 @@ class SmartyView implements ViewInterface {
 		$this->Smarty->registerFilter('pre', $templateProcessor);
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
-		if ($this->configurationManager !== null) {
-			$fluidPlugin = new FluidPlugin($this->controllerContext, $this->configurationManager);
-			$this->Smarty->registerPlugin('block', 'fluid', $fluidPlugin);
-		}
+		$fluidPlugin = new FluidPlugin($this->controllerContext, $this->configurationManager);
+		$this->Smarty->registerPlugin('block', 'fluid', $fluidPlugin);
 
 		if ($this->contentObject !== null) {
 			$typoscriptPlugin = new TyposcriptPlugin($this->contentObject);
@@ -251,18 +153,27 @@ class SmartyView implements ViewInterface {
 	/**
 	 * @phpstan-return string
 	 */
-	public function render(string $view = '') {
+	public function render($view = '') {
+		$renderingContext = $this->getRenderingContext();
+		assert($renderingContext instanceof RenderingContext);
+		$templatePaths = $renderingContext->getTemplatePaths();
+		$templatePaths->setFormat('tpl');
+
 		assert($this->Smarty instanceof Smarty);
 
-		$this->Smarty->setTemplateDir($this->resolveTemplateRootPaths());
+		$this->Smarty->setTemplateDir($templatePaths->getTemplateRootPaths());
 
-		if ($this->contentObject && !$this->contentObject->data && isset($this->variables['data'])) {
-			$this->contentObject->data = $this->variables['data'];
+		$variables = (array)$renderingContext->getVariableProvider()->getAll();
+
+		if ($this->contentObject && !$this->contentObject->data && isset($variables['data'])) {
+			$this->contentObject->data = $variables['data'];
 		}
 
-		$this->Smarty->assign($this->variables);
-		$extensionName = $this->controllerContext->getRequest()->getControllerExtensionName();
-		$pluginName = $this->controllerContext->getRequest()->getPluginName();
+		$this->Smarty->assign($variables);
+		$extensionName = $renderingContext->getRequest()->getControllerExtensionName();
+		$pluginName = $renderingContext->getRequest()->getPluginName();
+		$controllerName = $renderingContext->getControllerName();
+		$controllerAction = $renderingContext->getControllerAction();
 
 		if ($this->configurationManager !== null) {
 			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
@@ -288,8 +199,8 @@ class SmartyView implements ViewInterface {
 			'extensionPath' => $extPath,
 			'extensionName' => $extensionName,
 			'pluginName' => $pluginName,
-			'controllerName' => $this->controllerContext->getRequest()->getControllerName(),
-			'actionName' => $this->controllerContext->getRequest()->getControllerActionName(),
+			'controllerName' => $controllerName,
+			'actionName' => $controllerAction,
 			'controllerContext' => $this->controllerContext,
 			'request' => $this->controllerContext->getRequest(),
 			'context' => GeneralUtility::makeInstance(Context::class),
@@ -312,7 +223,7 @@ class SmartyView implements ViewInterface {
 			$this->Smarty->assign($userVars);
 		}
 
-		if ($extensionName == 'VierwdSmarty' && file_exists($view)) {
+		if ($extensionName == 'VierwdSmarty' && $view && file_exists($view)) {
 			// make sure the directory of the file is in the template dirs
 			$fileDir = realpath(dirname($view));
 			$dirs = (array)$this->Smarty->getTemplateDir();
@@ -330,7 +241,11 @@ class SmartyView implements ViewInterface {
 
 		if (!$view) {
 			// try to get the view name based upon the controller/action
-			$view = $this->getViewFileName($this->controllerContext);
+			$view = $templatePaths->resolveTemplateFileForControllerAndActionAndFormat($controllerName, $controllerAction);
+		}
+
+		if (!$view) {
+			throw new InvalidTemplateResourceException('Could not find Template', 1673272709);
 		}
 
 		if (!$this->Smarty->templateExists($view)) {

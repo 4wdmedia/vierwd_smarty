@@ -28,6 +28,10 @@ parameters:
             paths:
                 - Classes
         -
-            message: '#.*implements deprecated interface .*ViewInterface.*#'
+            message: '#.*deprecated method initializeView.*#'
+            paths:
+                - Classes
+        -
+            message: '#Access to deprecated property \$controllerContext.*#'
             paths:
                 - Classes

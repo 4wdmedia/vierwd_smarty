@@ -189,7 +189,11 @@ class SmartyEmail extends Email {
 
 	protected function renderContent(string $format): string {
 		assert($this->view->Smarty instanceof Smarty);
-		$this->view->Smarty->setTemplateDir($this->view->resolveTemplateRootPaths());
+
+		$renderingContext = $this->view->getRenderingContext();
+		$templatePaths = $renderingContext->getTemplatePaths();
+		$templatePaths->setFormat('tpl');
+		$this->view->Smarty->setTemplateDir($templatePaths->getTemplateRootPaths());
 
 		$templateName = explode('.', $this->templateName);
 		$extension = array_pop($templateName);

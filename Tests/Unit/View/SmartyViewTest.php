@@ -79,33 +79,6 @@ class SmartyViewTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getTemplateRootPathsReturnsUserSpecifiedTemplatePaths(): void {
-		/** @var SmartyView|\PHPUnit_Framework_MockObject_MockObject|\Nimut\TestingFramework\MockObject\AccessibleMockObjectInterface $templateView */
-		$templateView = $this->getAccessibleMock(SmartyView::class, ['dummy'], [], '', false);
-		$templateView->setTemplateRootPaths(['/foo/bar']);
-		$expected = ['/foo/bar'];
-		$actual = $templateView->_call('getTemplateRootPaths');
-		$this->assertEquals($expected, $actual, 'A set template root path was not returned correctly.');
-	}
-
-	/**
-	 * @test
-	 */
-	public function calculateTemplatePath(): void {
-		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'My', 'action', 'tpl');
-
-		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
-		$templateView->_set('controllerContext', $mockControllerContext);
-
-		$expected = 'vierwd_smarty/Resources/Private/Templates';
-		$actual = $templateView->_call('getTemplateRootPaths');
-		$this->assertIsArray($actual);
-		$this->assertStringEndsWith($expected, $actual[0]);
-	}
-
-	/**
-	 * @test
-	 */
 	public function renderTemplate(): void {
 		$mockControllerContext = $this->setupMockControllerContext('MyPackage', 'Controller', 'action', 'tpl');
 		$templateView = $this->getAccessibleMock(SmartyView::class, null, [], '', false);
