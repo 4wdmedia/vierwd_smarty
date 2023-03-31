@@ -12,6 +12,10 @@ services:
     public: true
     shared: false
 
+  Vierwd\VierwdSmarty\View\:
+    resource: '../Classes/View/*'
+    public: true
+
   Vierwd\VierwdSmarty\Cache\ClearCacheHook:
     tags:
       - name: event.listener
