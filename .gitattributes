@@ -1,2 +1,5 @@
-Tests/Unit/Fixtures/** linguist-vendored
-Tests/ export-ignore
+/.Build/
+/.gitattributes export-ignore
+/.github export-ignore
+/Tests/Unit/Fixtures/** linguist-vendored
+/Tests/ export-ignore
