@@ -18,19 +18,19 @@
 		"role": "Developer"
 	}],
 	"require": {
-		"php": ">=7.4.0",
+		"php": "^8.1.0",
 		"smarty/smarty": "^4.1.0",
-		"typo3/cms-core": "^11.4.0"
+		"typo3/cms-core": "^12.3.0"
 	},
 	"require-dev": {
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
-		"friendsofphp/php-cs-fixer": "^2.12.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+		"friendsofphp/php-cs-fixer": "^3.15.0",
 		"phpspec/prophecy-phpunit": "^2.0",
 		"phpstan/extension-installer": "^1.0.0",
 		"phpstan/phpstan-deprecation-rules": "^1.0.0",
 		"phpunit/phpunit": "^9.0",
 		"saschaegerer/phpstan-typo3": "^1.0.0",
-		"typo3/testing-framework": "^6.11",
+		"typo3/testing-framework": "7.x-dev",
 		"vierwd/coding-standard": "dev-master"
 	},
 	"autoload": {
@@ -89,7 +89,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "11.x-dev"
+			"dev-master": "12.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
