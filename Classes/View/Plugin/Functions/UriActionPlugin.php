@@ -4,14 +4,14 @@ declare(strict_types = 1);
 namespace Vierwd\VierwdSmarty\View\Plugin\Functions;
 
 use Smarty_Internal_Template;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class UriActionPlugin {
 
-	private ControllerContext $controllerContext;
+	private UriBuilder $uriBuilder;
 
-	public function __construct(ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
+	public function __construct(UriBuilder $uriBuilder) {
+		$this->uriBuilder = $uriBuilder;
 	}
 
 	public function __invoke(array $params, Smarty_Internal_Template $smarty): ?string {
@@ -31,7 +31,7 @@ class UriActionPlugin {
 		$addQueryString = $params['addQueryString'] ?? false;
 		$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? [];
 
-		$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+		$uriBuilder = $this->uriBuilder->reset();
 		if ($pageUid) {
 			$uriBuilder->setTargetPageUid($pageUid);
 		}

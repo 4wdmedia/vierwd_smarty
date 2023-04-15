@@ -3,9 +3,10 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
 
@@ -27,18 +28,22 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 			return '';
 		}
 
-		$controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
+		assert($this->request instanceof ServerRequestInterface);
 
-		$request = GeneralUtility::makeInstance(Request::class);
-		$request->setControllerExtensionName($this->mconf['extensionName'] ?: 'vierwd_smarty');
-		$controllerContext->setRequest($request);
+		$extbaseAttribute = new ExtbaseRequestParameters();
+		$extbaseAttribute->setPluginName('pi1');
+		$extbaseAttribute->setControllerExtensionName($this->mconf['extensionName'] ?: 'VierwdSmarty');
+		$extbaseAttribute->setControllerName('Smarty');
+		$extbaseAttribute->setControllerActionName('render');
+		$request = $this->request->withAttribute('extbase', $extbaseAttribute);
+		$request = GeneralUtility::makeInstance(Request::class, $request);
 
 		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		$extensionName = GeneralUtility::underscoredToUpperCamelCase($request->getControllerExtensionName());
 		$configuration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FRAMEWORK, $extensionName);
 
 		$view = GeneralUtility::makeInstance(SmartyView::class);
-		$view->setControllerContext($controllerContext);
+		$view->setRequest($request);
 		$templateRootPaths = $configuration['view']['templateRootPaths'] ?? $configuration['settings']['templateRootPaths'] ?? [];
 		// set template root paths, if available
 		if ($templateRootPaths) {
@@ -94,7 +99,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		return false;
 	}
 
-	public function subMenu(int $uid, string $objSuffix = ''): string {
+	public function subMenu(int $uid, string $objSuffix = '', int $menuItemKey = 0): string {
 		$tsfe = $this->getTypoScriptFrontendController();
 		$tsfe->register['parentMenu'] = $this;
 
@@ -106,7 +111,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 			}
 		}
 
-		return parent::subMenu($uid, $objSuffix);
+		return parent::subMenu($uid, $objSuffix, $menuItemKey);
 	}
 
 }

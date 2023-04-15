@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace Vierwd\VierwdSmarty\View\Plugin\Block;
 
 use Smarty_Internal_Template;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Core\TypoScript\AST\AstBuilder;
+use TYPO3\CMS\Core\TypoScript\Tokenizer\LossyTokenizer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Configuration\TypoScript\ConditionMatching\ConditionMatcher;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class TyposcriptPlugin {
@@ -42,33 +42,13 @@ class TyposcriptPlugin {
 
 		// $cObj->setCurrentVal($dataValues[$key][$valueKey]);
 
-		$tsparserObj = GeneralUtility::makeInstance(TypoScriptParser::class);
+		$tokenizer = GeneralUtility::makeInstance(LossyTokenizer::class);
+		$lineStream = $tokenizer->tokenize($content);
+		$astBuilder = GeneralUtility::makeInstance(AstBuilder::class);
+		$root = $GLOBALS['TYPO3_REQUEST']->getAttribute('frontend.typoscript')->getSetupTree();
+		$typoScriptConfig = $astBuilder->build($lineStream, $root)->toArray();
 
-		if (is_array($GLOBALS['TSFE']->tmpl->setup)) {
-			foreach ($GLOBALS['TSFE']->tmpl->setup as $tsObjectKey => $tsObjectValue) {
-				// do not copy int-keys
-				if ($tsObjectKey !== intval($tsObjectKey) && $tsObjectKey !== intval($tsObjectKey) . '.') {
-					$tsparserObj->setup[$tsObjectKey] = $tsObjectValue;
-				}
-			}
-		}
-
-		$conditionMatcher = GeneralUtility::makeInstance(ConditionMatcher::class);
-		$tsparserObj->parse($content, $conditionMatcher);
-
-		// save current typoscript setup and change to modified setup
-		$oldSetup = $GLOBALS['TSFE']->tmpl->setup;
-		$GLOBALS['TSFE']->tmpl->setup = $tsparserObj->setup;
-
-		$oldTplVars = $smarty->tpl_vars;
-		$smarty->tpl_vars = [];
-
-		$content = $cObj->cObjGet($tsparserObj->setup, 'COA');
-
-		$smarty->tpl_vars = $oldTplVars;
-
-		// reset typoscript
-		$GLOBALS['TSFE']->tmpl->setup = $oldSetup;
+		$content = $cObj->cObjGet($typoScriptConfig, 'COA');
 
 		if (!empty($params['assign'])) {
 			$smarty->assign($params['assign'], $content);

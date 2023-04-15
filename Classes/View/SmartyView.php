@@ -11,12 +11,15 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3\CMS\Fluid\View\AbstractTemplateView;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
 
 use Vierwd\VierwdSmarty\Resource\ExtResource;
@@ -58,17 +61,42 @@ class SmartyView extends AbstractTemplateView {
 
 	protected ImageService $imageService;
 
-	protected TypoLinkCodecService $typoLinkCodecService;
+	protected RequestInterface $request;
+	protected UriBuilder $uriBuilder;
 
-	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService) {
 		parent::__construct();
 		$this->configurationManager = $configurationManager;
 		$this->imageService = $imageService;
-		$this->typoLinkCodecService = $typoLinkCodecService;
+
+		$this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
+		$extbaseAttribute = new ExtbaseRequestParameters();
+		$extbaseAttribute->setPluginName('pi1');
+		$extbaseAttribute->setControllerExtensionName('VierwdSmarty');
+		$extbaseAttribute->setControllerName('Smarty');
+		$extbaseAttribute->setControllerActionName('render');
+		$request = $GLOBALS['TYPO3_REQUEST']->withAttribute('extbase', $extbaseAttribute);
+		$request = GeneralUtility::makeInstance(Request::class, $request);
+
+		$this->setRequest($request);
 	}
 
 	public function setContentObject(?ContentObjectRenderer $contentObject): void {
 		$this->contentObject = $contentObject;
+	}
+
+	public function setRequest(RequestInterface $request): void {
+		$this->request = $request;
+		$this->uriBuilder->setRequest($request);
+	}
+
+	public function getRequest(): RequestInterface {
+		return $this->request;
+	}
+
+	public function getUriBuilder(): UriBuilder {
+		return $this->uriBuilder;
 	}
 
 	protected function createSmarty(): void {
@@ -78,7 +106,7 @@ class SmartyView extends AbstractTemplateView {
 
 		$this->Smarty = new Smarty();
 
-		if (isset($GLOBALS['TSFE']) && !$GLOBALS['TSFE']->headerNoCache()) {
+		if (!$this->request->getAttribute('noCache')) {
 			$this->Smarty->setCacheLifetime(120);
 			$this->Smarty->setCompileCheck(0);
 		}
@@ -89,29 +117,29 @@ class SmartyView extends AbstractTemplateView {
 			}
 		}
 
-		$translatePlugin = new TranslatePlugin($this->controllerContext);
+		$translatePlugin = new TranslatePlugin($this->request);
 		$this->Smarty->registerPlugin('function', 'translate', $translatePlugin);
 
-		$uriResourcePlugin = new UriResourcePlugin($this->controllerContext);
+		$uriResourcePlugin = new UriResourcePlugin($this->request);
 		$this->Smarty->registerPlugin('function', 'uri_resource', $uriResourcePlugin);
 
-		$uriActionPlugin = new UriActionPlugin($this->controllerContext);
+		$uriActionPlugin = new UriActionPlugin($this->uriBuilder);
 		$this->Smarty->registerPlugin('function', 'uri_action', $uriActionPlugin);
 
-		$typolinkPlugin = new TypolinkPlugin($this->controllerContext);
+		$typolinkPlugin = new TypolinkPlugin($this->uriBuilder);
 		$this->Smarty->registerPlugin('function', 'typolink', $typolinkPlugin);
 
-		$flashMessagesPlugin = new FlashMessagesPlugin($this->controllerContext);
+		$flashMessagesPlugin = new FlashMessagesPlugin($this->baseRenderingContext);
 		$this->Smarty->registerPlugin('function', 'flashMessages', $flashMessagesPlugin);
 
-		$linkActionPlugin = new LinkActionPlugin($this->controllerContext);
+		$linkActionPlugin = new LinkActionPlugin($this->uriBuilder);
 		$this->Smarty->registerPlugin('block', 'link_action', $linkActionPlugin);
 
 		$templateProcessor = new TemplatePreprocessor();
 		$this->Smarty->registerFilter('pre', $templateProcessor);
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
-		$fluidPlugin = new FluidPlugin($this->controllerContext, $this->configurationManager);
+		$fluidPlugin = new FluidPlugin($this->baseRenderingContext, $this->configurationManager);
 		$this->Smarty->registerPlugin('block', 'fluid', $fluidPlugin);
 
 		if ($this->contentObject !== null) {
@@ -135,7 +163,7 @@ class SmartyView extends AbstractTemplateView {
 			$this->Smarty->clearAllAssign();
 		}
 
-		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
+		$extensionKey = $this->request->getControllerExtensionKey();
 
 		// setup compile and caching dirs
 		$extCacheDir = Environment::getVarPath() . '/cache/vierwd_smarty';
@@ -170,8 +198,8 @@ class SmartyView extends AbstractTemplateView {
 		}
 
 		$this->Smarty->assign($variables);
-		$extensionName = $renderingContext->getRequest()->getControllerExtensionName();
-		$pluginName = $renderingContext->getRequest()->getPluginName();
+		$extensionName = $this->request->getControllerExtensionName();
+		$pluginName = $this->request->getPluginName();
 		$controllerName = $renderingContext->getControllerName();
 		$controllerAction = $renderingContext->getControllerAction();
 
@@ -183,7 +211,7 @@ class SmartyView extends AbstractTemplateView {
 		$formPrefix = GeneralUtility::makeInstance(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
 		$this->Smarty->assign('formPrefix', $formPrefix);
 
-		$extensionKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
+		$extensionKey = $this->request->getControllerExtensionKey();
 		if ($extensionKey) {
 			$extPath = ExtensionManagementUtility::extPath($extensionKey);
 		} else {
@@ -201,12 +229,11 @@ class SmartyView extends AbstractTemplateView {
 			'pluginName' => $pluginName,
 			'controllerName' => $controllerName,
 			'actionName' => $controllerAction,
-			'controllerContext' => $this->controllerContext,
-			'request' => $this->controllerContext->getRequest(),
+			'renderingContext' => $this->baseRenderingContext,
+			'request' => $this->request,
 			'context' => GeneralUtility::makeInstance(Context::class),
 			'siteLanguage' => $siteLanguage,
 			'typo3Request' => $request,
-			'typolinkService' => $this->typoLinkCodecService,
 			'imageService' => $this->imageService,
 			// 'settings' => $typoScript['settings'],
 			'TSFE' => $GLOBALS['TSFE'] ?? null,
@@ -265,8 +292,8 @@ class SmartyView extends AbstractTemplateView {
 			}
 
 			if (!glob($view . '*')) {
-				$controller = $this->controllerContext->getRequest()->getControllerName();
-				$action     = $this->controllerContext->getRequest()->getControllerActionName();
+				$controller = $this->request->getControllerName();
+				$action     = $this->request->getControllerActionName();
 
 				throw new Exception('Template not found for ' . $controller . '->' . $action . "\nMaybe incorrect case of filename?");
 			}

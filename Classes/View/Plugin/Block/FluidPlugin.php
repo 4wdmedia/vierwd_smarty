@@ -6,16 +6,16 @@ namespace Vierwd\VierwdSmarty\View\Plugin\Block;
 use Smarty_Internal_Template;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class FluidPlugin {
 
-	private ControllerContext $controllerContext;
+	private RenderingContextInterface $renderingContext;
 	private ConfigurationManagerInterface $configurationManager;
 
-	public function __construct(ControllerContext $controllerContext, ConfigurationManagerInterface $configurationManager) {
-		$this->controllerContext = $controllerContext;
+	public function __construct(RenderingContextInterface $renderingContext, ConfigurationManagerInterface $configurationManager) {
+		$this->renderingContext = $renderingContext;
 		$this->configurationManager = $configurationManager;
 	}
 
@@ -28,8 +28,7 @@ class FluidPlugin {
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
-		$fluidView = GeneralUtility::makeInstance(StandaloneView::class);
-		$fluidView->setControllerContext($this->controllerContext);
+		$fluidView = GeneralUtility::makeInstance(StandaloneView::class, $this->renderingContext);
 		$fluidView->assignMultiple($data);
 		$fluidView->setTemplateSource($content);
 

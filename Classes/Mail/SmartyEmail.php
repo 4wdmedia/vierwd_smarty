@@ -10,7 +10,6 @@ use Symfony\Component\Mime\Part\AbstractPart;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Information\Typo3Information;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 
 use Vierwd\VierwdSmarty\View\Plugin\Functions\TypolinkPlugin;
 use Vierwd\VierwdSmarty\View\Plugin\Functions\UriActionPlugin;
@@ -46,33 +45,34 @@ class SmartyEmail extends Email {
 
 	protected SmartyView $view;
 
-	public function __construct(ControllerContext $controllerContext, Headers $headers = null, AbstractPart $body = null) {
+	public function __construct(Headers $headers = null, AbstractPart $body = null) {
 		parent::__construct($headers, $body);
-		$this->initializeView($controllerContext);
+		$this->initializeView();
 	}
 
-	protected function initializeView(ControllerContext $controllerContext): void {
+	protected function initializeView(): void {
 		$this->view = GeneralUtility::makeInstance(SmartyView::class);
-		$this->view->setControllerContext($controllerContext);
 		$this->view->initializeView();
 		assert($this->view->Smarty instanceof Smarty);
 
 		$this->view->assignMultiple($this->getDefaultVariables());
 		$this->format($GLOBALS['TYPO3_CONF_VARS']['MAIL']['format'] ?? self::FORMAT_BOTH);
 
+		$uriBuilder = $this->view->getUriBuilder();
+
 		// overwrite {uri_action}
 		$this->view->Smarty->unregisterPlugin('function', 'uri_action');
-		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) use ($controllerContext) {
+		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) use ($uriBuilder) {
 			$params['absolute'] = true;
-			$uriActionPlugin = new UriActionPlugin($controllerContext);
+			$uriActionPlugin = new UriActionPlugin($uriBuilder);
 			return $uriActionPlugin($params, $smarty);
 		});
 
 		// overwrite {typolink}
 		$this->view->Smarty->unregisterPlugin('function', 'typolink');
-		$this->view->Smarty->registerPlugin('function', 'typolink', function($params, $smarty) use ($controllerContext) {
+		$this->view->Smarty->registerPlugin('function', 'typolink', function($params, $smarty) use ($uriBuilder) {
 			$params['absolute'] = true;
-			$typolinkPlugin = new TypolinkPlugin($controllerContext);
+			$typolinkPlugin = new TypolinkPlugin($uriBuilder);
 			return $typolinkPlugin($params, $smarty);
 		});
 	}

@@ -6,17 +6,17 @@ namespace Vierwd\VierwdSmarty\Controller;
 use InvalidArgumentException;
 
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
 use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
 
@@ -39,10 +39,15 @@ class ActionController extends ExtbaseActionController {
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
-	protected function initializeView(ViewInterface $view): void {
+	protected function resolveView(): ViewInterface {
+		$view = parent::resolveView();
+
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
 		if ($view instanceof SmartyView) {
+			$view->setRequest($this->request);
+			$view->initializeView();
+
 			// @extensionScannerIgnoreLine
 			$view->setContentObject($this->configurationManager->getContentObject());
 
@@ -54,14 +59,11 @@ class ActionController extends ExtbaseActionController {
 			}
 		}
 
-		parent::initializeView($view);
-
 		if (!empty($configuration['dataProcessing'])) {
 			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
 				// reference to existing value
 				$key = trim(substr($configuration['dataProcessing'], 1));
-				$cF = GeneralUtility::makeInstance(TypoScriptParser::class);
-				[, $dataProcessing] = $cF->getVal($key, $GLOBALS['TSFE']->tmpl->setup);
+				$dataProcessing = ArrayUtility::getValueByPath($GLOBALS['TSFE']->tmpl->setup, $key, '.');
 			} else {
 				$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
 				$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
@@ -78,13 +80,15 @@ class ActionController extends ExtbaseActionController {
 				$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
 			}
 
-			$this->view->assignMultiple($variables);
+			$view->assignMultiple($variables);
 		}
 
 		if (!empty($configuration['variables'])) {
 			$variables = $this->getContentObjectVariables($configuration);
-			$this->view->assignMultiple($variables);
+			$view->assignMultiple($variables);
 		}
+
+		return $view;
 	}
 
 	/**

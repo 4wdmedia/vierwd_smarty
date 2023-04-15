@@ -5,32 +5,30 @@ namespace Vierwd\VierwdSmarty\View;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Extbase\Mvc\Request;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
 
 class StandaloneSmartyView extends SmartyView {
 
-	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, TypoLinkCodecService $typoLinkCodecService) {
-		parent::__construct($configurationManager, $imageService, $typoLinkCodecService);
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService) {
+		parent::__construct($configurationManager, $imageService);
 
 		$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		$configurationManager->setContentObject($contentObject);
 
-		$request = GeneralUtility::makeInstance(Request::class);
-		$request->setControllerExtensionName('VierwdSmarty');
+		$extbaseAttribute = new ExtbaseRequestParameters();
+		$extbaseAttribute->setPluginName('pi1');
+		$extbaseAttribute->setControllerExtensionName('VierwdSmarty');
+		$extbaseAttribute->setControllerName('Smarty');
+		$extbaseAttribute->setControllerActionName('render');
 
-		$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-		$uriBuilder->setRequest($request);
+		$request = $GLOBALS['TYPO3_REQUEST'];
+		$request = $request->withAttribute('extbase', $extbaseAttribute);
+		$request = GeneralUtility::makeInstance(Request::class, $request);
 
-		$controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
-		$controllerContext->setRequest($request);
-		$controllerContext->setUriBuilder($uriBuilder);
-
-		$this->setControllerContext($controllerContext);
+		$this->setRequest($request);
 
 		$this->initializeView();
 	}

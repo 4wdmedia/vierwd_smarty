@@ -4,6 +4,11 @@ parameters:
     bootstrapFiles:
         - phpstan.bootstrap.php
 
+    typo3:
+        requestGetAttributeMapping:
+            noCache: bool
+            extbase: TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters
+
     paths:
         - Classes
         # - Tests
@@ -11,27 +16,3 @@ parameters:
     checkMissingIterableValueType: false
 
     ignoreErrors:
-        -
-            message: '#^Call to deprecated method setControllerContext.*#'
-            paths:
-                - Classes
-        -
-            message: '#^Call to deprecated method getControllerContext.*#'
-            paths:
-                - Classes
-        -
-            message: '#.*deprecated class TYPO3\\CMS\\Extbase\\Mvc\\Controller\\ControllerContext#'
-            paths:
-                - Classes
-        -
-            message: '#.*deprecated method (getUriBuilder|getFlashMessageQueue|getBaseUri).*(ControllerContext|Request).*#'
-            paths:
-                - Classes
-        -
-            message: '#.*deprecated method initializeView.*#'
-            paths:
-                - Classes
-        -
-            message: '#Access to deprecated property \$controllerContext.*#'
-            paths:
-                - Classes

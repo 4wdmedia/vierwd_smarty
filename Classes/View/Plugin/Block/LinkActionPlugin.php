@@ -5,14 +5,14 @@ namespace Vierwd\VierwdSmarty\View\Plugin\Block;
 
 use Smarty_Internal_Template;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class LinkActionPlugin {
 
-	private ControllerContext $controllerContext;
+	private UriBuilder $uriBuilder;
 
-	public function __construct(ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
+	public function __construct(UriBuilder $uriBuilder) {
+		$this->uriBuilder = $uriBuilder;
 	}
 
 	public function __invoke(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
@@ -57,7 +57,7 @@ class LinkActionPlugin {
 			$addQueryString = $params['addQueryString'] ?? $defaultUrlParams['addQueryString'];
 			$argumentsToBeExcludedFromQueryString = $params['argumentsToBeExcludedFromQueryString'] ?? $defaultUrlParams['argumentsToBeExcludedFromQueryString'];
 
-			$uriBuilder = $this->controllerContext->getUriBuilder()->reset();
+			$uriBuilder = $this->uriBuilder->reset();
 			if ($pageUid) {
 				$uriBuilder->setTargetPageUid($pageUid);
 			}
