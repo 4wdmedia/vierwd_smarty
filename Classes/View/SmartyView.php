@@ -326,7 +326,11 @@ class SmartyView extends AbstractTemplateView {
 			}
 		}
 
-		return $this->Smarty->fetch($view);
+		$errorReporting = error_reporting();
+		error_reporting($errorReporting & ~(E_WARNING | E_NOTICE));
+		$result = $this->Smarty->fetch($view);
+		error_reporting($errorReporting);
+		return $result;
 	}
 
 }
