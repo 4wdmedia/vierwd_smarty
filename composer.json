@@ -89,7 +89,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "11.x-dev"
+			"dev-11.5": "11.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
