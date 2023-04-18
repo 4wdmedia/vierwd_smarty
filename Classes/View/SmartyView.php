@@ -161,7 +161,7 @@ class SmartyView extends AbstractTemplateView {
 
 		assert($this->Smarty instanceof Smarty);
 
-		$this->Smarty->setTemplateDir($templatePaths->getTemplateRootPaths());
+		$this->Smarty->setTemplateDir(array_reverse($templatePaths->getTemplateRootPaths()));
 
 		$variables = (array)$renderingContext->getVariableProvider()->getAll();
 
