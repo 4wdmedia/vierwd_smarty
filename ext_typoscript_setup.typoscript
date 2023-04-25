@@ -7,7 +7,7 @@ plugin.tx_vierwdsmarty {
 	controller = Smarty
 	action = render
 
-	settings.templateRootPaths {
+	view.templateRootPaths {
 		1 = EXT:vierwd_smarty/Resources/Private/Templates/
 	}
 }

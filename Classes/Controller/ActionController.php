@@ -51,11 +51,14 @@ class ActionController extends ExtbaseActionController {
 			// @extensionScannerIgnoreLine
 			$view->setContentObject($this->configurationManager->getContentObject());
 
-			// set template root paths, if used with settings (old way)
-			// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths", then it's automatically handled by extbase
-			if (isset($this->settings['templateRootPaths'])) {
-				$templateRootPaths = array_unique(array_merge($view->getTemplateRootPaths(), $this->settings['templateRootPaths']));
-				$view->setTemplateRootPaths($templateRootPaths);
+			// Set template paths here, to allow smarty template path before website extension path.
+			// TYPO3 always forces the path of the current extension as last fallback path.
+			if (isset($configuration['view'], $configuration['view']['templateRootPaths'])) {
+				$view->setTemplateRootPaths($configuration['view']['templateRootPaths']);
+			} else if (isset($configuration['settings'], $configuration['settings']['templateRootPaths'])) {
+				// set template root paths, if used with settings (old way)
+				// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths"
+				$view->setTemplateRootPaths($configuration['settings']['templateRootPaths']);
 			}
 		}
 
