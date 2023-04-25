@@ -4,7 +4,7 @@
 	'subheader' => '',
 	'date' => null
 ]}
-{if $data.header_layout !== 100 && $data.header}
+{if (int)$data.header_layout !== 100 && $data.header}
 	{$header_layout = $data.header_layout|default:1}
 	<header class="header">
 		{if $data.subheader}<div class="header__text">{/if}
