@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
@@ -25,6 +26,24 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 
 		if (!$template) {
 			return '';
+		}
+
+		if ($this->mconf['copyTouchOnlyNavpoint'] ?? false) {
+			// Copy the first item of the parent menu for touch-only devices
+			$pid = $this->menuArr[0]['pid'];
+			foreach ($this->parentMenuArr as $item) {
+				if ($item['uid'] === $pid) {
+					if ($item['doktype'] === PageRepository::DOKTYPE_SHORTCUT && $item['shortcut_mode'] === PageRepository::SHORTCUT_MODE_FIRST_SUBPAGE) {
+						break;
+					}
+					if ($item['subtitle'] ?? false) {
+						// Copy subtitle as alternative "touchOnly" title
+						$item['title'] = $item['subtitle'];
+					}
+					$item['touchOnly'] = true;
+					array_unshift($this->menuArr, $item);
+				}
+			}
 		}
 
 		$controllerContext = GeneralUtility::makeInstance(ControllerContext::class);
