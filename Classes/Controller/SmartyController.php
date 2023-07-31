@@ -20,7 +20,7 @@ class SmartyController extends ActionController {
 		}
 
 		// @extensionScannerIgnoreLine
-		$baseContentObject = $this->configurationManager->getContentObject();
+		$baseContentObject = $this->request->getAttribute('currentContentObject');
 		if (!$baseContentObject) {
 			return new Response();
 		}

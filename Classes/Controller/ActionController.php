@@ -16,6 +16,7 @@ use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
 use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -44,12 +45,13 @@ class ActionController extends ExtbaseActionController {
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
+		$baseContentObject = $this->request->getAttribute('currentContentObject');
+
 		if ($view instanceof SmartyView) {
 			$view->setRequest($this->request);
 			$view->initializeView();
 
-			// @extensionScannerIgnoreLine
-			$view->setContentObject($this->configurationManager->getContentObject());
+			$view->setContentObject($baseContentObject);
 
 			// Set template paths here, to allow smarty template path before website extension path.
 			// TYPO3 always forces the path of the current extension as last fallback path.
@@ -77,8 +79,6 @@ class ActionController extends ExtbaseActionController {
 			$contentDataProcessor = GeneralUtility::makeInstance(ContentDataProcessor::class);
 
 			$variables = [];
-			// @extensionScannerIgnoreLine
-			$baseContentObject = $this->configurationManager->getContentObject();
 			if ($baseContentObject) {
 				$variables = $contentDataProcessor->process($baseContentObject, $dataProcessing, $variables);
 			}
@@ -87,7 +87,7 @@ class ActionController extends ExtbaseActionController {
 		}
 
 		if (!empty($configuration['variables'])) {
-			$variables = $this->getContentObjectVariables($configuration);
+			$variables = $this->getContentObjectVariables($baseContentObject, $configuration);
 			$view->assignMultiple($variables);
 		}
 
@@ -117,9 +117,7 @@ class ActionController extends ExtbaseActionController {
 	 * @param array $conf Configuration array
 	 * @return array the variables to be assigned
 	 */
-	protected function getContentObjectVariables(array $conf): array {
-			// @extensionScannerIgnoreLine
-		$contentObject = $this->configurationManager->getContentObject();
+	protected function getContentObjectVariables(?ContentObjectRenderer $contentObject, array $conf): array {
 		if (!$contentObject) {
 			return [];
 		}
