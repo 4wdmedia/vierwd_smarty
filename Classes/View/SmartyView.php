@@ -179,6 +179,13 @@ class SmartyView extends AbstractTemplateView {
 	}
 
 	/**
+	 * Overwrite renderSection of AbstractTemplateView.
+	 */
+	public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false): string {
+		return '';
+	}
+
+	/**
 	 * @phpstan-return string
 	 */
 	public function render($view = '') {
