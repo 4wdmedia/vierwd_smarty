@@ -6,5 +6,5 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 function smarty_modifier_typolink(string $parameter): string {
 	$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-	return $cObj->getTypoLink_URL($parameter);
+	return $cObj->createUrl(['parameter' => $parameter]);
 }
