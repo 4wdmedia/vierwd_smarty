@@ -15,6 +15,7 @@ services:
   Vierwd\VierwdSmarty\View\:
     resource: '../Classes/View/*'
     public: true
+    shared: false
 
   Vierwd\VierwdSmarty\Cache\ClearCacheHook:
     tags:
