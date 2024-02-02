@@ -59,7 +59,6 @@ tt_content {
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Table.typoscript">
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Text.typoscript">
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textmedia.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textpic.typoscript">
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Uploads.typoscript">
 
 # Menu content elements
@@ -100,8 +99,12 @@ tt_content {
 
 	textmedia =< plugin.tx_vierwdsmarty
 	textmedia.settings.template = Content/Textmedia.tpl
-	image < .textmedia
-	text < .textmedia
+
+	image =< plugin.tx_vierwdsmarty
+	image.settings.template = Content/Textmedia.tpl
+
+	text =< plugin.tx_vierwdsmarty
+	text.settings.template = Content/Textmedia.tpl
 
 	uploads =< plugin.tx_vierwdsmarty
 	uploads.settings.template = Content/Uploads.tpl
