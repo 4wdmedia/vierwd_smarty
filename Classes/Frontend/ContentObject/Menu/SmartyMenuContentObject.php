@@ -9,6 +9,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\Menu\TextMenuContentObject;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -69,6 +70,14 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 			$view->setTemplateRootPaths($templateRootPaths);
 		}
 		$view->initializeView();
+
+		if (!empty($this->mconf['dataProcessing.'])) {
+			$contentDataProcessor = GeneralUtility::makeInstance(ContentDataProcessor::class);
+
+			$variables = [];
+			$variables = $contentDataProcessor->process($this->getParentContentObject(), $this->mconf, $variables);
+			$view->assignMultiple($variables);
+		}
 
 		$view->assign('level', $this->menuNumber);
 		$view->assign('menu', $this->menuArr);
