@@ -151,6 +151,10 @@ class SmartyView extends AbstractTemplateView {
 		$this->Smarty->registerResource('EXT', new ExtResource());
 	}
 
+	public function injectSettings(): void {
+		$this->initializeView();
+	}
+
 	public function initializeView(): void {
 		if ($this->contentObject === null) {
 			// initialize a new ContentObject
