@@ -51,7 +51,7 @@ class SmartyController extends ActionController {
 					// convert back to normal TypoScript array
 					$typoscriptArray = $typoScriptService->convertPlainArrayToTypoScriptArray($extbaseArray);
 
-					$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'], $typoscriptArray);
+					$content = $contentObject->cObjGetSingle($extbaseArray['_typoScriptNodeValue'] ?? [], $typoscriptArray);
 				} else if (is_string($extbaseArray) && $extbaseArray[0] == '<') {
 					$content = $contentObject->cObjGetSingle($extbaseArray, []);
 				} else if (is_string($extbaseArray)) {
