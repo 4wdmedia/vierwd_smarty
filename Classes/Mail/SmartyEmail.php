@@ -55,12 +55,12 @@ class SmartyEmail extends Email {
 		$this->view = GeneralUtility::makeInstance(SmartyView::class);
 		$this->view->setControllerContext($controllerContext);
 		$this->view->initializeView();
-		assert($this->view->Smarty instanceof Smarty);
 
 		$this->view->assignMultiple($this->getDefaultVariables());
 		$this->format($GLOBALS['TYPO3_CONF_VARS']['MAIL']['format'] ?? self::FORMAT_BOTH);
 
 		// overwrite {uri_action}
+		assert($this->view->Smarty instanceof Smarty);
 		$this->view->Smarty->unregisterPlugin('function', 'uri_action');
 		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) use ($controllerContext) {
 			$params['absolute'] = true;
