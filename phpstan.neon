@@ -13,6 +13,6 @@ parameters:
         - Classes
         # - Tests
 
-    checkMissingIterableValueType: false
-
     ignoreErrors:
+        -
+            identifier: missingType.iterableValue

@@ -53,7 +53,6 @@ class SmartyEmail extends Email {
 	protected function initializeView(): void {
 		$this->view = GeneralUtility::makeInstance(SmartyView::class);
 		$this->view->initializeView();
-		assert($this->view->Smarty instanceof Smarty);
 
 		$this->view->assignMultiple($this->getDefaultVariables());
 		$this->format($GLOBALS['TYPO3_CONF_VARS']['MAIL']['format'] ?? self::FORMAT_BOTH);
@@ -61,6 +60,7 @@ class SmartyEmail extends Email {
 		$uriBuilder = $this->view->getUriBuilder();
 
 		// overwrite {uri_action}
+		assert($this->view->Smarty instanceof Smarty);
 		$this->view->Smarty->unregisterPlugin('function', 'uri_action');
 		$this->view->Smarty->registerPlugin('function', 'uri_action', function($params, $smarty) use ($uriBuilder) {
 			$params['absolute'] = true;
