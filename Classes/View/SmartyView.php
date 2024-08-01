@@ -89,6 +89,9 @@ class SmartyView extends AbstractTemplateView {
 	public function setRequest(RequestInterface $request): void {
 		$this->request = $request;
 		$this->uriBuilder->setRequest($request);
+		if ($this->baseRenderingContext instanceof RenderingContext) {
+			$this->baseRenderingContext->setRequest($request);
+		}
 	}
 
 	public function getRequest(): RequestInterface {
