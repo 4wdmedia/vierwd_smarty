@@ -3,11 +3,12 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\ViewHelper;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\AbstractTemplateView;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-
+use Psr\Http\Message\ServerRequestInterface;
 use Smarty;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
+use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use Vierwd\VierwdSmarty\View\SmartyView;
 
 /**
@@ -41,12 +42,10 @@ class SmartyViewHelper extends AbstractViewHelper {
 		}
 		$template = $this->renderChildren();
 
-		$parentView = $this->renderingContext->getViewHelperVariableContainer()->getView();
+		$request = $this->createExtbaseRequest();
 
 		$view = self::$smartyView;
-		if ($parentView instanceof AbstractTemplateView) {
-			$view->setTemplateRootPaths($parentView->getTemplateRootPaths());
-		}
+		$view->setRequest($request);
 		$view->initializeView();
 
 		assert($view->Smarty instanceof Smarty);
@@ -71,7 +70,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 		}
 
 		// @extensionScannerIgnoreLine
-		$result = $view->render($template);
+		$result = $view->render('string:' . $template);
 
 		// if the variables have changed in a template, update the original variables in the outer templateVariableContainer
 		// It's not possible to really assign them by reference
@@ -88,6 +87,19 @@ class SmartyViewHelper extends AbstractViewHelper {
 		}
 
 		return $result;
+	}
+
+	private function createExtbaseRequest(): Request {
+		$request = $this->renderingContext->getAttribute(ServerRequestInterface::class);
+
+		$extbaseAttribute = new ExtbaseRequestParameters();
+		$extbaseAttribute->setPluginName('pi1');
+		$extbaseAttribute->setControllerExtensionName('VierwdSmarty');
+		$extbaseAttribute->setControllerName($this->renderingContext->getControllerName());
+		$extbaseAttribute->setControllerActionName($this->renderingContext->getControllerAction());
+		$request = $request->withAttribute('extbase', $extbaseAttribute);
+		$request = GeneralUtility::makeInstance(Request::class, $request);
+		return $request;
 	}
 
 }

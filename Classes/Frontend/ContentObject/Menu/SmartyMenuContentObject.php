@@ -67,7 +67,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 		$templateRootPaths = $configuration['view']['templateRootPaths'] ?? $configuration['settings']['templateRootPaths'] ?? [];
 		// set template root paths, if available
 		if ($templateRootPaths) {
-			$view->setTemplateRootPaths($templateRootPaths);
+			$view->getRenderingContext()->getTemplatePaths()->setTemplateRootPaths($templateRootPaths);
 		}
 		$view->initializeView();
 

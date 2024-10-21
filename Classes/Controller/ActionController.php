@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -17,7 +18,7 @@ use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInval
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3Fluid\Fluid\View\ViewInterface;
+use TYPO3Fluid\Fluid\View\ViewInterface as FluidStandaloneViewInterface;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
 
@@ -27,11 +28,8 @@ class ActionController extends ExtbaseActionController {
 
 	/**
 	 * this is needed to use the smarty view
-	 *
-	 * @var string
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
 	 */
-	protected $defaultViewObjectName = SmartyView::class;
+	protected ?string $defaultViewObjectName = SmartyView::class;
 
 	/**
 	 * initialize the view.
@@ -40,7 +38,7 @@ class ActionController extends ExtbaseActionController {
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
-	protected function resolveView(): ViewInterface {
+	protected function resolveView(): FluidStandaloneViewInterface|ViewInterface {
 		$view = parent::resolveView();
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
@@ -50,18 +48,7 @@ class ActionController extends ExtbaseActionController {
 		if ($view instanceof SmartyView) {
 			$view->setRequest($this->request);
 			$view->initializeView();
-
 			$view->setContentObject($baseContentObject);
-
-			// Set template paths here, to allow smarty template path before website extension path.
-			// TYPO3 always forces the path of the current extension as last fallback path.
-			if (isset($configuration['view'], $configuration['view']['templateRootPaths'])) {
-				$view->setTemplateRootPaths($configuration['view']['templateRootPaths']);
-			} else if (isset($configuration['settings'], $configuration['settings']['templateRootPaths'])) {
-				// set template root paths, if used with settings (old way)
-				// The "proper" way is to set "plugin.tx_myextension.view.templateRootPaths"
-				$view->setTemplateRootPaths($configuration['settings']['templateRootPaths']);
-			}
 		}
 
 		if (!empty($configuration['dataProcessing'])) {

@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\View\Plugin\Functions;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Smarty_Internal_Template;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -25,14 +26,17 @@ class FlashMessagesPlugin {
 		$queueIdentifier = $params['queueIdentifier'] ?? null;
 
 		if ($queueIdentifier === null && $this->renderingContext instanceof RenderingContext) {
-			$request = $this->renderingContext->getRequest();
-			if (!$request instanceof RequestInterface) {
+			if (!$this->renderingContext->hasAttribute(ServerRequestInterface::class)) {
 				// Throw if not an extbase request
 				throw new \RuntimeException(
 					'ViewHelper f:flashMessages needs an extbase Request object to resolve the Queue identifier magically.'
 					. ' When not in extbase context, set attribute "queueIdentifier".',
 					1639821269
 				);
+			}
+			$request = $this->renderingContext->getAttribute(ServerRequestInterface::class);
+			if (!$request instanceof RequestInterface) {
+				throw new \RuntimeException('Missing Request for f:flashMessages', 1729524262);
 			}
 			$extensionService = GeneralUtility::makeInstance(ExtensionService::class);
 			$pluginNamespace = $extensionService->getPluginNamespace($request->getControllerExtensionName(), $request->getPluginName());

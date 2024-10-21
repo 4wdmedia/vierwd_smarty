@@ -4,24 +4,25 @@ declare(strict_types = 1);
 namespace Vierwd\VierwdSmarty\View;
 
 use Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use Smarty;
 
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
-use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
-use TYPO3\CMS\Fluid\View\AbstractTemplateView;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\Exception\InvalidTemplateResourceException;
-
 use Vierwd\VierwdSmarty\Resource\ExtResource;
 use Vierwd\VierwdSmarty\View\Plugin\Block\FluidPlugin;
 use Vierwd\VierwdSmarty\View\Plugin\Block\LinkActionPlugin;
@@ -49,7 +50,7 @@ function clean($str): string {
 	}
 }
 
-class SmartyView extends AbstractTemplateView {
+class SmartyView implements ViewInterface {
 
 	public ?Smarty $Smarty = null;
 
@@ -63,23 +64,35 @@ class SmartyView extends AbstractTemplateView {
 
 	protected RequestInterface $request;
 	protected UriBuilder $uriBuilder;
+	protected RenderingContextInterface $baseRenderingContext;
 
-	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService) {
-		parent::__construct();
+	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, ?RenderingContextInterface $context = null) {
 		$this->configurationManager = $configurationManager;
 		$this->imageService = $imageService;
 
+		if (!$context) {
+			$context = GeneralUtility::makeInstance(RenderingContextFactory::class)->create();
+		}
+		$this->baseRenderingContext = $context;
+
 		$this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+	}
 
-		$extbaseAttribute = new ExtbaseRequestParameters();
-		$extbaseAttribute->setPluginName('pi1');
-		$extbaseAttribute->setControllerExtensionName('VierwdSmarty');
-		$extbaseAttribute->setControllerName('Smarty');
-		$extbaseAttribute->setControllerActionName('render');
-		$request = $GLOBALS['TYPO3_REQUEST']->withAttribute('extbase', $extbaseAttribute);
-		$request = GeneralUtility::makeInstance(Request::class, $request);
+	public function getRenderingContext(): RenderingContextInterface {
+		return $this->baseRenderingContext;
+	}
 
-		$this->setRequest($request);
+	public function assign(string $key, mixed $value): self {
+		$this->baseRenderingContext->getVariableProvider()->add($key, $value);
+		return $this;
+	}
+
+	public function assignMultiple(array $values): self {
+		$templateVariableContainer = $this->baseRenderingContext->getVariableProvider();
+		foreach ($values as $key => $value) {
+			$templateVariableContainer->add($key, $value);
+		}
+		return $this;
 	}
 
 	public function setContentObject(?ContentObjectRenderer $contentObject): void {
@@ -90,7 +103,7 @@ class SmartyView extends AbstractTemplateView {
 		$this->request = $request;
 		$this->uriBuilder->setRequest($request);
 		if ($this->baseRenderingContext instanceof RenderingContext) {
-			$this->baseRenderingContext->setRequest($request);
+			$this->baseRenderingContext->setAttribute(ServerRequestInterface::class, $request);
 		}
 	}
 
@@ -109,7 +122,8 @@ class SmartyView extends AbstractTemplateView {
 
 		$this->Smarty = new Smarty();
 
-		if (!$this->request->getAttribute('noCache')) {
+		$cachingInstruction = $this->request->getAttribute('frontend.cache.instruction');
+		if (!$cachingInstruction || $cachingInstruction->isCachingAllowed()) {
 			$this->Smarty->setCacheLifetime(120);
 			$this->Smarty->setCompileCheck(0);
 		}
@@ -142,7 +156,7 @@ class SmartyView extends AbstractTemplateView {
 		$this->Smarty->registerFilter('pre', $templateProcessor);
 		$this->Smarty->registerFilter('variable', 'Vierwd\\VierwdSmarty\\View\\clean');
 
-		$fluidPlugin = new FluidPlugin($this->baseRenderingContext, $this->configurationManager);
+		$fluidPlugin = new FluidPlugin($this->baseRenderingContext, $this->configurationManager, GeneralUtility::makeInstance(ViewFactoryInterface::class));
 		$this->Smarty->registerPlugin('block', 'fluid', $fluidPlugin);
 
 		if ($this->contentObject !== null) {
@@ -155,7 +169,7 @@ class SmartyView extends AbstractTemplateView {
 	}
 
 	public function injectSettings(): void {
-		$this->initializeView();
+		// $this->initializeView();
 	}
 
 	public function initializeView(): void {
@@ -185,17 +199,7 @@ class SmartyView extends AbstractTemplateView {
 		}
 	}
 
-	/**
-	 * Overwrite renderSection of AbstractTemplateView.
-	 */
-	public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false): string {
-		return '';
-	}
-
-	/**
-	 * @phpstan-return string
-	 */
-	public function render($view = '') {
+	public function render(string $view = ''): string {
 		$renderingContext = $this->getRenderingContext();
 		assert($renderingContext instanceof RenderingContext);
 		$templatePaths = $renderingContext->getTemplatePaths();
@@ -341,7 +345,7 @@ class SmartyView extends AbstractTemplateView {
 		}
 
 		$errorReporting = error_reporting();
-		error_reporting($errorReporting & ~(E_WARNING | E_NOTICE));
+		error_reporting($errorReporting & ~(E_WARNING | E_NOTICE | E_DEPRECATED));
 		$result = $this->Smarty->fetch($view);
 		error_reporting($errorReporting);
 		return $result;
