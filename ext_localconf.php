@@ -8,7 +8,8 @@ $GLOBALS['TYPO3_CONF_VARS']['FE']['contentRenderingTemplates'][] = 'vierwdsmarty
 	'VierwdSmarty',
 	'smarty_render',
 	[\Vierwd\VierwdSmarty\Controller\SmartyController::class => 'render',],
-	[]
+	[],
+	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT,
 );
 
 // SMARTY Menu Object

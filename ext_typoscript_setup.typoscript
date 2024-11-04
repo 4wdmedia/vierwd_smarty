@@ -1,8 +1,6 @@
-plugin.tx_vierwdsmarty = USER
+plugin.tx_vierwdsmarty = EXTBASEPLUGIN
 plugin.tx_vierwdsmarty {
-	userFunc = Vierwd\VierwdSmarty\Bootstrap->run
 	pluginName = smarty_render
-	vendorName = Vierwd
 	extensionName = VierwdSmarty
 	controller = Smarty
 	action = render
