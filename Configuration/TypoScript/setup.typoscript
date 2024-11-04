@@ -1,4 +1,4 @@
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/Setup/lib.parseFunc.typoscript">
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/Setup/lib.parseFunc.typoscript'
 
 styles.content.get = CONTENT
 styles.content.get {
@@ -49,30 +49,30 @@ tt_content {
 # Use Configuration of fluid_styled_content
 
 # Typical content elements
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Bullets.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Div.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Header.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Html.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Image.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/List.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Shortcut.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Table.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Text.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textmedia.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Uploads.typoscript">
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Bullets.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Div.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Header.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Html.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Image.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/List.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Shortcut.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Table.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Text.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Textmedia.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/Uploads.typoscript'
 
 # Menu content elements
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuAbstract.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedContent.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedPages.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuPages.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSubpages.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSection.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSectionPages.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRecentlyUpdated.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRelatedPages.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemap.typoscript">
-<INCLUDE_TYPOSCRIPT: source="FILE:EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemapPages.typoscript">
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuAbstract.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedContent.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuCategorizedPages.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuPages.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSubpages.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSection.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSectionPages.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRecentlyUpdated.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuRelatedPages.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemap.typoscript'
+@import 'EXT:vierwd_smarty/Configuration/TypoScript/ContentElement/MenuSitemapPages.typoscript'
 
 # Override and use Smarty to render those elements
 tt_content {
