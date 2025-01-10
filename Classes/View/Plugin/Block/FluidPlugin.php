@@ -5,11 +5,14 @@ namespace Vierwd\VierwdSmarty\View\Plugin\Block;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Smarty_Internal_Template;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\View\ViewFactoryData;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+use function Safe\file_put_contents;
 
 class FluidPlugin {
 
@@ -57,18 +60,23 @@ class FluidPlugin {
 			}, $partialRootPaths);
 		}
 
+		$cacheDirectory = Environment::getVarPath() . '/cache/vierwd_smarty/fluid-in-smarty/';
+		GeneralUtility::mkdir_deep($cacheDirectory);
+		$cacheFile = $cacheDirectory . '/' . md5($content) . '.html';
+		if (!file_exists($cacheFile)) {
+			file_put_contents($cacheFile, $content);
+		}
+
 		$request = $this->renderingContext->getAttribute(ServerRequestInterface::class);
 		$viewFactoryData = new ViewFactoryData(
 			// templateRootPaths: ['EXT:backend/Resources/Private/Templates'],
 			partialRootPaths: $partialRootPaths,
 			layoutRootPaths: $layoutRootPaths,
 			request: $request,
+			templatePathAndFilename: $cacheFile,
 		);
 		$fluidView = $this->viewFactory->create($viewFactoryData);
-		// $fluidView = GeneralUtility::makeInstance(StandaloneView::class, $this->renderingContext);
 		$fluidView->assignMultiple($data);
-		// TODO
-		// $fluidView->setTemplateSource($content);
 
 		return $fluidView->render();
 	}
