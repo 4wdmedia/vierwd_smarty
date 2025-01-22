@@ -341,7 +341,7 @@ class SmartyView extends AbstractTemplateView {
 		}
 
 		$errorReporting = error_reporting();
-		error_reporting($errorReporting & ~(E_WARNING | E_NOTICE));
+		error_reporting($errorReporting & ~(E_WARNING | E_NOTICE | E_USER_DEPRECATED));
 		$result = $this->Smarty->fetch($view);
 		error_reporting($errorReporting);
 		return $result;
