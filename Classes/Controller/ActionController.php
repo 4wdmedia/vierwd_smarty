@@ -6,6 +6,7 @@ namespace Vierwd\VierwdSmarty\Controller;
 use InvalidArgumentException;
 
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -17,6 +18,7 @@ use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInval
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\ErrorController;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
@@ -105,7 +107,8 @@ class ActionController extends ExtbaseActionController {
 			// If the property mapper did throw a \TYPO3\CMS\Extbase\Property\Exception, because it was unable to find the requested entity, call the page-not-found handler.
 			$previousException = $exception->getPrevious();
 			if ($previousException instanceof PropertyTargetNotFoundException || $previousException instanceof PropertyInvalidSourceException) {
-				$GLOBALS['TSFE']->pageNotFoundAndExit($this->entityNotFoundMessage);
+				$response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction($GLOBALS['TYPO3_REQUEST'], $this->entityNotFoundMessage);
+				throw new ImmediateResponseException($response);
 			}
 			throw $exception;
 		}
