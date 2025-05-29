@@ -17,6 +17,7 @@ use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
 use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
+use TYPO3\CMS\Fluid\View\FluidViewAdapter;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\ErrorController;
@@ -44,6 +45,29 @@ class ActionController extends ExtbaseActionController {
 		$view = parent::resolveView();
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+
+		if ($view instanceof FluidViewAdapter || method_exists($view, 'getRenderingContext')) {
+			// Since TYPO3 v13, Extbase automatically prepends the Template folder of the current extension
+			// This makes it impossible to have another folder with higher priority
+			$templateRootPaths = [];
+			if (!empty($configuration['view']['templateRootPaths']) && is_array($configuration['view']['templateRootPaths'])) {
+				$templateRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['templateRootPaths']);
+			}
+			$layoutRootPaths = [];
+			if (!empty($configuration['view']['layoutRootPaths']) && is_array($configuration['view']['layoutRootPaths'])) {
+				$layoutRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['layoutRootPaths']);
+			}
+			$partialRootPaths = [];
+			if (!empty($configuration['view']['partialRootPaths']) && is_array($configuration['view']['partialRootPaths'])) {
+				$partialRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['partialRootPaths']);
+			}
+			$renderingContext = $view->getRenderingContext();
+			$templatePaths = $renderingContext->getTemplatePaths();
+			$templatePaths->setTemplateRootPaths($templateRootPaths);
+			$templatePaths->setPartialRootPaths($partialRootPaths);
+			$templatePaths->setLayoutRootPaths($layoutRootPaths);
+		}
+
 
 		$baseContentObject = $this->request->getAttribute('currentContentObject');
 
