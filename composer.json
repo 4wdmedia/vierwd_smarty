@@ -20,6 +20,7 @@
 	"require": {
 		"php": "^8.2.0",
 		"smarty/smarty": "^4.1.0",
+		"thecodingmachine/safe": "^2.5",
 		"typo3/cms-core": "^13.4.0"
 	},
 	"require-dev": {
