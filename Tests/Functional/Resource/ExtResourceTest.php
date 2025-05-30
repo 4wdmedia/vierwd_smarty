@@ -1,22 +1,29 @@
 <?php
 declare(strict_types = 1);
 
-namespace Vierwd\VierwdSmarty\Tests\Unit\View;
+namespace Vierwd\VierwdSmarty\Tests\Functional\Resource;
 
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use Smarty;
 use SmartyException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 use Vierwd\VierwdSmarty\Resource\ExtResource;
+use Vierwd\VierwdSmarty\Tests\Functional\ExtensionTestCase;
 
-class ExtResourceTest extends UnitTestCase {
+class ExtResourceTest extends ExtensionTestCase {
 
 	/** @phpstan-var Smarty */
 	protected ?Smarty $smarty;
 
+	protected vfsStreamDirectory $root;
+
+	protected bool $initializeDatabase = false;
+
 	protected function setUp(): void {
+		parent::setUp();
+
 		$this->smarty = new Smarty();
 		$this->smarty->registerResource('EXT', new ExtResource());
 
@@ -27,6 +34,8 @@ class ExtResourceTest extends UnitTestCase {
 	}
 
 	protected function tearDown(): void {
+		parent::tearDown();
+
 		$this->smarty = null;
 		GeneralUtility::purgeInstances();
 	}
