@@ -14,10 +14,10 @@ use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
+use TYPO3\CMS\Extbase\Mvc\View\JsonView;
 use TYPO3\CMS\Extbase\Property\Exception as PropertyException;
 use TYPO3\CMS\Extbase\Property\Exception\InvalidSourceException as PropertyInvalidSourceException;
 use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTargetNotFoundException;
-use TYPO3\CMS\Fluid\View\FluidViewAdapter;
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\ErrorController;
@@ -30,11 +30,6 @@ class ActionController extends ExtbaseActionController {
 	protected string $entityNotFoundMessage = 'The requested entity could not be found.';
 
 	/**
-	 * this is needed to use the smarty view
-	 */
-	protected ?string $defaultViewObjectName = SmartyView::class;
-
-	/**
 	 * initialize the view.
 	 * Set ContentObject, run dataProcessing and set variables
 	 * Afterwards you can register some custom template functions/modifiers.
@@ -42,40 +37,41 @@ class ActionController extends ExtbaseActionController {
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
 	protected function resolveView(): FluidStandaloneViewInterface|ViewInterface {
-		$view = parent::resolveView();
+		if ($this->defaultViewObjectName === JsonView::class) {
+			return parent::resolveView();
+		}
+
+		$view = GeneralUtility::makeInstance(SmartyView::class);
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-
-		if ($view instanceof FluidViewAdapter || method_exists($view, 'getRenderingContext')) {
-			// Since TYPO3 v13, Extbase automatically prepends the Template folder of the current extension
-			// This makes it impossible to have another folder with higher priority
-			$templateRootPaths = [];
-			if (!empty($configuration['view']['templateRootPaths']) && is_array($configuration['view']['templateRootPaths'])) {
-				$templateRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['templateRootPaths']);
-			}
-			$layoutRootPaths = [];
-			if (!empty($configuration['view']['layoutRootPaths']) && is_array($configuration['view']['layoutRootPaths'])) {
-				$layoutRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['layoutRootPaths']);
-			}
-			$partialRootPaths = [];
-			if (!empty($configuration['view']['partialRootPaths']) && is_array($configuration['view']['partialRootPaths'])) {
-				$partialRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['partialRootPaths']);
-			}
-			$renderingContext = $view->getRenderingContext();
-			$templatePaths = $renderingContext->getTemplatePaths();
-			$templatePaths->setTemplateRootPaths($templateRootPaths);
-			$templatePaths->setPartialRootPaths($partialRootPaths);
-			$templatePaths->setLayoutRootPaths($layoutRootPaths);
+		// Since TYPO3 v13, Extbase automatically prepends the Template folder of the current extension
+		// This makes it impossible to have another folder with higher priority
+		$templateRootPaths = [];
+		if (!empty($configuration['view']['templateRootPaths']) && is_array($configuration['view']['templateRootPaths'])) {
+			$templateRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['templateRootPaths']);
 		}
+		$layoutRootPaths = [];
+		if (!empty($configuration['view']['layoutRootPaths']) && is_array($configuration['view']['layoutRootPaths'])) {
+			$layoutRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['layoutRootPaths']);
+		}
+		$partialRootPaths = [];
+		if (!empty($configuration['view']['partialRootPaths']) && is_array($configuration['view']['partialRootPaths'])) {
+			$partialRootPaths = ArrayUtility::sortArrayWithIntegerKeys($configuration['view']['partialRootPaths']);
+		}
+		$renderingContext = $view->getRenderingContext();
+		$templatePaths = $renderingContext->getTemplatePaths();
+		$templatePaths->setTemplateRootPaths($templateRootPaths);
+		$templatePaths->setPartialRootPaths($partialRootPaths);
+		$templatePaths->setLayoutRootPaths($layoutRootPaths);
+		$templatePaths->setFormat('tpl');
 
+		$renderingContext->setControllerName($this->request->getControllerName());
+		$renderingContext->setControllerAction($this->request->getControllerActionName());
 
 		$baseContentObject = $this->request->getAttribute('currentContentObject');
-
-		if ($view instanceof SmartyView) {
-			$view->setRequest($this->request);
-			$view->initializeView();
-			$view->setContentObject($baseContentObject);
-		}
+		$view->setRequest($this->request);
+		$view->initializeView();
+		$view->setContentObject($baseContentObject);
 
 		if (!empty($configuration['dataProcessing'])) {
 			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
