@@ -50,8 +50,8 @@ jobs:
       - name: phpstan
         run: composer run-script phpstan
 
-      # - name: Unit Tests
-      #   run: composer run-script unit-test
+      - name: Unit Tests
+        run: composer run-script unit-test
 
-      # - name: Functional Tests
-      #   run: composer run-script test
+      - name: Functional Tests
+        run: composer run-script test
