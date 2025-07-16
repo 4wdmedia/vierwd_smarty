@@ -42,6 +42,7 @@ class ActionController extends ExtbaseActionController {
 		}
 
 		$view = GeneralUtility::makeInstance(SmartyView::class);
+		$view->assign('settings', $this->settings);
 
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		// Since TYPO3 v13, Extbase automatically prepends the Template folder of the current extension
