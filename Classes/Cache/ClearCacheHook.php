@@ -18,7 +18,8 @@ class ClearCacheHook {
 		// &$cacheActions, &$optionValues
 		if ($GLOBALS['BE_USER']->isAdmin()) {
 			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-			$uri = $uriBuilder->buildUriFromRoute('tce_db', ['cacheCmd' => 'vierwd_smarty']);
+			$uri = (string)$uriBuilder->buildUriFromRoute('tce_db', ['cacheCmd' => 'vierwd_smarty']);
+			assert($uri !== '');
 			$event->addCacheAction([
 				'id' => 'vierwd_smarty',
 				'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
