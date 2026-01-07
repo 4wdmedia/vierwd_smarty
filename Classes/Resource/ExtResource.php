@@ -5,6 +5,9 @@ namespace Vierwd\VierwdSmarty\Resource;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function Safe\file_get_contents;
+use function Safe\filemtime;
+
 /**
  * Resource for reading files beginning with EXT:
  */

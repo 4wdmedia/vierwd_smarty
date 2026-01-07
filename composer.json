@@ -29,9 +29,9 @@
 		"mikey179/vfsstream": "^1.6",
 		"phpspec/prophecy-phpunit": "^2.0",
 		"phpstan/extension-installer": "^1.0.0",
-		"phpstan/phpstan-deprecation-rules": "^1.0.0",
+		"phpstan/phpstan-deprecation-rules": "^2.0.3",
 		"phpunit/phpunit": "^11.0",
-		"saschaegerer/phpstan-typo3": "^1.0.0",
+		"saschaegerer/phpstan-typo3": "^2.1.1",
 		"typo3/testing-framework": "^9.0.0",
 		"vierwd/coding-standard": "dev-master"
 	},

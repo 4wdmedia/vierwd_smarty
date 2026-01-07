@@ -35,7 +35,6 @@ class FluidPlugin {
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
-		assert($this->configurationManager instanceof ConfigurationManagerInterface);
 		$configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 		$layoutRootPaths = [];
 		$partialRootPaths = [];

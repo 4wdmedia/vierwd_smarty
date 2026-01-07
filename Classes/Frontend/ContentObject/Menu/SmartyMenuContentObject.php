@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Frontend\ContentObject\Menu;
 
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
@@ -47,8 +46,6 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 				}
 			}
 		}
-
-		assert($this->request instanceof ServerRequestInterface);
 
 		$extbaseAttribute = new ExtbaseRequestParameters();
 		$extbaseAttribute->setPluginName('pi1');
@@ -129,6 +126,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 
 	public function subMenu(int $uid, string $objSuffix = '', int $menuItemKey = 0): string {
 		$tsfe = $this->getTypoScriptFrontendController();
+		// @phpstan-ignore-next-line TypoScriptFrontendController is deprecated
 		$tsfe->register['parentMenu'] = $this;
 
 		$this->I = [];

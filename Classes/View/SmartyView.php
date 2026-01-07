@@ -221,10 +221,8 @@ class SmartyView implements ViewInterface {
 		$controllerName = $renderingContext->getControllerName();
 		$controllerAction = $renderingContext->getControllerAction();
 
-		if ($this->configurationManager !== null) {
-			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-			$this->Smarty->assign('frameworkSettings', $typoScript);
-		}
+		$typoScript = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+		$this->Smarty->assign('frameworkSettings', $typoScript);
 
 		$formPrefix = GeneralUtility::makeInstance(ExtensionService::class)->getPluginNamespace($extensionName, $pluginName);
 		$this->Smarty->assign('formPrefix', $formPrefix);
