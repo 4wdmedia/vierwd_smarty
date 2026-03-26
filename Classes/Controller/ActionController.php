@@ -21,7 +21,6 @@ use TYPO3\CMS\Extbase\Property\Exception\TargetNotFoundException as PropertyTarg
 use TYPO3\CMS\Frontend\ContentObject\ContentDataProcessor;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\ErrorController;
-use TYPO3Fluid\Fluid\View\ViewInterface as FluidStandaloneViewInterface;
 
 use Vierwd\VierwdSmarty\View\SmartyView;
 
@@ -36,7 +35,7 @@ class ActionController extends ExtbaseActionController {
 	 *
 	 * @see http://www.smarty.net/docs/en/api.register.plugin.tpl
 	 */
-	protected function resolveView(): FluidStandaloneViewInterface|ViewInterface {
+	protected function resolveView(): ViewInterface {
 		if ($this->defaultViewObjectName === JsonView::class) {
 			return parent::resolveView();
 		}

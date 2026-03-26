@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Vierwd\VierwdSmarty\Tests\Unit\ViewHelper;
 
+use PHPUnit\Framework\Attributes\Test;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -62,9 +63,7 @@ class SmartyViewHelperTest extends ExtensionTestCase {
 		$reflection->setValue(null);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function smartyInFluidCode(): void {
 		$this->context->getTemplatePaths()->setTemplateSource('{namespace vierwd=Vierwd\VierwdSmarty\ViewHelper}<vierwd:smarty>{$variable = \'test\'}{$variable|upper}{$variable}</vierwd:smarty>');
 		self::assertSame('TESTtest', (new TemplateView($this->context))->render());

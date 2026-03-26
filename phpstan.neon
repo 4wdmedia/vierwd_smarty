@@ -4,11 +4,6 @@ parameters:
     bootstrapFiles:
         - phpstan.bootstrap.php
 
-    typo3:
-        requestGetAttributeMapping:
-            frontend.cache.instruction: ?TYPO3\CMS\Frontend\Cache\CacheInstruction
-            extbase: TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters
-
     paths:
         - Classes
         # - Tests

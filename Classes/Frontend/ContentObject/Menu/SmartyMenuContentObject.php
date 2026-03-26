@@ -15,9 +15,6 @@ use Vierwd\VierwdSmarty\View\SmartyView;
 
 class SmartyMenuContentObject extends TextMenuContentObject {
 
-	/** @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint */
-	public $menuArr;
-
 	public function writeMenu(): string {
 		if (empty($this->menuArr)) {
 			return '';
@@ -125,10 +122,6 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 	}
 
 	public function subMenu(int $uid, string $objSuffix = '', int $menuItemKey = 0): string {
-		$tsfe = $this->getTypoScriptFrontendController();
-		// @phpstan-ignore-next-line TypoScriptFrontendController is deprecated
-		$tsfe->register['parentMenu'] = $this;
-
 		$this->I = [];
 		// subMenu expects a valid I[key] to work on _SUB_MENU
 		foreach ($this->menuArr as $key => $value) {

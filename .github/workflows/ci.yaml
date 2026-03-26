@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         php: [ '8.2' ]
-        TYPO3: [ '13' ]
+        TYPO3: [ '14' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

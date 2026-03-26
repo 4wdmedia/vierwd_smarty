@@ -5,6 +5,7 @@ namespace Vierwd\VierwdSmarty\Tests\Functional\Resource;
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
+use PHPUnit\Framework\Attributes\Test;
 use Smarty;
 use SmartyException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -40,27 +41,21 @@ class ExtResourceTest extends ExtensionTestCase {
 		GeneralUtility::purgeInstances();
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function fetchReturnsTemplateContent(): void {
 		$actual = trim($this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplate.tpl'));
 		$expected = "Template will be rendered with EXT: resource.\nTemplate evaluation";
 		$this->assertEquals($expected, $actual, 'Fetching templates with EXT: url does not work.');
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function includeUsingExtReturnsTemplateContent(): void {
 		$actual = trim($this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplateWithInclude.tpl'));
 		$expected = "Before\nTemplate will be rendered with EXT: resource.\nTemplate evaluation\nAfter";
 		$this->assertEquals($expected, $actual, 'Fetching templates with EXT: url does not work.');
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function fetchNonExistentTemplate(): void {
 		$this->expectException(SmartyException::class);
 		$this->smarty->fetch('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates/ExtResourceTemplateDoesNotExist.tpl');

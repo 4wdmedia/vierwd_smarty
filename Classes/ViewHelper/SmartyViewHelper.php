@@ -59,6 +59,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 			$smartyVariables = $view->Smarty->getTemplateVars();
 		}
 
+		assert($this->renderingContext !== null);
 		$templateVariableContainer = $this->renderingContext->getVariableProvider();
 		$variables = (array)$templateVariableContainer->getAll();
 		foreach ($variables as $key => &$value) {
@@ -90,6 +91,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 	}
 
 	private function createExtbaseRequest(): Request {
+		assert($this->renderingContext !== null);
 		$request = $this->renderingContext->getAttribute(ServerRequestInterface::class);
 
 		$extbaseAttribute = new ExtbaseRequestParameters();

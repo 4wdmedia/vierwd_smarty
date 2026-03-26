@@ -20,8 +20,8 @@
 	"require": {
 		"php": "^8.2.0",
 		"smarty/smarty": "^4.1.0",
-		"thecodingmachine/safe": "^2.5",
-		"typo3/cms-core": "^13.4.0"
+		"thecodingmachine/safe": "^2.5 || ^3.0",
+		"typo3/cms-core": "^14.0.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
@@ -31,7 +31,7 @@
 		"phpstan/extension-installer": "^1.0.0",
 		"phpstan/phpstan-deprecation-rules": "^2.0.3",
 		"phpunit/phpunit": "^11.0",
-		"saschaegerer/phpstan-typo3": "^2.1.1",
+		"saschaegerer/phpstan-typo3": "^3.0.1",
 		"typo3/testing-framework": "^9.0.0",
 		"vierwd/coding-standard": "dev-master"
 	},
@@ -83,7 +83,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-main": "13.x-dev"
+			"dev-main": "14.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",

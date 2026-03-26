@@ -25,7 +25,8 @@ class UriResourcePlugin {
 			$extensionName = $this->request->getControllerExtensionName();
 		}
 		$uri = 'EXT:' . GeneralUtility::camelCaseToLowerCaseUnderscored($extensionName) . '/Resources/Public/' . $path;
-		$uri = PathUtility::getPublicResourceWebPath($uri);
+		// TODO: Check if cache buster is added or not.
+		$uri = (string)PathUtility::getSystemResourceUri($uri);
 
 		if ($absolute === true) {
 			$uri = GeneralUtility::locationHeaderUrl($uri);
