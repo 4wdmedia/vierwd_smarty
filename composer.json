@@ -82,9 +82,6 @@
 		]
 	},
 	"extra": {
-		"branch-alias": {
-			"dev-13.4": "13.x-dev"
-		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
 			"extension-key": "vierwd_smarty",
