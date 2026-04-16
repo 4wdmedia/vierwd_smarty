@@ -24,7 +24,7 @@ class ClearCacheHook {
 				'id' => 'vierwd_smarty',
 				'title' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache',
 				'description' => 'LLL:EXT:vierwd_smarty/Resources/Private/Language/locallang.xlf:flushTemplateCache.description',
-				'href' => $uri,
+				'endpoint' => $uri,
 				'iconIdentifier' => 'actions-system-cache-clear-impact-medium',
 			]);
 			$event->addCacheActionIdentifier('vierwd_smarty');
