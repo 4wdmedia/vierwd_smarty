@@ -33,10 +33,7 @@ use Vierwd\VierwdSmarty\View\Plugin\Functions\TypolinkPlugin;
 use Vierwd\VierwdSmarty\View\Plugin\Functions\UriActionPlugin;
 use Vierwd\VierwdSmarty\View\Plugin\Functions\UriResourcePlugin;
 
-/**
- * @param mixed $str
- */
-function clean($str): string {
+function clean(mixed $str): string {
 	if (is_scalar($str)) {
 		$str = (string)preg_replace('/&(?!#(?:[0-9]+|x[0-9A-F]+);?)/si', '&amp;', (string)$str);
 		// replace html-characters
@@ -176,6 +173,7 @@ class SmartyView implements ViewInterface {
 		if ($this->contentObject === null) {
 			// initialize a new ContentObject
 			$this->contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+			$this->contentObject->setRequest($this->request);
 			$this->contentObject->start([], '_NO_TABLE');
 		}
 		$this->createSmarty();

@@ -32,8 +32,6 @@ class TyposcriptPlugin {
 		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 		if ($this->contentObject) {
 			$cObj->setParent($this->contentObject->data, $this->contentObject->currentRecord);
-			$cObj->currentRecordNumber = $this->contentObject->currentRecordNumber;
-			$cObj->parentRecordNumber = $this->contentObject->parentRecordNumber;
 		}
 		if ($table != '_NO_TABLE') {
 			$data['_MIGRATED'] = false;
