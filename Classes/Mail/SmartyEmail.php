@@ -45,7 +45,7 @@ class SmartyEmail extends Email {
 
 	protected SmartyView $view;
 
-	public function __construct(Headers $headers = null, AbstractPart $body = null) {
+	public function __construct(?Headers $headers = null, ?AbstractPart $body = null) {
 		parent::__construct($headers, $body);
 		$this->initializeView();
 	}
@@ -99,10 +99,7 @@ class SmartyEmail extends Email {
 		return $this;
 	}
 
-	/**
-	 * @param mixed $value
-	 */
-	public function assign(string $key, $value): self {
+	public function assign(string $key, mixed $value): self {
 		$this->view->assign($key, $value);
 		return $this;
 	}
