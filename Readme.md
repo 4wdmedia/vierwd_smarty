@@ -59,11 +59,12 @@ controllerName | `Blog`
 actionName | `list`
 context | The controllerContext (instance of `TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext`)
 request | The current request (instance of `TYPO3\CMS\Extbase\MvcRequest`)
+typo3Request | `Psr\Http\Message\ServerRequestInterface`
 formPrefix | Prefix form fields need as name to automatically map form fields to arguments
 settings | Flexform settings for the plugin
 frameworkSettings | TypoScript settings for `plugin.tx_exampleblog`
 typolinkService | An instance of `TYPO3\CMS\Frontend\Service\TypoLinkCodecService`
-TSFE | `$TSFE` (instance of `TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController`)
+rootLine | The rootline for the current page
 
 ### Pre-defined smarty functions, blocks and modifiers
 

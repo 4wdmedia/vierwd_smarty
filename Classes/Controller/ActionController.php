@@ -74,14 +74,8 @@ class ActionController extends ExtbaseActionController {
 		$view->setContentObject($baseContentObject);
 
 		if (!empty($configuration['dataProcessing'])) {
-			if (is_string($configuration['dataProcessing']) && $configuration['dataProcessing'][0] == '<') {
-				// reference to existing value
-				$key = trim(substr($configuration['dataProcessing'], 1));
-				$dataProcessing = ArrayUtility::getValueByPath($GLOBALS['TSFE']->tmpl->setup, $key, '.');
-			} else {
-				$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
-				$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
-			}
+			$typoScriptService = GeneralUtility::makeInstance(TypoScriptService::class);
+			$dataProcessing = $typoScriptService->convertPlainArrayToTypoScriptArray($configuration['dataProcessing']);
 
 			$dataProcessing = ['dataProcessing.' => $dataProcessing];
 

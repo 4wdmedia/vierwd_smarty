@@ -250,7 +250,7 @@ class SmartyView implements ViewInterface {
 			'typo3Request' => $request,
 			'imageService' => $this->imageService,
 			// 'settings' => $typoScript['settings'],
-			'TSFE' => $GLOBALS['TSFE'] ?? null,
+			'rootLine' => $request->getAttribute('frontend.page.information')?->getRootLine() ?? [],
 		];
 
 		$this->Smarty->assign($templateVars);

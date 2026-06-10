@@ -66,11 +66,6 @@ class SmartyController extends ActionController {
 		$this->view->assign('settings', $this->settings);
 
 		if (!$template) {
-			// template was not passed as setting, check the register
-			$template = $GLOBALS['TSFE']->register['template'];
-		}
-
-		if (!$template) {
 			return new Response();
 		}
 
