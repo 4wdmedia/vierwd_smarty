@@ -61,7 +61,7 @@ class SmartyViewRenderingTest extends ExtensionTestCase {
 		$view = $this->createView();
 		$view->assign('templateVariable', '<b>test</b>');
 
-		$result = $view->render('Controller/action.tpl');
+		$result = $view->render('Controller/Action.tpl');
 
 		$this->assertSame('&lt;b&gt;test&lt;/b&gt;', $result);
 	}
@@ -71,7 +71,7 @@ class SmartyViewRenderingTest extends ExtensionTestCase {
 		$view = $this->createView();
 		$view->assign('templateVariable', 'test-string');
 
-		$result = $view->render('Controller/action.tpl');
+		$result = $view->render('Controller/Action.tpl');
 
 		$this->assertSame('test-string', $result);
 	}
