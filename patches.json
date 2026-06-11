@@ -1,0 +1,7 @@
+{
+	"patches": {
+		"smarty/smarty": {
+			"Ignore Smarty deprecation warnings": "patches/smarty_deprecations.patch"
+		}
+	}
+}

@@ -24,6 +24,7 @@
 		"typo3/cms-core": "^14.0.0"
 	},
 	"require-dev": {
+		"cweagans/composer-patches": "^2.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
 		"friendsofphp/php-cs-fixer": "^3.15.0",
 		"mikey179/vfsstream": "^1.6",
@@ -54,10 +55,11 @@
 		"bin-dir": ".Build/bin",
 		"sort-packages": true,
 		"allow-plugins": {
+			"cweagans/composer-patches": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"phpstan/extension-installer": true,
 			"typo3/class-alias-loader": true,
-			"typo3/cms-composer-installers": true,
-			"dealerdirect/phpcodesniffer-composer-installer": true
+			"typo3/cms-composer-installers": true
 		}
 	},
 	"scripts": {

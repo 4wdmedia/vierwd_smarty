@@ -1,0 +1,149 @@
+--- a/lexer/smarty_internal_templateparser.y	2025-08-26 10:37:46
++++ b/lexer/smarty_internal_templateparser.y	2026-06-11 17:30:22
+@@ -785,9 +785,6 @@
+         if (isset($this->smarty->registered_classes[c])) {
+             res = $this->smarty->registered_classes[c].'::'.s[0].s[1];
+         } else {
+-            trigger_error('Using unregistered static method "' . c.'::'.s[0] . '" in a template is deprecated and will be ' .
+-                    'removed in a future release. Use Smarty::registerClass to explicitly register ' .
+-                    'a class for access.', E_USER_DEPRECATED);
+             res = c.'::'.s[0].s[1];
+         } 
+     } else {
+--- a/libs/sysplugins/smarty_internal_compile_private_modifier.php	2025-08-26 10:37:46
++++ b/libs/sysplugins/smarty_internal_compile_private_modifier.php	2026-06-11 17:35:05
+@@ -109,11 +109,6 @@
+                             if (!is_object($compiler->smarty->security_policy)
+                                 || $compiler->smarty->security_policy->isTrustedPhpModifier($modifier, $compiler)
+                             ) {
+-                                if (!in_array($modifier, ['time', 'join', 'is_array', 'in_array'])) {
+-                                    trigger_error('Using unregistered function "' . $modifier . '" in a template is deprecated and will be ' .
+-                                        'removed in a future release. Use Smarty::registerPlugin to explicitly register ' .
+-                                        'a custom modifier.', E_USER_DEPRECATED);
+-                                }
+                                 $output = "{$modifier}({$params})";
+                             }
+                             $compiler->known_modifier_type[ $modifier ] = $type;
+--- a/libs/sysplugins/smarty_internal_templatecompilerbase.php	2025-08-26 10:37:46
++++ b/libs/sysplugins/smarty_internal_templatecompilerbase.php	2026-06-11 17:36:11
+@@ -655,16 +655,6 @@
+                         return $func_name . '(' . $parameter[0] . ')';
+                     }
+                 } else {
+-
+-                    if (
+-                        !$this->smarty->loadPlugin('smarty_modifiercompiler_' . $name)
+-                        && !isset($this->smarty->registered_plugins[Smarty::PLUGIN_MODIFIER][$name])
+-                        && !in_array($name, ['time', 'join', 'is_array', 'in_array', 'count'])
+-                    ) {
+-                        trigger_error('Using unregistered function "' . $name . '" in a template is deprecated and will be ' .
+-                            'removed in a future release. Use Smarty::registerPlugin to explicitly register ' .
+-                            'a custom modifier.', E_USER_DEPRECATED);
+-                    }
+ 
+                     return $name . '(' . implode(',', $parameter) . ')';
+                 }
+--- a/libs/sysplugins/smarty_internal_templateparser.php	2025-08-26 10:37:46
++++ b/libs/sysplugins/smarty_internal_templateparser.php	2026-06-11 17:36:47
+@@ -17,7 +17,7 @@
+ *
+ * This is the template parser.
+ * It is generated from the smarty_internal_templateparser.y file
+-* 
++*
+ * @author Uwe Tews <uwe.tews@googlemail.com>
+ */
+ class Smarty_Internal_Templateparser
+@@ -1117,30 +1117,30 @@
+     public $yystack = array();  /* The parser's stack */
+ 
+     public $yyTokenName = array(
+-  '$',             'VERT',          'COLON',         'TEXT',        
+-  'STRIPON',       'STRIPOFF',      'LITERALSTART',  'LITERALEND',  
++  '$',             'VERT',          'COLON',         'TEXT',
++  'STRIPON',       'STRIPOFF',      'LITERALSTART',  'LITERALEND',
+   'LITERAL',       'SIMPELOUTPUT',  'SIMPLETAG',     'SMARTYBLOCKCHILDPARENT',
+-  'LDEL',          'RDEL',          'DOLLARID',      'EQUAL',       
+-  'ID',            'PTR',           'LDELMAKENOCACHE',  'LDELIF',      
+-  'LDELFOR',       'SEMICOLON',     'INCDEC',        'TO',          
+-  'STEP',          'LDELFOREACH',   'SPACE',         'AS',          
+-  'APTR',          'LDELSETFILTER',  'CLOSETAG',      'LDELSLASH',   
+-  'ATTR',          'INTEGER',       'COMMA',         'OPENP',       
+-  'CLOSEP',        'MATH',          'UNIMATH',       'ISIN',        
+-  'QMARK',         'NOT',           'TYPECAST',      'HEX',         
+-  'DOT',           'INSTANCEOF',    'SINGLEQUOTESTRING',  'DOUBLECOLON', 
+-  'NAMESPACE',     'AT',            'HATCH',         'OPENB',       
+-  'CLOSEB',        'DOLLAR',        'LOGOP',         'SLOGOP',      
+-  'TLOGOP',        'SINGLECOND',    'ARRAYOPEN',     'QUOTE',       
+-  'BACKTICK',      'error',         'start',         'template',    
+-  'literal_e2',    'literal_e1',    'smartytag',     'tagbody',     
+-  'tag',           'outattr',       'eqoutattr',     'varindexed',  
+-  'output',        'attributes',    'variable',      'value',       
+-  'expr',          'modifierlist',  'statement',     'statements',  
+-  'foraction',     'varvar',        'modparameters',  'attribute',   
+-  'ternary',       'tlop',          'lop',           'scond',       
++  'LDEL',          'RDEL',          'DOLLARID',      'EQUAL',
++  'ID',            'PTR',           'LDELMAKENOCACHE',  'LDELIF',
++  'LDELFOR',       'SEMICOLON',     'INCDEC',        'TO',
++  'STEP',          'LDELFOREACH',   'SPACE',         'AS',
++  'APTR',          'LDELSETFILTER',  'CLOSETAG',      'LDELSLASH',
++  'ATTR',          'INTEGER',       'COMMA',         'OPENP',
++  'CLOSEP',        'MATH',          'UNIMATH',       'ISIN',
++  'QMARK',         'NOT',           'TYPECAST',      'HEX',
++  'DOT',           'INSTANCEOF',    'SINGLEQUOTESTRING',  'DOUBLECOLON',
++  'NAMESPACE',     'AT',            'HATCH',         'OPENB',
++  'CLOSEB',        'DOLLAR',        'LOGOP',         'SLOGOP',
++  'TLOGOP',        'SINGLECOND',    'ARRAYOPEN',     'QUOTE',
++  'BACKTICK',      'error',         'start',         'template',
++  'literal_e2',    'literal_e1',    'smartytag',     'tagbody',
++  'tag',           'outattr',       'eqoutattr',     'varindexed',
++  'output',        'attributes',    'variable',      'value',
++  'expr',          'modifierlist',  'statement',     'statements',
++  'foraction',     'varvar',        'modparameters',  'attribute',
++  'ternary',       'tlop',          'lop',           'scond',
+   'array',         'function',      'ns1',           'doublequoted_with_quotes',
+-  'static_class_access',  'arraydef',      'object',        'arrayindex',  
++  'static_class_access',  'arraydef',      'object',        'arrayindex',
+   'indexdef',      'varvarele',     'objectchain',   'objectelement',
+   'method',        'params',        'modifier',      'modparameter',
+   'arrayelements',  'arrayelement',  'doublequoted',  'doublequotedcontent',
+@@ -2192,7 +2192,7 @@
+     }
+ // line 428 "../smarty/lexer/smarty_internal_templateparser.y"
+     public function yy_r30(){
+-    $tag = trim(substr($this->yystack[$this->yyidx + -1]->minor,$this->compiler->getLdelLength())); 
++    $tag = trim(substr($this->yystack[$this->yyidx + -1]->minor,$this->compiler->getLdelLength()));
+     $this->_retvalue = $this->compiler->compileTag(($tag === 'else if')? 'elseif' : $tag,array(),array('if condition'=>$this->yystack[$this->yyidx + 0]->minor));
+     }
+ // line 433 "../smarty/lexer/smarty_internal_templateparser.y"
+@@ -2425,11 +2425,8 @@
+         if (isset($this->smarty->registered_classes[$this->yystack[$this->yyidx + -2]->minor])) {
+             $this->_retvalue = $this->smarty->registered_classes[$this->yystack[$this->yyidx + -2]->minor].'::'.$this->yystack[$this->yyidx + 0]->minor[0].$this->yystack[$this->yyidx + 0]->minor[1];
+         } else {
+-            trigger_error('Using unregistered static method "' . $this->yystack[$this->yyidx + -2]->minor.'::'.$this->yystack[$this->yyidx + 0]->minor[0] . '" in a template is deprecated and will be ' .
+-                'removed in a future release. Use Smarty::registerClass to explicitly register ' .
+-                'a class for access.', E_USER_DEPRECATED);
+             $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor.'::'.$this->yystack[$this->yyidx + 0]->minor[0].$this->yystack[$this->yyidx + 0]->minor[1];
+-        } 
++        }
+     } else {
+         $this->compiler->trigger_template_error ('static class \''.$this->yystack[$this->yyidx + -2]->minor.'\' is undefined or not allowed by security setting');
+     }
+@@ -2448,7 +2445,7 @@
+         $smarty_var = $this->compiler->compileTag('private_special_variable',array(),$this->yystack[$this->yyidx + 0]->minor['smarty_internal_index']);
+         $this->_retvalue = $smarty_var;
+     } else {
+-        // used for array reset,next,prev,end,current 
++        // used for array reset,next,prev,end,current
+         $this->last_variable = $this->yystack[$this->yyidx + 0]->minor['var'];
+         $this->last_index = $this->yystack[$this->yyidx + 0]->minor['smarty_internal_index'];
+         $this->_retvalue = $this->compiler->compileVariable($this->yystack[$this->yyidx + 0]->minor['var']).$this->yystack[$this->yyidx + 0]->minor['smarty_internal_index'];
+@@ -2724,7 +2721,7 @@
+     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor.'=>'.$this->yystack[$this->yyidx + 0]->minor;
+     }
+ // line 1208 "../smarty/lexer/smarty_internal_templateparser.y"
+-    public function yy_r173(){ 
++    public function yy_r173(){
+     $this->_retvalue = '\''.$this->yystack[$this->yyidx + -2]->minor.'\'=>'.$this->yystack[$this->yyidx + 0]->minor;
+     }
+ // line 1224 "../smarty/lexer/smarty_internal_templateparser.y"

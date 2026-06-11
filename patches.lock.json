@@ -1,0 +1,17 @@
+{
+    "_hash": "a867c2fae67fbda14eedd152a2efb4d6cc9518955977968522c3f9b8c897ccfa",
+    "patches": {
+        "smarty/smarty": [
+            {
+                "package": "smarty/smarty",
+                "description": "Ignore Smarty deprecation warnings",
+                "url": "patches/smarty_deprecations.patch",
+                "sha256": "00461a3f2c08d136e6c04415c623b515e3c27eb8ab59db5c1c5f54e8299ab679",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches.json"
+                }
+            }
+        ]
+    }
+}

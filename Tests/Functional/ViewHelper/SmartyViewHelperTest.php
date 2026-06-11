@@ -47,12 +47,14 @@ class SmartyViewHelperTest extends ExtensionTestCase {
 		$this->context = $this->get(RenderingContextFactory::class)->create();
 		$request = new ServerRequest();
 		$this->context->setAttribute(ServerRequestInterface::class, $request);
+		$GLOBALS['TYPO3_REQUEST'] = $request;
 		$smartyView = new SmartyView($configurationManager, $imageService, $this->context);
 
 		GeneralUtility::addInstance(SmartyView::class, $smartyView);
 	}
 
 	protected function tearDown(): void {
+		unset($GLOBALS['TYPO3_REQUEST']);
 		GeneralUtility::purgeInstances();
 		parent::tearDown();
 
@@ -60,7 +62,7 @@ class SmartyViewHelperTest extends ExtensionTestCase {
 
 		$reflection = new \ReflectionProperty(SmartyViewHelper::class, 'smartyView');
 		$reflection->setAccessible(true);
-		$reflection->setValue(null);
+		$reflection->setValue(null, null);
 	}
 
 	#[Test]
