@@ -5,6 +5,7 @@ namespace Vierwd\VierwdSmarty\View\Plugin\Block;
 
 use Smarty_Internal_Template;
 use TYPO3\CMS\Core\TypoScript\AST\AstBuilder;
+use TYPO3\CMS\Core\TypoScript\AST\Node\RootNode;
 use TYPO3\CMS\Core\TypoScript\Tokenizer\LossyTokenizer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -46,7 +47,13 @@ class TyposcriptPlugin {
 		$lineStream = $tokenizer->tokenize($content);
 		$astBuilder = GeneralUtility::makeInstance(AstBuilder::class);
 		$root = $GLOBALS['TYPO3_REQUEST']->getAttribute('frontend.typoscript')->getSetupTree();
-		$typoScriptConfig = $astBuilder->build($lineStream, $root)->toArray();
+		// It's not possible to clone the root node
+		// => create new RootNode and add the cloned children
+		$clonedRoot = new RootNode();
+		foreach ($root->getNextChild() as $childNode) {
+			$clonedRoot->addChild(clone $childNode);
+		}
+		$typoScriptConfig = $astBuilder->build($lineStream, $clonedRoot)->toArray();
 
 		$content = $cObj->cObjGet($typoScriptConfig, 'COA');
 
