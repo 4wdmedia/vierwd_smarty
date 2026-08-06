@@ -6,3 +6,6 @@ defined('TYPO3') || exit;
 	'smarty_render',
 	'Smarty Rendering'
 );
+$CTypeKey = array_key_last($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items']);
+$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][$CTypeKey]['adminOnly'] = true;
+unset($CTypeKey);
