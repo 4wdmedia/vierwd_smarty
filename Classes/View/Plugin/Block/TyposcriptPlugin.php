@@ -46,6 +46,7 @@ class TyposcriptPlugin {
 		$tokenizer = GeneralUtility::makeInstance(LossyTokenizer::class);
 		$lineStream = $tokenizer->tokenize($content);
 		$astBuilder = GeneralUtility::makeInstance(AstBuilder::class);
+		/** @var RootNode $root */
 		$root = $GLOBALS['TYPO3_REQUEST']->getAttribute('frontend.typoscript')->getSetupTree();
 		// It's not possible to clone the root node
 		// => create new RootNode and add the cloned children
