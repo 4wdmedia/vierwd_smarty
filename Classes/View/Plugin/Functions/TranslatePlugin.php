@@ -9,10 +9,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class TranslatePlugin {
 
-	private RequestInterface $request;
-
-	public function __construct(RequestInterface $request) {
-		$this->request = $request;
+	public function __construct(private readonly RequestInterface $request) {
 	}
 
 	public function __invoke(array $params, Smarty_Internal_Template $smarty): ?string {

@@ -16,14 +16,7 @@ use function Safe\file_put_contents;
 
 class FluidPlugin {
 
-	private RenderingContextInterface $renderingContext;
-	private ConfigurationManagerInterface $configurationManager;
-	private ViewFactoryInterface $viewFactory;
-
-	public function __construct(RenderingContextInterface $renderingContext, ConfigurationManagerInterface $configurationManager, ViewFactoryInterface $viewFactory) {
-		$this->renderingContext = $renderingContext;
-		$this->configurationManager = $configurationManager;
-		$this->viewFactory = $viewFactory;
+	public function __construct(private readonly RenderingContextInterface $renderingContext, private readonly ConfigurationManagerInterface $configurationManager, private readonly ViewFactoryInterface $viewFactory) {
 	}
 
 	public function __invoke(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {
@@ -31,7 +24,7 @@ class FluidPlugin {
 			return '';
 		}
 
-		$data = isset($params['data']) ? $params['data'] : [];
+		$data = $params['data'] ?? [];
 		unset($params['data']);
 		$data = $params + $data + $smarty->getTemplateVars();
 
@@ -44,9 +37,7 @@ class FluidPlugin {
 			} else if (isset($configuration['view']['layoutRootPath'])) {
 				$layoutRootPaths = [$configuration['view']['layoutRootPath']];
 			}
-			$layoutRootPaths = array_map(function($path) {
-				return GeneralUtility::getFileAbsFileName($path);
-			}, $layoutRootPaths);
+			$layoutRootPaths = array_map(GeneralUtility::getFileAbsFileName(...), $layoutRootPaths);
 
 			// Partials
 			if (isset($configuration['view']['partialRootPaths'])) {
@@ -54,9 +45,7 @@ class FluidPlugin {
 			} else if (isset($configuration['view']['partialRootPath'])) {
 				$partialRootPaths = [$configuration['view']['partialRootPath']];
 			}
-			$partialRootPaths = array_map(function($path) {
-				return GeneralUtility::getFileAbsFileName($path);
-			}, $partialRootPaths);
+			$partialRootPaths = array_map(GeneralUtility::getFileAbsFileName(...), $partialRootPaths);
 		}
 
 		$cacheDirectory = Environment::getVarPath() . '/cache/vierwd_smarty/fluid-in-smarty/';

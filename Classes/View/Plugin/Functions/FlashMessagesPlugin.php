@@ -14,10 +14,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class FlashMessagesPlugin {
 
-	private RenderingContextInterface $renderingContext;
-
-	public function __construct(RenderingContextInterface $renderingContext) {
-		$this->renderingContext = $renderingContext;
+	public function __construct(private readonly RenderingContextInterface $renderingContext) {
 	}
 
 	public function __invoke(array $params, Smarty_Internal_Template $smarty): string {

@@ -116,7 +116,7 @@ class ActionController extends ExtbaseActionController {
 			$previousException = $exception->getPrevious();
 			if ($previousException instanceof PropertyTargetNotFoundException || $previousException instanceof PropertyInvalidSourceException) {
 				$response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction($GLOBALS['TYPO3_REQUEST'], $this->entityNotFoundMessage);
-				throw new ImmediateResponseException($response);
+				throw new ImmediateResponseException($response, 1788248019);
 			}
 			throw $exception;
 		}

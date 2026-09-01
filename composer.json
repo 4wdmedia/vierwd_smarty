@@ -31,7 +31,8 @@
 		"phpstan/extension-installer": "^1.0.0",
 		"phpstan/phpstan-deprecation-rules": "^2.0.3",
 		"phpunit/phpunit": "^11.0",
-		"saschaegerer/phpstan-typo3": "^2.1.1",
+		"saschaegerer/phpstan-typo3": "^3.0.1",
+		"ssch/typo3-rector": "^3.15",
 		"typo3/testing-framework": "^9.0.0",
 		"vierwd/coding-standard": "dev-master"
 	},
@@ -64,6 +65,8 @@
 		"phplint": "find . -name \\*.php ! -path \"./.Build/*\" | parallel --gnu php -d display_errors=stderr -l {} > /dev/null \\;",
 		"phpstan": "phpstan analyze",
 		"phpcs": "phpcs --runtime-set ignore_warnings_on_exit 1 --standard=.Build/vendor/vierwd/coding-standard/ForwardMedia Classes/ Tests/",
+		"rector": "rector process",
+		"rector-dry": "rector process --dry-run",
 		"unit-test": "phpunit -c .Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml Tests/Unit/",
 		"test": [
 			"find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo \"Running functional test suite {}\"; typo3DatabaseDriver='pdo_mysql' typo3DatabaseName='typo3' typo3DatabaseHost='localhost' typo3DatabaseUsername='root' typo3DatabasePassword='' .Build/bin/phpunit --colors -c .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests.xml {}'"

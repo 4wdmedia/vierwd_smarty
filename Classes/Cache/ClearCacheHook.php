@@ -37,7 +37,7 @@ class ClearCacheHook {
 			try {
 				$cacheManager = GeneralUtility::makeInstance(CacheManager::class);
 				$cacheManager->flushCachesInGroup('vierwd_smarty');
-			} catch (NoSuchCacheGroupException $e) {
+			} catch (NoSuchCacheGroupException) {
 				// ignore
 				// TODO: Check if this hook is still needed
 			}

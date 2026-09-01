@@ -57,7 +57,7 @@ class SmartyController extends ActionController {
 				} else if (is_string($extbaseArray)) {
 					$content = $extbaseArray;
 				} else {
-					throw new \Exception('Unkown type for ' . $key);
+					throw new \Exception('Unkown type for ' . $key, 1788248029);
 				}
 				$this->settings['typoscript'][$key] = $content;
 			}
