@@ -43,7 +43,7 @@ function clean(mixed $str): string {
 	} else if ($str === null) {
 		return '';
 	} else {
-		throw new Exception('$str needs to be scalar value');
+		throw new Exception('$str needs to be scalar value', 1788248091);
 	}
 }
 
@@ -55,18 +55,11 @@ class SmartyView implements ViewInterface {
 
 	protected ?ContentObjectRenderer $contentObject = null;
 
-	protected ConfigurationManagerInterface $configurationManager;
-
-	protected ImageService $imageService;
-
 	protected RequestInterface $request;
 	protected UriBuilder $uriBuilder;
 	protected RenderingContextInterface $baseRenderingContext;
 
-	public function __construct(ConfigurationManagerInterface $configurationManager, ImageService $imageService, ?RenderingContextInterface $context = null) {
-		$this->configurationManager = $configurationManager;
-		$this->imageService = $imageService;
-
+	public function __construct(protected ConfigurationManagerInterface $configurationManager, protected ImageService $imageService, ?RenderingContextInterface $context = null) {
 		if (!$context) {
 			$context = GeneralUtility::makeInstance(RenderingContextFactory::class)->create();
 		}
@@ -259,7 +252,7 @@ class SmartyView implements ViewInterface {
 		if ($userVars) {
 			$overwrite = array_intersect_key($templateVars, $userVars);
 			if ($overwrite) {
-				throw new Exception('Overwriting smarty template vars with own variables: ' . implode(',', array_keys($overwrite)));
+				throw new Exception('Overwriting smarty template vars with own variables: ' . implode(',', array_keys($overwrite)), 1788248126);
 			}
 			$this->Smarty->assign($userVars);
 		}
@@ -294,7 +287,7 @@ class SmartyView implements ViewInterface {
 		}
 
 		// test for correct case-sensitivity
-		if (isset($_SERVER['4WD_CONFIG']) && substr($view, 0, 7) != 'string:') {
+		if (isset($_SERVER['4WD_CONFIG']) && !str_starts_with($view, 'string:')) {
 			if (!file_exists($view)) {
 				// try to get the file
 				$dirs = (array)$this->Smarty->getTemplateDir();
@@ -309,12 +302,12 @@ class SmartyView implements ViewInterface {
 				$controller = $this->request->getControllerName();
 				$action     = $this->request->getControllerActionName();
 
-				throw new Exception('Template not found for ' . $controller . '->' . $action . "\nMaybe incorrect case of filename?");
+				throw new Exception('Template not found for ' . $controller . '->' . $action . "\nMaybe incorrect case of filename?", 1788248135);
 			}
 		}
 
 		// check if the view was modified AFTER the extension was installed
-		if (isset($_SERVER['4WD_CONFIG']) && strpos($view, 'vierwd_smarty/Resources/Private/Templates') !== false) {
+		if (isset($_SERVER['4WD_CONFIG']) && str_contains($view, 'vierwd_smarty/Resources/Private/Templates')) {
 			$viewModifiedTime = filemtime($view);
 			$emConf = GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/ext_emconf.php');
 			$extensionInstallTime = filemtime($emConf);

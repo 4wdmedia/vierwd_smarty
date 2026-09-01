@@ -10,10 +10,7 @@ use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 
 class UriResourcePlugin {
 
-	private RequestInterface $request;
-
-	public function __construct(RequestInterface $request) {
-		$this->request = $request;
+	public function __construct(private readonly RequestInterface $request) {
 	}
 
 	public function __invoke(array $params, Smarty_Internal_Template $smarty): string {
@@ -21,9 +18,7 @@ class UriResourcePlugin {
 		$extensionName = $params['extensionName'] ?? null;
 		$absolute = $params['absolute'] ?? false;
 
-		if ($extensionName === null) {
-			$extensionName = $this->request->getControllerExtensionName();
-		}
+		$extensionName ??= $this->request->getControllerExtensionName();
 		$uri = 'EXT:' . GeneralUtility::camelCaseToLowerCaseUnderscored($extensionName) . '/Resources/Public/' . $path;
 		// TODO: Check if cache buster is added or not.
 		$uri = (string)PathUtility::getSystemResourceUri($uri);

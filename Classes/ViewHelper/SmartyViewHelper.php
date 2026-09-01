@@ -31,9 +31,7 @@ class SmartyViewHelper extends AbstractViewHelper {
 	protected static ?SmartyView $smartyView = null;
 
 	public function initialize(): void {
-		if (self::$smartyView === null) {
-			self::$smartyView = GeneralUtility::makeInstance(SmartyView::class);
-		}
+		self::$smartyView ??= GeneralUtility::makeInstance(SmartyView::class);
 	}
 
 	public function render(): string {

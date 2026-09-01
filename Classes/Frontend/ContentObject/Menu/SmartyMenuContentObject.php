@@ -90,7 +90,7 @@ class SmartyMenuContentObject extends TextMenuContentObject {
 	 */
 	public function checkItemState(string $kind, array $item): bool {
 		if ($item['ITEM_STATE'] ?? false) {
-			if ((string)$item['ITEM_STATE'] === (string)$kind) {
+			if ((string)$item['ITEM_STATE'] === $kind) {
 				return true;
 			}
 

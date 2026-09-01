@@ -15,15 +15,10 @@ use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Service\ImageService;
-use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
-use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Vierwd\VierwdSmarty\Tests\Functional\ExtensionTestCase;
 use Vierwd\VierwdSmarty\View\StandaloneSmartyView;
 
 class StandaloneViewTest extends ExtensionTestCase {
-
-	private ?RenderingContextInterface $renderingContext = null;
 
 	protected bool $initializeDatabase = false;
 
@@ -44,14 +39,11 @@ class StandaloneViewTest extends ExtensionTestCase {
 
 		$viewFactory = $this->createMock(ViewFactoryInterface::class);
 		GeneralUtility::addInstance(ViewFactoryInterface::class, $viewFactory);
-
-		$this->renderingContext = $this->get(RenderingContextFactory::class)->create();
 	}
 
 	protected function tearDown(): void {
 		unset($GLOBALS['TYPO3_REQUEST']);
 		GeneralUtility::purgeInstances();
-		$this->renderingContext = null;
 
 		parent::tearDown();
 	}
@@ -71,7 +63,6 @@ class StandaloneViewTest extends ExtensionTestCase {
 		$configurationManager = $this->getMockBuilder(ConfigurationManagerInterface::class)->disableOriginalConstructor()->getMock();
 		$configurationManager->method('getConfiguration')->willReturn([]);
 		$imageService = $this->getMockBuilder(ImageService::class)->disableOriginalConstructor()->getMock();
-		$typoLinkCodecService = $this->getMockBuilder(TypoLinkCodecService::class)->disableOriginalConstructor()->getMock();
 
 		$extbaseAttribute = new ExtbaseRequestParameters();
 		$extbaseAttribute->setPluginName('Pi1');
@@ -95,7 +86,7 @@ class StandaloneViewTest extends ExtensionTestCase {
 
 		$request = GeneralUtility::makeInstance(Request::class, $serverRequest);
 
-		$view = new StandaloneSmartyView($configurationManager, $imageService, $typoLinkCodecService);
+		$view = new StandaloneSmartyView($configurationManager, $imageService);
 		$view->setRequest($request);
 		$view->getRenderingContext()->getTemplatePaths()->setTemplateRootPaths([
 			GeneralUtility::getFileAbsFileName('EXT:vierwd_smarty/Tests/Unit/Fixtures/Templates'),

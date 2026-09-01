@@ -78,19 +78,12 @@ class SmartyEmail extends Email {
 	}
 
 	public function format(string $format): self {
-		switch ($format) {
-			case self::FORMAT_BOTH:
-				$this->format = [self::FORMAT_HTML, self::FORMAT_PLAIN];
-				break;
-			case self::FORMAT_HTML:
-				$this->format = [self::FORMAT_HTML];
-				break;
-			case self::FORMAT_PLAIN:
-				$this->format = [self::FORMAT_PLAIN];
-				break;
-			default:
-				throw new \InvalidArgumentException('Setting SmartyEmail->format() must be either "html", "plain" or "both", no other formats are currently supported', 1644931847);
-		}
+		$this->format = match ($format) {
+			self::FORMAT_BOTH => [self::FORMAT_HTML, self::FORMAT_PLAIN],
+			self::FORMAT_HTML => [self::FORMAT_HTML],
+			self::FORMAT_PLAIN => [self::FORMAT_PLAIN],
+			default => throw new \InvalidArgumentException('Setting SmartyEmail->format() must be either "html", "plain" or "both", no other formats are currently supported', 1644931847),
+		};
 		return $this;
 	}
 

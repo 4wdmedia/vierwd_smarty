@@ -9,10 +9,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class LinkActionPlugin {
 
-	private UriBuilder $uriBuilder;
-
-	public function __construct(UriBuilder $uriBuilder) {
-		$this->uriBuilder = $uriBuilder;
+	public function __construct(private readonly UriBuilder $uriBuilder) {
 	}
 
 	public function __invoke(array $params, ?string $content, Smarty_Internal_Template $smarty, bool &$repeat): string {

@@ -61,7 +61,6 @@ class SmartyViewHelperTest extends ExtensionTestCase {
 		$this->context = null;
 
 		$reflection = new \ReflectionProperty(SmartyViewHelper::class, 'smartyView');
-		$reflection->setAccessible(true);
 		$reflection->setValue(null, null);
 	}
 
