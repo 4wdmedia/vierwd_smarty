@@ -52,12 +52,8 @@ class SmartyViewTest extends UnitTestCase {
 
 	/**
 	 * Helper to build mock controller context needed to test expandGenericPathPattern.
-	 *
-	 * @param string $packageKey
-	 * @param string $controllerName
-	 * @param string $format
 	 */
-	protected function setupMockControllerContext($packageKey, $controllerName, $action, $format): ControllerContext {
+	protected function setupMockControllerContext(string $packageKey, string $controllerName, string $action, string $format): ControllerContext {
 		if (strpos($controllerName, '\\') === false) {
 			$controllerObjectName = "TYPO3\\$packageKey\\Controller\\" . $controllerName . 'Controller';
 		} else {

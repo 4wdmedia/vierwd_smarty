@@ -17,6 +17,7 @@ class ExtResource extends \Smarty_Resource_Custom {
 	 * @param string  $name
 	 * @param string  $source
 	 * @param int $mtime
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
 	 */
 	protected function fetch($name, &$source, &$mtime): void {
 		$file = GeneralUtility::getFileAbsFileName('EXT:' . $name);
@@ -29,6 +30,8 @@ class ExtResource extends \Smarty_Resource_Custom {
 	/**
 	 * @param string $name
 	 * @return int|bool|null
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
 	 */
 	protected function fetchTimestamp($name) {
 		$file = GeneralUtility::getFileAbsFileName('EXT:' . $name);
